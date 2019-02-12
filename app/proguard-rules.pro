@@ -19,3 +19,54 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-dontwarn org.xmlpull.v1.**
+-dontwarn okhttp3.**
+-dontwarn javax.annotation.**
+-dontwarn com.squareup.picasso.**
+-dontwarn com.google.gson.**
+-dontwarn retrofit2.Platform$Java8
+-dontwarn okio.**
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault
+#Using for retrofit & gson
+-keep class com.google.gson.** { *; }
+-keep class com.google.inject.** { *; }
+-keep class org.apache.http.** { *; }
+-keep class org.apache.james.mime4j.* { *; }
+-keep class javax.inject.** { *; }
+-keep class retrofit.** { *; }
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.stream.** { *; }
+-keepclassmembernames interface * {
+    @retrofit.http.* <methods>;
+}
+-keep interface retrofit.** { *;}
+-keep interface com.squareup.** { *; }
+-dontwarn rx.**
+-dontwarn retrofit.**
+-dontwarn kotlin.**
+-dontwarn org.w3c.dom.events.*
+
+-keep class com.google.gson.verion.desing.network.responses.** { *; }
+-keep class verion.desing.network.responses.** { *; }
+
+-keepattributes Exceptions
+-keepattributes InnerClasses
+-keepattributes Signature
+-keepattributes Deprecated
+-keepattributes SourceFile
+-keepattributes LineNumberTable
+-keepattributes *Annotation*
+-keepattributes EnclosingMethod
+
+
+#Icons
+-keepclasseswithmembers class **.R$* {
+    public static final int define_*;
+}
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}

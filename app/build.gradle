@@ -1,28 +1,120 @@
 apply plugin: 'com.android.application'
 
+
 android {
-    compileSdkVersion 28
+    lintOptions{
+        checkReleaseBuilds false
+        abortOnError false
+    }
     defaultConfig {
         applicationId "verion.desing.launcher"
-        minSdkVersion 21
-        targetSdkVersion 28
+        minSdkVersion 25
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
     }
+    defaultConfig {
+        multiDexEnabled true
+    }
+    compileSdkVersion 'android-P'
+
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    dataBinding {
+        enabled = true
+    }
+    aaptOptions { cruncherEnabled = false }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+        incremental = false
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    //Test
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    //Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    //Player
+    implementation 'com.google.android.exoplayer:exoplayer:2.6.1'
+
+    //Images
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //Network
+    implementation "com.squareup.okhttp3:okhttp:$okhttp3_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp3_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-scalars:$retrofit_version"
+
+    // Dagger 2
+    implementation "com.google.dagger:dagger:${draggerVersion}"
+    annotationProcessor "com.google.dagger:dagger-compiler:${draggerVersion}"
+    compileOnly 'javax.annotation:jsr250-api:1.0'
+    implementation 'javax.inject:javax.inject:1'
+
+    //AndroidX a
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.viewpager:viewpager:1.0.0'
+
+    //room
+    implementation "androidx.room:room-runtime:$room_version"
+
+    //dataBinding
+    annotationProcessor "androidx.databinding:databinding-compiler:$databinding_compiler"
+
+    //Design
+    implementation 'com.kofigyan.stateprogressbar:stateprogressbar:0.0.9'
+    implementation 'com.google.android.material:material:1.0.0-alpha3'
+    implementation 'me.relex:circleindicator:1.2.2@aar'
+
+    //Icons
+    implementation 'com.mikepenz:iconics-views:3.1.0'
+    implementation 'com.mikepenz:iconics-core:3.1.0'
+    implementation 'com.mikepenz:fontawesome-typeface:5.3.1.1@aar'
+    implementation 'com.mikepenz:meteocons-typeface:1.1.0.5@aar'
+    implementation 'com.mikepenz:google-material-typeface:3.0.1.3.original@aar'
+
+    //Logger
+    implementation 'com.orhanobut:logger:2.2.0'
+
+//    Rx
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation "io.reactivex.rxjava2:rxjava:2.1.14"
+
+    //Firebase
+    implementation 'com.google.android.gms:play-services-auth:15.0.1'
+    implementation 'com.google.firebase:firebase-messaging:17.0.0'
+    implementation 'com.google.firebase:firebase-core:16.0.0'
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
+    implementation 'com.google.firebase:firebase-config:16.0.0'
+    implementation 'com.google.firebase:firebase-storage:16.0.1'
+    implementation 'com.google.firebase:firebase-database:16.0.1'
+
+}
+repositories {
+    google()
+    maven { url 'https://jitpack.io' }
+    jcenter()
 }
