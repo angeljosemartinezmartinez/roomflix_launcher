@@ -38,6 +38,8 @@ android {
 }
 
 dependencies {
+
+    implementation project(path: ':database')
     //Test
     testImplementation 'junit:junit:4.12'
     implementation fileTree(include: ['*.jar'], dir: 'libs')

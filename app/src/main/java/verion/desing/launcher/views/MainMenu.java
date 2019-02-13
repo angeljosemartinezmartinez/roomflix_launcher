@@ -1,4 +1,4 @@
-package verion.desing.launcher;
+package verion.desing.launcher.views;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AnimationUtils;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -27,14 +25,15 @@ import java.util.TimerTask;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import verion.desing.launcher.R;
 import verion.desing.launcher.databinding.ActivityMainBinding;
 import verion.desing.launcher.model.Button;
 import verion.desing.launcher.network.service.CallManager;
 import verion.desing.launcher.network.service.callbacks.CallBackData;
 
-public class MainActivity extends AppCompatActivity {
+public class MainMenu extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "MainMenu";
     private ActivityMainBinding binding;
     private ArrayList<Button> buttons;
 
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         goStream("/storage/emulated/0/Download/ARRECIFE_GRAN_HOTEL.mp4");
         setVideoView();
         setClock();
-        getDataFromServer();
+        //getDataFromServer();
     }
 
     @Override
@@ -78,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
         call.getDataFromServer("900EB3068F9A", new CallBackData() {
             @Override
             public void finishAction(Object body) {
-                Log.d(TAG, body.toString());
             }
 
             @Override
@@ -238,7 +236,12 @@ public class MainActivity extends AppCompatActivity {
                 loadRoundCorner(button.getImg(), btnFor);
             });
         }
-
+        binding.btn11.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), LanguageSelect.class));
+            }
+        });
 
     }
 

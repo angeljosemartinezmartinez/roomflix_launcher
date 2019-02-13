@@ -20,7 +20,6 @@ public class CallManager {
                 try {
                     if (response.isSuccessful()) {
                         listener.finishAction(response.body());
-                        Log.d(TAG, response.body().toString());
                     } else listener.error(String.valueOf(response.code()));
                 } catch (Exception e) {
                     listener.error("C");
