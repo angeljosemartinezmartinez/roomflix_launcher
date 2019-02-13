@@ -10,6 +10,8 @@ data class Data (
         var nativeName: String? = "",
         @SerializedName("code")
         var code: String? = "",
+        @SerializedName("picture")
+        var picture: String? ="",
         @SerializedName("textsApp")
-        var  textsApp: ArrayList<String>? = ArrayList()
+        var  textsApp: TextsApp? = null
 )

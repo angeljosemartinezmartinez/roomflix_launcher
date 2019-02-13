@@ -20,22 +20,23 @@ import com.orhanobut.logger.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import verion.desing.launcher.R;
 import verion.desing.launcher.databinding.ActivityMainBinding;
+import verion.desing.launcher.dragger.LauncherApplication;
+import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.model.Button;
 import verion.desing.launcher.network.service.CallManager;
 import verion.desing.launcher.network.service.callbacks.CallBackData;
+import verion.desing.launcher.views.activities.BaseActivity;
 
-public class MainMenu extends AppCompatActivity {
+public class MainMenu extends BaseActivity {
 
     private static final String TAG = "MainMenu";
     private ActivityMainBinding binding;
     private ArrayList<Button> buttons;
+    private String background;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,21 +45,48 @@ public class MainMenu extends AppCompatActivity {
         buttons = new ArrayList<>();
         Iconics.init(getApplicationContext());
         checkPermission();
-        String background = "/storage/emulated/0/Download/language_background/demoimgfondofondoHotelplay.png";
-        loadRoundCorner(background, binding.background);
-        openSettings("com.android.settings");
+        background = "/storage/emulated/0/Download/language_background/demoimgfondofondoHotelplay.png";
+        imageHelper.loadRoundCorner(background, binding.background);
         setBtnFromDevice();
         setBtnViews(buttons);
-        goStream("/storage/emulated/0/Download/ARRECIFE_GRAN_HOTEL.mp4");
+        goStreaming(binding.video,"/storage/emulated/0/Download/ARRECIFE_GRAN_HOTEL.mp4");
         setVideoView();
         setClock();
-        //getDataFromServer();
+        executeCall();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        openSettings("com.android.settings");
+    }
+
+    public synchronized void executeCall(){
+        getDataFromServer(new CallBackAllInfoCheck() {
+            @Override
+            public void dataChange() {
+                imageHelper.loadRoundCorner(background, binding.background);
+                setBtnFromDevice();
+                setBtnViews(buttons);
+                goStreaming(binding.video,"/storage/emulated/0/Download/ARRECIFE_GRAN_HOTEL.mp4");
+            }
+
+            @Override
+            public void dataNoChange() {
+                goLangSelect();
+            }
+
+            @Override
+            public void error(String macAddress) {
+
+            }
+        });
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        goStream("/storage/emulated/0/Download/ARRECIFE_GRAN_HOTEL.mp4");
+        goStreaming(binding.video,"/storage/emulated/0/Download/ARRECIFE_GRAN_HOTEL.mp4");
         setVideoView();
         setClock();
     }
@@ -72,20 +100,6 @@ public class MainMenu extends AppCompatActivity {
 
     }
 
-    private void getDataFromServer(){
-        CallManager call = new CallManager();
-        call.getDataFromServer("900EB3068F9A", new CallBackData() {
-            @Override
-            public void finishAction(Object body) {
-            }
-
-            @Override
-            public void error(String s) {
-
-            }
-        });
-    }
-
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(IconicsContextWrapper.wrap(newBase));
@@ -94,14 +108,7 @@ public class MainMenu extends AppCompatActivity {
 
     private void openSettings(String nPackage){
         binding.icoSettings.setOnClickListener(view -> {
-            try {
-                Intent launchIntent = getPackageManager().getLaunchIntentForPackage(nPackage);
-                if (launchIntent != null) {
-                    startActivity(launchIntent);//null pointer check in case package nombre was not found
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            startPackage(nPackage);
         });
         binding.icoSettings.setOnFocusChangeListener((view, b) -> {
             if(b){
@@ -170,7 +177,7 @@ public class MainMenu extends AppCompatActivity {
             binding.video.requestFocus();
 
         });
-        new Timer().schedule(new TimerTask() {
+        /*new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 if (binding.video.isPlaying()) {
@@ -183,11 +190,12 @@ public class MainMenu extends AppCompatActivity {
                     Log.d(TAG, "Time: " + temp + " s");
                 }
             }
-        }, 0, 3600000);
+        }, 0, 3600000);*/
         binding.video.start();
     }
 
     private void setVideoView() {
+        binding.video.setVisibility(View.VISIBLE);
         binding.video.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
                 v.setBackgroundResource(R.drawable.focus_video_view);
@@ -211,7 +219,7 @@ public class MainMenu extends AppCompatActivity {
             binding.video.setVisibility(View.VISIBLE);
 
         }));
-//        binding.video.requestFocus();
+        binding.video.requestFocus();
 
     }
 
@@ -226,14 +234,12 @@ public class MainMenu extends AppCompatActivity {
                 btnFor.setVisibility(View.VISIBLE);
                 btnFor.setOnFocusChangeListener((view, b) -> {
                     if (b) {
-                        Log.d(TAG, "Focused: " + i + " btn: " + button.getImgFocused());
-                        loadRoundCorner(button.getImgFocused(), btnFor);
+                        imageHelper.loadRoundCorner(button.getImgFocused(), btnFor);
                     } else {
-                        Log.d(TAG, "Not focused: " + i + " btn: " + button.getImg());
-                        loadRoundCorner(button.getImg(), btnFor);
+                        imageHelper.loadRoundCorner(button.getImg(), btnFor);
                     }
                 });
-                loadRoundCorner(button.getImg(), btnFor);
+                imageHelper.loadRoundCorner(button.getImg(), btnFor);
             });
         }
         binding.btn11.setOnClickListener(new View.OnClickListener() {
@@ -243,21 +249,6 @@ public class MainMenu extends AppCompatActivity {
             }
         });
 
-    }
-
-    public void loadRoundCorner(String url, ImageButton view) {
-
-        Context context = view.getContext();
-        Glide.with(context).load(url)
-                .apply(new RequestOptions()
-                        .dontAnimate().diskCacheStrategy(DiskCacheStrategy.NONE)).into(view);
-    }
-
-    public void loadRoundCorner(String url, ImageView view) {
-        Context context = view.getContext();
-        Glide.with(context).load(url)
-                .apply(new RequestOptions()
-                        .dontAnimate().diskCacheStrategy(DiskCacheStrategy.NONE)).into(view);
     }
 
     private void setBtnFromDevice() {

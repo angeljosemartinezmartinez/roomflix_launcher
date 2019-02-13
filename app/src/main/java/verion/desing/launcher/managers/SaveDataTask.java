@@ -16,10 +16,10 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
     private static final String TAG = "SaveDataTask";
     private final Context context;
     private CallBackSaveData listener;
-    private ArrayList<ResponseLanguages> data;
+    private ResponseLanguages data;
     private AppDataBase appDatabase;
 
-    SaveDataTask(Context context, CallBackSaveData listener, ArrayList<ResponseLanguages> data) {
+    SaveDataTask(Context context, CallBackSaveData listener, ResponseLanguages data) {
         this.listener = listener;
         this.data = data;
         this.context = context;
@@ -49,20 +49,17 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
     }
 
 
-    private void saveLang(ArrayList<ResponseLanguages> languages, AppDataBase appDatabase) {
-        ArrayList<Language> langs = new ArrayList<>();
+    private void saveLang(ResponseLanguages languages, AppDataBase appDatabase) {
+        Language langs;
         ArrayList<Data> listData = new ArrayList<>();
-        for (ResponseLanguages lang : languages) {
-            for(ResponseLanguages.Data data : lang.data){
-                listData.add(new Data(data.name, data.nativeName, data.code, data.texts));
-            }
-            langs.add(new Language(lang.statusCode, lang.baseUrl, lang.picture, listData));
+        for (ResponseLanguages.Data data : languages.data) {
+            listData.add(new Data(data.name, data.nativeName, data.code, data.picture, null));
         }
-        if (langs.size() > 0) {
+        langs =new Language(languages.statusCode, languages.baseUrl, listData);
             appDatabase.languageDao().insertAll(langs);
-            Log.d(TAG, "SAVE " + langs.size() + " LANGS");
+            Log.d(TAG, "SAVE " + langs.toString() + " LANGS");
 
 
-        }
+
     }
 }

@@ -9,7 +9,6 @@ data class Language (
         @PrimaryKey(autoGenerate = false)
         var code: Int? = 0,
         var baseUrl: String? = "",
-        var picture: String? = "",
         var data: ArrayList<Data>? = ArrayList()
 
 )

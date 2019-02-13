@@ -46,6 +46,6 @@ ext{
     room_version = "2.0.0-alpha1"
     supportLibVersion = '27.1.1'
     buildToolsVersion = '28.0.0'
-    databinding_compiler='3.3.0'//Change with gradle version
+    databinding_compiler='3.3.1'//Change with gradle version
     okhttp3_version = '3.10.0'
 }

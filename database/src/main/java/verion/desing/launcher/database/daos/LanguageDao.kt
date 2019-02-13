@@ -9,10 +9,10 @@ import verion.desing.launcher.database.tables.Language
 @Dao
 interface LanguageDao {
     @Query("SELECT * from languages")
-    fun getAll(): List<Language>
+    fun getAll():Language
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(languages: ArrayList<Language>)
+    fun insertAll(languages: Language)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(language: Language)

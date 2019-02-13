@@ -9,7 +9,7 @@ import verion.desing.launcher.database.daos.LanguageDao
 import verion.desing.launcher.database.tables.Language
 
 @TypeConverters(Converters::class)
-@Database(entities = arrayOf(Language::class), version = 1)
+@Database(entities = arrayOf(Language::class), version = 2)
 abstract class AppDataBase : RoomDatabase(){
     abstract fun languageDao():LanguageDao
 

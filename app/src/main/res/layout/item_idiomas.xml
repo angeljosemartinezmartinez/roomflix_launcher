@@ -9,6 +9,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="10dp"
         android:adjustViewBounds="true"
+        android:background="@color/transparent"
         android:clickable="true"
         android:focusable="true"
         android:focusableInTouchMode="true"

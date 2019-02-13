@@ -10,8 +10,7 @@ public class ResponseLanguages {
     public int statusCode;
     @SerializedName("baseUrl")
     public String baseUrl;
-    @SerializedName("picture")
-    public String picture;
+
     @SerializedName("data")
     public ArrayList<Data> data;
 
@@ -23,17 +22,31 @@ public class ResponseLanguages {
         public String nativeName;
         @SerializedName("code")
         public String code;
+        @SerializedName("picture")
+        public String picture;
         @SerializedName("textsApp")
-        public ArrayList<String> texts;
+        private TextsApp texts;
 
-        @Override
-        public String toString() {
-            return "Data{" +
-                    "name='" + name + '\'' +
-                    ", nativeName='" + nativeName + '\'' +
-                    ", code='" + code + '\'' +
-                    ", texts=" + texts +
-                    '}';
+        public Data(String name, String nativeName, String code, TextsApp texts) {
+            this.name = name;
+            this.nativeName = nativeName;
+            this.code = code;
+            this.texts = texts;
+        }
+
+        public class TextsApp implements Serializable{
+            @SerializedName("Text 1")
+            private String text1;
+            @SerializedName("Text 2")
+            private String text2;
+            @SerializedName("Text 3")
+            private String text3;
+
+            public TextsApp(String text1, String text2, String text3) {
+                this.text1 = text1;
+                this.text2 = text2;
+                this.text3 = text3;
+            }
         }
     }
 
@@ -42,7 +55,6 @@ public class ResponseLanguages {
         return "ResponseLanguages{" +
                 "statusCode=" + statusCode +
                 ", baseUrl='" + baseUrl + '\'' +
-                ", picture='" + picture + '\'' +
                 ", data=" + data +
                 '}';
     }

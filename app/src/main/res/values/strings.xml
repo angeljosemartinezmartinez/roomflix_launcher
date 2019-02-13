@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">VerionLauncher</string>
+    <string name="title_exit">Warning</string>
+    <string name="explanation_exit_codes">We are doing some operations, let us some minutes</string>
 </resources>
