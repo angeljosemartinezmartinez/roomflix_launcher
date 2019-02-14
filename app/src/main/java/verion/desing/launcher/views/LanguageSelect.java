@@ -14,17 +14,14 @@ import com.orhanobut.logger.Logger;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import javax.inject.Inject;
-
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
-import verion.desing.launcher.database.models.Data;
-import verion.desing.launcher.database.tables.Language;
+import verion.desing.launcher.database.models.Language;
+import verion.desing.launcher.database.tables.Languages;
 import verion.desing.launcher.databinding.ActivityIdiomasBinding;
-import verion.desing.launcher.listener.CallBackArrayList;
 import verion.desing.launcher.listener.CallBackViewEvents;
 import verion.desing.launcher.network.service.callbacks.CallBackData;
 import verion.desing.launcher.utils.Utils;
@@ -35,6 +32,7 @@ public class LanguageSelect extends BaseActivity {
 
     private static final String TAG = "LanguageSelect";
     private ActivityIdiomasBinding binding;
+    private String baseURl;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,10 +51,11 @@ public class LanguageSelect extends BaseActivity {
     }
 
     public void getLanguageButtons() {
-        mDBManager.getLanguages(new CallBackData<Language>() {
+        mDBManager.getLanguages(new CallBackData<Languages>() {
             @Override
-            public void finishAction(Language s) {
+            public void finishAction(Languages s) {
                 runOnUiThread(() -> {
+                    baseURl = s.getBaseUrl();
                     setLanguageView(s.getData());
                     Log.d(TAG, "Finish");
                 });
@@ -69,14 +68,14 @@ public class LanguageSelect extends BaseActivity {
         }, this);
     }
 
-    public void setLanguageView(ArrayList<Data> s) {
+    public void setLanguageView(ArrayList<Language> s) {
         binding.recycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        binding.recycler.setAdapter(new LanguageAdapter(s, new CallBackViewEvents<Data>() {
+        binding.recycler.setAdapter(new LanguageAdapter(s, new CallBackViewEvents<Language>() {
             @Override
-            public void click(Data data, View v) {
-                for(int i = 0;i<s.size();i++){
+            public void click(Language data, View v) {
+                for (int i = 0; i < s.size(); i++) {
                     String IDLanguage = data.getCode();
-                    final String backgroundLang = Constants.SHARED_PREFERENCES.BASE_URL + data.getPicture();
+                    final String backgroundLang = baseURl + data.getPicture();
                     mySharedPreferences.putString(Constants.SHARED_PREFERENCES.URL_LANG, backgroundLang);
                     selectLang(IDLanguage, backgroundLang);
                 }
@@ -84,15 +83,15 @@ public class LanguageSelect extends BaseActivity {
             }
 
             @Override
-            public void focus(Data item, View v) {
+            public void focus(Language item, View v) {
 
             }
 
             @Override
-            public void unFocus(Data item, View v) {
+            public void unFocus(Language item, View v) {
 
             }
-        }));
+        }, baseURl));
     }
 
     private synchronized void selectLang(String idLangSelected, final String langBackground) {

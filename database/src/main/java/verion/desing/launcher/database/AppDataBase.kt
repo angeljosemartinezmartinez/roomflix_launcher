@@ -6,10 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import verion.desing.launcher.database.daos.LanguageDao
-import verion.desing.launcher.database.tables.Language
+import verion.desing.launcher.database.tables.Languages
 
 @TypeConverters(Converters::class)
-@Database(entities = arrayOf(Language::class), version = 2)
+@Database(entities = arrayOf(Languages::class), version = 2)
 abstract class AppDataBase : RoomDatabase(){
     abstract fun languageDao():LanguageDao
 

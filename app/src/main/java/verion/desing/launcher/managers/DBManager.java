@@ -9,7 +9,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import verion.desing.launcher.database.AppDataBase;
-import verion.desing.launcher.database.tables.Language;
+import verion.desing.launcher.database.tables.Languages;
 import verion.desing.launcher.listener.CallBackArrayList;
 import verion.desing.launcher.listener.CallBackSaveData;
 import verion.desing.launcher.network.response.ResponseLanguages;
@@ -37,14 +37,14 @@ public class DBManager {
         task.execute();
     }
 
-    public void getLanguages(final CallBackData<Language> listener, final Context context) {
+    public void getLanguages(final CallBackData<Languages> listener, final Context context) {
 
         open(context);
 
         new Thread(() -> {
             // a potentially  time consuming task
             try {
-                Language languages = (Language) appDatabase.languageDao().getAll();
+                Languages languages = (Languages) appDatabase.languageDao().getAll();
                 if (languages != null)
                     listener.finishAction(languages);
                 else

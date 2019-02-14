@@ -6,29 +6,25 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
-import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
-import verion.desing.launcher.database.models.Data;
-import verion.desing.launcher.database.tables.Language;
+import verion.desing.launcher.database.models.Language;
 import verion.desing.launcher.databinding.ItemIdiomasBinding;
-import verion.desing.launcher.dragger.LauncherApplication;
-import verion.desing.launcher.dragger.MySharedPreferences;
 import verion.desing.launcher.helpers.ImageHelper;
 import verion.desing.launcher.helpers.RoundCornerFocus;
 import verion.desing.launcher.listener.CallBackViewEvents;
 
 public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHolder> {
-    private final List<Data> mValues;
+    private final List<Language> mValues;
     public CallBackViewEvents callBackClick;
+    private String baseUrl;
 
 
-    public LanguageAdapter(List<Data> values, CallBackViewEvents callBack) {
+    public LanguageAdapter(List<Language> values, CallBackViewEvents callBack, String baseUrl) {
         mValues = values;
         this.callBackClick = callBack;
+        this.baseUrl = baseUrl;
     }
 
     @Override
@@ -42,8 +38,8 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Data lang = mValues.get(position);
-        holder.bind(lang);
+        Language lang = mValues.get(position);
+        holder.bind(lang, baseUrl);
     }
 
 
@@ -70,12 +66,11 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
         }
 
 
-        public void bind(final Data item) {
+        public void bind(Language item, String baseUrl) {
             if (item != null) {
                 binding.getRoot().setOnFocusChangeListener(new RoundCornerFocus(new RoundCornerFocus.CallBackFocus() {
                     @Override
                     public void focused(View v) {
-                        //v.setPadding(10, 10, 10, 10);
                     }
 
                     @Override
@@ -83,9 +78,8 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
 
                     }
                 }));
-
                 binding.getRoot().setOnClickListener(v -> callBackClick.click(item, v));
-                new ImageHelper().loadRoundCorner("http://192.168.11.7:8000" + item.getPicture(), binding.image);
+                new ImageHelper().loadRoundCornerAdapter(baseUrl + item.getPicture(), binding.image);
                 if (item.getCode().toLowerCase().equals("en")) {
                     binding.image.requestFocus();
                     binding.image.setBackground(binding.getRoot().getContext()

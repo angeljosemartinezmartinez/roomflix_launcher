@@ -7,8 +7,8 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import verion.desing.launcher.database.AppDataBase;
-import verion.desing.launcher.database.models.Data;
-import verion.desing.launcher.database.tables.Language;
+import verion.desing.launcher.database.models.Language;
+import verion.desing.launcher.database.tables.Languages;
 import verion.desing.launcher.listener.CallBackSaveData;
 import verion.desing.launcher.network.response.ResponseLanguages;
 
@@ -50,12 +50,12 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
 
 
     private void saveLang(ResponseLanguages languages, AppDataBase appDatabase) {
-        Language langs;
-        ArrayList<Data> listData = new ArrayList<>();
-        for (ResponseLanguages.Data data : languages.data) {
-            listData.add(new Data(data.name, data.nativeName, data.code, data.picture, null));
+        Languages langs;
+        ArrayList<Language> listData = new ArrayList<>();
+        for (ResponseLanguages.Languages data : languages.languages) {
+            listData.add(new Language(data.nativeName, data.code, data.picture));
         }
-        langs =new Language(languages.statusCode, languages.baseUrl, listData);
+        langs =new Languages(0,languages.baseUrl, listData);
             appDatabase.languageDao().insertAll(langs);
             Log.d(TAG, "SAVE " + langs.toString() + " LANGS");
 

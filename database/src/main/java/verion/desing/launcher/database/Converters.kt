@@ -3,8 +3,7 @@ package verion.desing.launcher.database
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import verion.desing.launcher.database.models.Data
-import verion.desing.launcher.database.models.TextsApp
+import verion.desing.launcher.database.models.Language
 
 
 class Converters {
@@ -25,30 +24,15 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromStringToArrayListData(value: String): ArrayList<Data> {
-        val listType = object : TypeToken<ArrayList<Data>>() {
+    fun fromStringToArrayListLanguage(value: String): ArrayList<Language> {
+        val listType = object : TypeToken<ArrayList<Language>>() {
         }.type
         return Gson().fromJson(value, listType)
     }
 
     @TypeConverter
-    fun fromArrayListDataToString(list: ArrayList<Data>): String {
-        val listType = object : TypeToken<ArrayList<Data>>() {
-        }.type
-        val gson = Gson()
-        return gson.toJson(list, listType)
-    }
-
-    @TypeConverter
-    fun fromStringToTextsApp(value: String): TextsApp {
-        val listType = object : TypeToken<TextsApp>() {
-        }.type
-        return Gson().fromJson(value, listType)
-    }
-
-    @TypeConverter
-    fun fromTextsAppToString(list: TextsApp): String {
-        val listType = object : TypeToken<TextsApp>() {
+    fun fromArrayListLanguageToString(list: ArrayList<Language>): String {
+        val listType = object : TypeToken<ArrayList<Language>>() {
         }.type
         val gson = Gson()
         return gson.toJson(list, listType)

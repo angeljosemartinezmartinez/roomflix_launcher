@@ -125,7 +125,17 @@ public class ImageHelper {
 
         Glide.with(context).load(url)
                 .apply(new RequestOptions()
-                        //.transforms(new CenterCrop(), new RoundedCorners(context, 0, 0))
+//                        .transforms(new CenterCrop(), new RoundedCorners(context, 0, 0))
+                        .dontAnimate().diskCacheStrategy(DiskCacheStrategy.NONE)).into(view);
+    }
+
+    public void loadRoundCornerAdapter(String url, ImageButton view) {
+
+        Context context = view.getContext();
+
+        Glide.with(context).load(url)
+                .apply(new RequestOptions()
+                        .transforms(new CenterCrop(), new RoundedCorners(context, 4, 4))
                         .dontAnimate().diskCacheStrategy(DiskCacheStrategy.NONE)).into(view);
     }
 
