@@ -9,19 +9,19 @@ import java.util.List;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import verion.desing.launcher.R;
-import verion.desing.launcher.database.models.Language;
+import verion.desing.launcher.database.tables.Languages;
 import verion.desing.launcher.databinding.ItemIdiomasBinding;
 import verion.desing.launcher.helpers.ImageHelper;
 import verion.desing.launcher.helpers.RoundCornerFocus;
 import verion.desing.launcher.listener.CallBackViewEvents;
 
 public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHolder> {
-    private final List<Language> mValues;
+    private final List<Languages> mValues;
     public CallBackViewEvents callBackClick;
     private String baseUrl;
 
 
-    public LanguageAdapter(List<Language> values, CallBackViewEvents callBack, String baseUrl) {
+    public LanguageAdapter(List<Languages> values, CallBackViewEvents callBack, String baseUrl) {
         mValues = values;
         this.callBackClick = callBack;
         this.baseUrl = baseUrl;
@@ -38,7 +38,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Language lang = mValues.get(position);
+        Languages lang = mValues.get(position);
         holder.bind(lang, baseUrl);
     }
 
@@ -66,7 +66,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
         }
 
 
-        public void bind(Language item, String baseUrl) {
+        public void bind(Languages item, String baseUrl) {
             if (item != null) {
                 binding.getRoot().setOnFocusChangeListener(new RoundCornerFocus(new RoundCornerFocus.CallBackFocus() {
                     @Override

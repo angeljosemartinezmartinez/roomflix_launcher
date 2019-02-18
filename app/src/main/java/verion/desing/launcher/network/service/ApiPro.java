@@ -40,7 +40,7 @@ public class ApiPro {
                 .create();
         builder =
                 new Retrofit.Builder()
-                        .baseUrl("http://192.168.11.7:8000/api/languages/")
+                        .baseUrl("http://192.168.11.162:8000/api/main/")
                         .addConverterFactory(GsonConverterFactory.create(gson));
 
 

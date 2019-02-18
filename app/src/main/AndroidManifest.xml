@@ -28,15 +28,16 @@
     <application
         android:name=".dragger.LauncherApplication"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
+        android:keepScreenOn="true"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:largeHeap="true"
-        android:hardwareAccelerated="true"
-        android:keepScreenOn="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".views.MainMenu"
+        <activity
+            android:name=".views.activities.MainMenu"
             android:clearTaskOnLaunch="false"
             android:directBootAware="true"
             android:launchMode="singleTask"
@@ -54,7 +55,9 @@
                 <action android:name="android.intent.action.ACTION_LOCKED_BOOT_COMPLETED" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.LanguageSelect" />
+        <activity
+            android:name=".views.activities.LanguageSelect"
+            android:parentActivityName=".views.activities.MainMenu" />
     </application>
 
 </manifest>

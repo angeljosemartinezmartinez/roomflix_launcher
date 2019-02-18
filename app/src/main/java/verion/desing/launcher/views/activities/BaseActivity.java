@@ -27,11 +27,10 @@ import verion.desing.launcher.helpers.ImageHelper;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.listener.CallBackSaveData;
 import verion.desing.launcher.managers.DBManager;
+import verion.desing.launcher.network.callbacks.CallBackData;
+import verion.desing.launcher.network.response.ResponseAllInfo;
 import verion.desing.launcher.network.response.ResponseLanguages;
 import verion.desing.launcher.network.service.CallManager;
-import verion.desing.launcher.network.service.callbacks.CallBackData;
-import verion.desing.launcher.views.LanguageSelect;
-import verion.desing.launcher.views.MainMenu;
 import verion.desing.launcher.views.fragment.FragmentCodes;
 
 public class BaseActivity extends AppCompatActivity {
@@ -66,12 +65,13 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-    public void getDataFromServer(CallBackAllInfoCheck callBackAllInfoCheck) {
-        call.getDataFromServer(macAddress, new CallBackData<ResponseLanguages>() {
+    public void callAllInfo(CallBackAllInfoCheck callBackAllInfoCheck) {
+        call.getDataFromServer(macAddress, new CallBackData<ResponseAllInfo>() {
             @Override
-            public void finishAction(ResponseLanguages body) {
+            public void finishAction(ResponseAllInfo body) {
                 mySharedPreferences.putString(Constants.SHARED_PREFERENCES.BASE_URL, body.baseUrl);
                 saveData(body, callBackAllInfoCheck);
+                //TODO: METHOD TO SAVE BACKGROUND AND BACKGROUND LANGUAGE ALSO SAVE LANGUAGE DEFAULT TO SHOW IT WHEN STARTS
             }
 
             @Override
@@ -89,7 +89,7 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-    private void saveData(ResponseLanguages body, CallBackAllInfoCheck callBackAllInfoCheck) {
+    private void saveData(ResponseAllInfo body, CallBackAllInfoCheck callBackAllInfoCheck) {
         insertDataBaseData(body, new CallBackSaveData() {
             @Override
             public void finish() {
@@ -103,7 +103,7 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
-    public synchronized void insertDataBaseData(final ResponseLanguages body, CallBackSaveData callBackSaveData) {
+    public synchronized void insertDataBaseData(final ResponseAllInfo body, CallBackSaveData callBackSaveData) {
         mDBManager.saveData(body, getApplicationContext(), new CallBackSaveData() {
             @Override
             public void finish() {

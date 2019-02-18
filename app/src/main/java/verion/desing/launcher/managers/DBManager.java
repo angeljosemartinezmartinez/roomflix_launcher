@@ -1,19 +1,25 @@
 package verion.desing.launcher.managers;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import verion.desing.launcher.database.AppDataBase;
+import verion.desing.launcher.database.tables.Button;
 import verion.desing.launcher.database.tables.Languages;
+import verion.desing.launcher.database.tables.Submenus;
+import verion.desing.launcher.database.tables.Templates;
 import verion.desing.launcher.listener.CallBackArrayList;
+import verion.desing.launcher.listener.CallBackGetOne;
+import verion.desing.launcher.listener.CallBackList;
 import verion.desing.launcher.listener.CallBackSaveData;
-import verion.desing.launcher.network.response.ResponseLanguages;
-import verion.desing.launcher.network.service.callbacks.CallBackData;
+import verion.desing.launcher.network.response.ResponseAllInfo;
 
 @Module
 public class DBManager {
@@ -30,25 +36,80 @@ public class DBManager {
         return new DBManager();
     }
 
-    public void saveData(final ResponseLanguages data, final Context context, final CallBackSaveData listener) {
+    public void saveData(final ResponseAllInfo data, final Context context, final CallBackSaveData listener) {
         open(context);
         SaveDataTask task = new SaveDataTask(context, listener, data);
 
         task.execute();
     }
 
-    public void getLanguages(final CallBackData<Languages> listener, final Context context) {
+    public void getLanguages(CallBackArrayList<Languages> listener,Context context) {
+        open(context);
+        new Thread(() -> {
+            try {
+                ArrayList<Languages> languages = (ArrayList<Languages>) appDatabase.languageDao().getAll();
+                Log.d(TAG, languages.toString());
+                if (languages != null)
+                    listener.finish(languages);
+                else
+                    listener.error("no languages found");
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                listener.error(e.getLocalizedMessage());
+            }
+        }).start();
+
+    }
+
+    public  void getButtonsFromTemplate(CallBackArrayList<Button> listener,Context context) {
+        open(context);
+        new Thread(() -> {
+            try {
+                ArrayList<Button> buttons =(ArrayList<Button>) appDatabase.buttonDao().getAll();
+                Log.d(TAG, buttons.toString());
+                listener.finish(buttons);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                listener.error(e.getLocalizedMessage());
+            }
+        }).start();
+
+
+    }
+
+    public void getTemplate(final CallBackGetOne<Templates> listener, final Context context, String langID) {
 
         open(context);
 
         new Thread(() -> {
             // a potentially  time consuming task
             try {
-                Languages languages = (Languages) appDatabase.languageDao().getAll();
-                if (languages != null)
-                    listener.finishAction(languages);
+                Templates templates = (Templates) appDatabase.templateDao().getOne(langID);
+                if (templates != null)
+                    listener.finish(templates);
                 else
-                    listener.error("no languages found");
+                    listener.error("no templates found");
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                listener.error(e.getLocalizedMessage());
+            }
+        }).start();
+
+    }
+
+    public void getSubmenu(final CallBackArrayList<Submenus> listener, final Context context) {
+
+        open(context);
+
+        new Thread(() -> {
+            // a potentially  time consuming task
+            try {
+                ArrayList<Submenus> submenus = (ArrayList<Submenus>) appDatabase.submenuDao().getAll();
+                if (submenus != null)
+                    listener.finish(submenus);
+                else
+                    listener.error("no submenus found");
             } catch (NullPointerException e) {
                 e.printStackTrace();
                 listener.error(e.getLocalizedMessage());

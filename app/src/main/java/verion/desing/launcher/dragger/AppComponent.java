@@ -8,8 +8,8 @@ import verion.desing.launcher.helpers.ImageHelper;
 import verion.desing.launcher.helpers.PermissionHelper;
 import verion.desing.launcher.managers.DBManager;
 import verion.desing.launcher.network.service.CallManager;
-import verion.desing.launcher.views.LanguageSelect;
-import verion.desing.launcher.views.MainMenu;
+import verion.desing.launcher.views.activities.LanguageSelect;
+import verion.desing.launcher.views.activities.MainMenu;
 import verion.desing.launcher.views.activities.BaseActivity;
 import verion.desing.launcher.views.adapter.LanguageAdapter;
 
