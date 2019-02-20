@@ -3,10 +3,7 @@ package verion.desing.launcher.database
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import verion.desing.launcher.database.models.*
-import verion.desing.launcher.database.tables.Button
-import verion.desing.launcher.database.tables.Languages
-import verion.desing.launcher.database.tables.Submenus
+import verion.desing.launcher.database.tables.*
 
 
 class Converters {
@@ -57,15 +54,15 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromStringToPictures(value: String): Pictures {
-        val listType = object : TypeToken<Pictures>() {
+    fun fromStringToArrayListPictures(value: String): ArrayList<Pictures> {
+        val listType = object : TypeToken<ArrayList<Pictures>>() {
         }.type
         return Gson().fromJson(value, listType)
     }
 
     @TypeConverter
-    fun fromPicturesToString(list: Pictures): String {
-        val listType = object : TypeToken<Pictures>() {
+    fun fromPicturesToArrayListString(list: ArrayList<Pictures>): String {
+        val listType = object : TypeToken<ArrayList<Pictures>>() {
         }.type
         val gson = Gson()
         return gson.toJson(list, listType)
@@ -81,21 +78,6 @@ class Converters {
     @TypeConverter
     fun fromArrayListLanguagesToString(list: List<Languages>): String {
         val listType = object : TypeToken<List<Languages>>() {
-        }.type
-        val gson = Gson()
-        return gson.toJson(list, listType)
-    }
-
-    @TypeConverter
-    fun fromStringToFocusPictures(value: String): FocusPictures {
-        val listType = object : TypeToken<FocusPictures>() {
-        }.type
-        return Gson().fromJson(value, listType)
-    }
-
-    @TypeConverter
-    fun fromFocusPicturesToString(list: FocusPictures): String {
-        val listType = object : TypeToken<FocusPictures>() {
         }.type
         val gson = Gson()
         return gson.toJson(list, listType)

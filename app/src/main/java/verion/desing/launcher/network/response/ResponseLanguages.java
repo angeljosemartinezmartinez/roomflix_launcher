@@ -9,4 +9,16 @@ public class ResponseLanguages {
     public String code;
     @SerializedName("picture")
     public String picture;
+    @SerializedName("isDefault")
+    public boolean isDefault;
+
+    @Override
+    public String toString() {
+        return "ResponseLanguages{" +
+                "nativeName='" + nativeName + '\'' +
+                ", code='" + code + '\'' +
+                ", picture='" + picture + '\'' +
+                ", isDefault=" + isDefault +
+                '}';
+    }
 }

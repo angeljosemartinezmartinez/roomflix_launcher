@@ -1,10 +1,8 @@
 package verion.desing.launcher.managers;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Singleton;
 
@@ -13,11 +11,11 @@ import dagger.Provides;
 import verion.desing.launcher.database.AppDataBase;
 import verion.desing.launcher.database.tables.Button;
 import verion.desing.launcher.database.tables.Languages;
+import verion.desing.launcher.database.tables.Pictures;
 import verion.desing.launcher.database.tables.Submenus;
 import verion.desing.launcher.database.tables.Templates;
 import verion.desing.launcher.listener.CallBackArrayList;
 import verion.desing.launcher.listener.CallBackGetOne;
-import verion.desing.launcher.listener.CallBackList;
 import verion.desing.launcher.listener.CallBackSaveData;
 import verion.desing.launcher.network.response.ResponseAllInfo;
 
@@ -43,12 +41,11 @@ public class DBManager {
         task.execute();
     }
 
-    public void getLanguages(CallBackArrayList<Languages> listener,Context context) {
+    public void getLanguages(CallBackArrayList<Languages> listener, Context context) {
         open(context);
         new Thread(() -> {
             try {
                 ArrayList<Languages> languages = (ArrayList<Languages>) appDatabase.languageDao().getAll();
-                Log.d(TAG, languages.toString());
                 if (languages != null)
                     listener.finish(languages);
                 else
@@ -61,12 +58,11 @@ public class DBManager {
 
     }
 
-    public  void getButtonsFromTemplate(CallBackArrayList<Button> listener,Context context) {
+    public void getButtonsFromTemplate(CallBackArrayList<Button> listener, Context context) {
         open(context);
         new Thread(() -> {
             try {
-                ArrayList<Button> buttons =(ArrayList<Button>) appDatabase.buttonDao().getAll();
-                Log.d(TAG, buttons.toString());
+                ArrayList<Button> buttons = (ArrayList<Button>) appDatabase.buttonDao().getAll();
                 listener.finish(buttons);
 
             } catch (Exception e) {
@@ -75,7 +71,20 @@ public class DBManager {
             }
         }).start();
 
+    }
 
+    public void getPicturesFromLanguage(CallBackArrayList<Pictures> listener, Context context, String id) {
+        open(context);
+        new Thread(() -> {
+            try {
+                ArrayList<Pictures> pictures = (ArrayList<Pictures>) appDatabase.picturesDao().getOne(id);
+                listener.finish(pictures);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                listener.error(e.getLocalizedMessage());
+            }
+        }).start();
     }
 
     public void getTemplate(final CallBackGetOne<Templates> listener, final Context context, String langID) {
@@ -125,6 +134,15 @@ public class DBManager {
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
+
+    }
+
+    public void delete(Context c) {
+        new Thread(() -> {
+            open(c);
+            appDatabase.clearAllTables();
+        }).start();
+
 
     }
 }

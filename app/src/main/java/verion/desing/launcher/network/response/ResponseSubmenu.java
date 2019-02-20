@@ -15,34 +15,29 @@ public class ResponseSubmenu {
         @SerializedName("position")
         public int position;
         @SerializedName("pictures")
-        public Pictures pictures;
+        public ArrayList<Pictures> pictures;
         @SerializedName("focusPictures")
-        public FocusPictures picturesFocused;
+        public ArrayList<FocusPictures> picturesFocused;
         @SerializedName("functionType")
         public int functionType;
         @SerializedName("functionTarget")
         public String functionTarget;
 
-        public class Pictures implements Serializable{
-            @SerializedName("es")
-            public String es;
-            @SerializedName("en")
-            public String en;
-            @SerializedName("de")
-            public String de;
-            @SerializedName("fr")
-            public String fr;
+        public class Pictures implements Serializable {
+            @SerializedName("language")
+            public String locale;
+            @SerializedName("picture")
+            public String picture;
+            @SerializedName("focusPicture")
+            public String pictureFocused;
+
         }
 
-        public class FocusPictures implements Serializable{
-            @SerializedName("es")
-            public String es;
-            @SerializedName("en")
-            public String en;
-            @SerializedName("de")
-            public String de;
-            @SerializedName("fr")
-            public String fr;
+        public class FocusPictures implements Serializable {
+            @SerializedName("language")
+            public String locale;
+            @SerializedName("picture")
+            public String picture;
         }
     }
 }

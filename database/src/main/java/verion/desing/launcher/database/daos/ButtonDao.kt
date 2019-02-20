@@ -21,6 +21,6 @@ interface ButtonDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(childbuttons: ArrayList<Button>)
 
-    @Query("SELECT * FROM button WHERE codeLanguage= :id")
-    fun getOneFromLanguage(id: String): List<Button>
+    /*@Query("SELECT * FROM button WHERE picture_code= :pic AND focus_code = :focusPic")
+    fun getOneFromLanguage(pic: String,focusPic: String): List<Button>*/
 }

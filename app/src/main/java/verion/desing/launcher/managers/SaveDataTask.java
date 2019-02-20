@@ -4,14 +4,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import verion.desing.launcher.database.AppDataBase;
-import verion.desing.launcher.database.models.FocusPictures;
-import verion.desing.launcher.database.models.Pictures;
 import verion.desing.launcher.database.tables.Button;
 import verion.desing.launcher.database.tables.Languages;
+import verion.desing.launcher.database.tables.Pictures;
 import verion.desing.launcher.database.tables.Submenus;
 import verion.desing.launcher.database.tables.Templates;
 import verion.desing.launcher.listener.CallBackSaveData;
@@ -43,8 +41,10 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
                 appDatabase = AppDataBase.Companion.getInstance(context);
             saveLang(data.languages, appDatabase);
             saveTemplate(data.templates, appDatabase);
+            savePictures(data.templates, appDatabase);
             saveButtons(data.templates, appDatabase);
             saveSubmenu(data.submenus, appDatabase);
+
 
             ok = true;
         } catch (Exception e) {
@@ -81,7 +81,7 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
     private void saveLang(ArrayList<ResponseLanguages> languages, AppDataBase appDatabase) {
         ArrayList<Languages> langs = new ArrayList<>();
         for (ResponseLanguages data : languages) {
-            langs.add(new Languages(languages.indexOf(data), data.nativeName, data.code, data.picture));
+            langs.add(new Languages(languages.indexOf(data), data.nativeName, data.code, data.picture, data.isDefault));
         }
         appDatabase.languageDao().insertAll(langs);
         Log.d(TAG, "SAVE " + langs.size() + " LANGS");
@@ -91,51 +91,62 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
     private void saveTemplate(ResponseTemplates responseTemplates, AppDataBase appDataBase) {
         Templates templates;
         ArrayList<Button> buttons = new ArrayList<>();
-        Pictures pictures;
-        FocusPictures focusPictures;
+        ArrayList<Pictures> pictures = new ArrayList<>();
         for (ResponseTemplates.Button button : responseTemplates.buttons) {
-            Field variableName[] = ResponseTemplates.Button.Pictures.class.getDeclaredFields();
-            for (int i = 0; i < variableName.length; i++) {
-                pictures = new Pictures(button.pictures.es, button.pictures.en, button.pictures.de, button.pictures.fr);
-                focusPictures = new FocusPictures(button.picturesFocused.es, button.picturesFocused.en, button.picturesFocused.de, button.picturesFocused.fr);
-                buttons.add(new Button(button.position, button.position, pictures, focusPictures, button.functionType, button.functionTarget, variableName[i].getName()));
+            for (ResponseTemplates.Button.Pictures picture : button.pictures) {
+                pictures.add(new Pictures(0, picture.locale, picture.picture, picture.pictureFocused));
             }
+            buttons.add(new Button(button.position, button.position, pictures, button.functionType,
+                    button.functionTarget));
+
         }
         templates = new Templates(0, responseTemplates.logo, responseTemplates.background, responseTemplates.backgroundLanguages, buttons);
         appDataBase.templateDao().insertAll(templates);
-        Log.d(TAG, "SAVE " + templates.toString() + " TEMPLATE");
+        //Log.d(TAG, "SAVE " + templates.toString() + " TEMPLATE");
     }
+
+    private void savePictures(ResponseTemplates responseTemplates, AppDataBase appDataBase) {
+        ArrayList<Pictures> pictures = new ArrayList<>();
+        for (ResponseTemplates.Button button : responseTemplates.buttons) {
+            for (ResponseTemplates.Button.Pictures picture : button.pictures) {
+                pictures.add(new Pictures(0, picture.locale, picture.picture, picture.pictureFocused));
+            }
+
+
+        }
+        appDataBase.picturesDao().insertAll(pictures);
+        Log.d(TAG, "SAVE " + pictures.size() + " PICTURES");
+
+    }
+
 
     private void saveButtons(ResponseTemplates responseTemplates, AppDataBase appDataBase) {
+        ArrayList<Button> buttons = new ArrayList<>();
         for (ResponseTemplates.Button button : responseTemplates.buttons) {
-            Pictures pictures;
-            FocusPictures focusPictures;
-            ArrayList<Button> buttons = new ArrayList<>();
-            Field variableName[] = ResponseTemplates.Button.Pictures.class.getDeclaredFields();
-            for (int i = 0; i < variableName.length; i++) {
-                pictures = new Pictures(button.pictures.es, button.pictures.en, button.pictures.de, button.pictures.fr);
-                focusPictures = new FocusPictures(button.picturesFocused.es, button.picturesFocused.en, button.picturesFocused.de, button.picturesFocused.fr);
-                buttons.add(new Button(button.position, button.position, pictures, focusPictures, button.functionType, button.functionTarget, variableName[i].getName()));
+            ArrayList<Pictures> pictures = new ArrayList<>();
+            for (ResponseTemplates.Button.Pictures picture : button.pictures) {
+                pictures.add(new Pictures(0, picture.locale, picture.picture, picture.pictureFocused));
             }
-            appDataBase.buttonDao().insertAll(buttons);
-            Log.d(TAG, "SAVE " + buttons.size() + " BUTTONS");
-        }
+            buttons.add(new Button(button.position, button.position, pictures, button.functionType,
+                    button.functionTarget));
 
+        }
+        appDataBase.buttonDao().insertAll(buttons);
+        Log.d(TAG, "SAVE " + buttons.size() + " BUTTONS");
     }
+
 
     private void saveSubmenu(ArrayList<ResponseSubmenu> responseSubmenus, AppDataBase appDataBase) {
         ArrayList<Submenus> submenus = new ArrayList<>();
         ArrayList<Button> buttons = new ArrayList<>();
-        Pictures pictures;
-        FocusPictures focusPictures;
+        ArrayList<Pictures> pictures = new ArrayList<>();
         for (ResponseSubmenu submenu : responseSubmenus) {
             for (ResponseSubmenu.Button button : submenu.buttons) {
-                Field variableName[] = ResponseSubmenu.Button.Pictures.class.getDeclaredFields();
-                for (int i = 0; i < variableName.length; i++) {
-                    pictures = new Pictures(button.pictures.es, button.pictures.en, button.pictures.de, button.pictures.fr);
-                    focusPictures = new FocusPictures(button.picturesFocused.es, button.picturesFocused.en, button.picturesFocused.de, button.picturesFocused.fr);
-                    buttons.add(new Button(0, button.position, pictures, focusPictures, button.functionType, button.functionTarget, variableName[i].getName()));
+                for (ResponseSubmenu.Button.Pictures picture : button.pictures) {
+                    pictures.add(new Pictures(button.position, picture.locale, picture.picture, picture.pictureFocused));
                 }
+                buttons.add(new Button(0, button.position, pictures, button.functionType,
+                        button.functionTarget));
             }
             submenus.add(new Submenus(submenu.id, buttons));
         }

@@ -12,14 +12,20 @@ import android.view.View;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.mikepenz.iconics.Iconics;
 import com.mikepenz.iconics.context.IconicsContextWrapper;
+import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 
 import javax.inject.Inject;
 
 import androidx.appcompat.app.AppCompatActivity;
 import verion.desing.launcher.Constants;
+import verion.desing.launcher.database.tables.Languages;
 import verion.desing.launcher.dragger.LauncherApplication;
 import verion.desing.launcher.dragger.MySharedPreferences;
 import verion.desing.launcher.helpers.FileHelper;
@@ -29,7 +35,6 @@ import verion.desing.launcher.listener.CallBackSaveData;
 import verion.desing.launcher.managers.DBManager;
 import verion.desing.launcher.network.callbacks.CallBackData;
 import verion.desing.launcher.network.response.ResponseAllInfo;
-import verion.desing.launcher.network.response.ResponseLanguages;
 import verion.desing.launcher.network.service.CallManager;
 import verion.desing.launcher.views.fragment.FragmentCodes;
 
@@ -49,18 +54,22 @@ public class BaseActivity extends AppCompatActivity {
     public String code;
     public String macAddress;
     public AlertDialog dialog;
+    public boolean inserting;
+    public boolean dataSave;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((LauncherApplication) getApplicationContext()).getAppComponent().inject(this);
-
+        Iconics.init(getApplicationContext());
         code = "";
         macAddress = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.MAC);
         if (macAddress.equals("")) {
             macAddress = getMacAddress().replaceAll(":", "");
             mySharedPreferences.putString(Constants.SHARED_PREFERENCES.MAC, macAddress);
         }
+        inserting = false;
+        dataSave = false;
         //macAddress = "C44EAC158C1C";
 
     }
@@ -69,9 +78,14 @@ public class BaseActivity extends AppCompatActivity {
         call.getDataFromServer(macAddress, new CallBackData<ResponseAllInfo>() {
             @Override
             public void finishAction(ResponseAllInfo body) {
-                mySharedPreferences.putString(Constants.SHARED_PREFERENCES.BASE_URL, body.baseUrl);
-                saveData(body, callBackAllInfoCheck);
-                //TODO: METHOD TO SAVE BACKGROUND AND BACKGROUND LANGUAGE ALSO SAVE LANGUAGE DEFAULT TO SHOW IT WHEN STARTS
+                if(isDataDifferent(body)){
+                    mySharedPreferences.putString(Constants.SHARED_PREFERENCES.BASE_URL, body.baseUrl);
+                    saveData(body, callBackAllInfoCheck);
+                }
+                else{
+                    Logger.d("DATA NOT DIFFERENT");
+                    callBackAllInfoCheck.dataNoChange();
+                }
             }
 
             @Override
@@ -79,6 +93,27 @@ public class BaseActivity extends AppCompatActivity {
                 Log.d(TAG, "Code: " + s);
             }
         });
+    }
+
+    private void saveBackground(ResponseAllInfo body) {
+        String background = body.templates.background;
+        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.URL_BACK, background);
+    }
+
+    private void saveBackgroundLanguages(ResponseAllInfo body) {
+        String backgroundLanguages = body.templates.backgroundLanguages;
+        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.URL_BACK_LANG, backgroundLanguages);
+    }
+
+    private void saveDefaultLanguage(ResponseAllInfo body) {
+        String codeLangDefault;
+        for (int i = 0; i < body.languages.size(); i++) {
+            if (body.languages.get(i).isDefault){
+                codeLangDefault =  body.languages.get(i).code;
+                mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LANG_DEFAULT,codeLangDefault);
+                Log.d(TAG, codeLangDefault);
+            }
+        }
     }
 
     public void goLangSelect() {
@@ -90,6 +125,10 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private void saveData(ResponseAllInfo body, CallBackAllInfoCheck callBackAllInfoCheck) {
+        Logger.d("DATA DIFFERENT");
+        saveBackground(body);
+        saveBackgroundLanguages(body);
+        saveDefaultLanguage(body);
         insertDataBaseData(body, new CallBackSaveData() {
             @Override
             public void finish() {
@@ -104,15 +143,18 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public synchronized void insertDataBaseData(final ResponseAllInfo body, CallBackSaveData callBackSaveData) {
+        if (inserting) return;
+        inserting = true;
         mDBManager.saveData(body, getApplicationContext(), new CallBackSaveData() {
             @Override
             public void finish() {
+                dataSave = true;
+                inserting = false;
                 callBackSaveData.finish();
             }
 
             @Override
             public void error(String s) {
-                //  errorDataBase(s);
                 callBackSaveData.error(s);
             }
         });
@@ -146,6 +188,36 @@ public class BaseActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
             return "NO:-:MAC";
+        }
+    }
+
+    private int putHashCall(ResponseAllInfo body) {
+        Gson g = new Gson();
+        Type typeOfObjectsListNew = new TypeToken<ResponseAllInfo>() {
+        }.getType();
+        String jsonResponse = g.toJson(body, typeOfObjectsListNew);
+        int hash = jsonResponse.hashCode();
+        return hash;
+    }
+
+    public boolean isDataDifferent(ResponseAllInfo body) {
+        int actual = putHashCall(body);
+        int last = mySharedPreferences.getInt(Constants.SHARED_PREFERENCES.HASH_ALL_INFO);
+        if (last == (actual)) {
+            dataSave = true;
+            inserting = false;
+            return false;
+        } else {
+            mDBManager.delete(this);
+            mySharedPreferences.putInt(Constants.SHARED_PREFERENCES.HASH_ALL_INFO, actual);
+            /*String date = body.mac.devices.get(0).apk.getFecha();
+            Log.d(TAG, "Different date: " + date + " shared preferences date: "
+                    + mySharedPreferences.getString(Constants.SHARED_PREFERENCES.APK_DATE));
+            if (!date.equals(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.APK_DATE))) {
+                checkUpdate(body.mac.devices.get(0).apk.getApk(), body.mac.devices.get(0).apk.getPkg());
+            }*/
+            //clearGlideCache(this);
+            return true;
         }
     }
 

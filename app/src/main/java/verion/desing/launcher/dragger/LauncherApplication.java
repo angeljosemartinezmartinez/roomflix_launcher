@@ -22,6 +22,7 @@ public class LauncherApplication extends Application {
         FormatStrategy formatStrategy = PrettyFormatStrategy.newBuilder()
                 .tag("HP-LOG")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
                 .build();
+        Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy));
         myComponent = DaggerAppComponent.builder()
                 .sharedPreferencesModule(new SharedPreferencesModule(getApplicationContext()))
                 .callManager(new CallManager())
