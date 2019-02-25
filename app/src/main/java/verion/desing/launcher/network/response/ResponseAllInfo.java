@@ -14,4 +14,6 @@ public class ResponseAllInfo {
     public ResponseTemplates templates;
     @SerializedName("submenus")
     public ArrayList<ResponseSubmenu> submenus;
+    @SerializedName("infoCards")
+    public ArrayList<ResponseInfoCards> infoCards;
 }

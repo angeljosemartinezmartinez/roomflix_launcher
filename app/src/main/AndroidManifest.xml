@@ -39,9 +39,7 @@
         <activity
             android:name=".views.activities.MainMenu"
             android:clearTaskOnLaunch="false"
-            android:directBootAware="true"
             android:launchMode="singleTask"
-            android:stateNotNeeded="false"
             tools:targetApi="n">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -57,7 +55,12 @@
         </activity>
         <activity
             android:name=".views.activities.LanguageSelect"
-            android:parentActivityName=".views.activities.MainMenu" />
+            android:parentActivityName=".views.activities.MainMenu"
+            android:clearTaskOnLaunch="false"
+            android:launchMode="singleTask"
+            />
+        <activity android:name=".views.activities.MoreAppsActivity"
+            />
     </application>
 
 </manifest>

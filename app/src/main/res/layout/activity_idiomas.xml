@@ -34,5 +34,11 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
+        <include
+            android:id="@+id/loader"
+            layout="@layout/loader"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

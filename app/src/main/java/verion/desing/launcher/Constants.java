@@ -27,6 +27,8 @@ public class Constants {
         public static final String TEMPLATE_DEFAULT = "templateDefault";
         public static final String BTN_LIST = "btnDefault" ;
         public static final String BASE_URL = "baseUrl";
+        public static final String ID_SUBMENU = "idSubmenu";
+        public static final String INFOCARD_INDEX = "infocardIndex";
     }
 
     public class ANALYTICS {

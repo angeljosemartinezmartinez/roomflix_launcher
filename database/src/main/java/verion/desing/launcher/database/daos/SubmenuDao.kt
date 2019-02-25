@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import verion.desing.launcher.database.tables.Button
 import verion.desing.launcher.database.tables.Submenus
 
 @Dao
@@ -21,5 +22,5 @@ interface SubmenuDao {
     fun deleteAll()
 
     @Query("SELECT * FROM submenus WHERE id= :id LIMIT 1")
-    fun getOne(id: String): Submenus
+    fun getOne(id: Int): Submenus
 }

@@ -14,30 +14,21 @@ public class ResponseSubmenu {
     public class Button implements Serializable {
         @SerializedName("position")
         public int position;
-        @SerializedName("pictures")
-        public ArrayList<Pictures> pictures;
-        @SerializedName("focusPictures")
-        public ArrayList<FocusPictures> picturesFocused;
-        @SerializedName("functionType")
-        public int functionType;
-        @SerializedName("functionTarget")
-        public String functionTarget;
+        @SerializedName("translations")
+        public ArrayList<Translations> pictures;
 
-        public class Pictures implements Serializable {
+        public class Translations implements Serializable {
             @SerializedName("language")
             public String locale;
             @SerializedName("picture")
             public String picture;
             @SerializedName("focusPicture")
             public String pictureFocused;
+            @SerializedName("functionType")
+            public int functionType;
+            @SerializedName("functionTarget")
+            public String functionTarget;
 
-        }
-
-        public class FocusPictures implements Serializable {
-            @SerializedName("language")
-            public String locale;
-            @SerializedName("picture")
-            public String picture;
         }
     }
 }

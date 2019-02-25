@@ -40,7 +40,7 @@ public class ApiPro {
                 .create();
         builder =
                 new Retrofit.Builder()
-                        .baseUrl("http://192.168.11.15:8000/api/main/")
+                        .baseUrl("http://hotelplay.tv/demo/new_api.json/")
                         .addConverterFactory(GsonConverterFactory.create(gson));
 
 

@@ -1,0 +1,96 @@
+package verion.desing.launcher.views.adapter;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+
+import java.util.ArrayList;
+
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.RecyclerView;
+import verion.desing.launcher.R;
+import verion.desing.launcher.database.tables.Translations;
+import verion.desing.launcher.databinding.ItemMoreAppsBinding;
+import verion.desing.launcher.helpers.ImageHelper;
+
+/**
+ * Created by juanisaac on 20/02/2019.
+ */
+
+public class MoreAppsAdapter extends RecyclerView.Adapter<MoreAppsAdapter.ViewHolder> {
+
+    public ClickAppCallBack listener;
+    private ArrayList<Translations> mBtnList;
+    private ItemMoreAppsBinding binding;
+    private String baseUrl;
+
+    public MoreAppsAdapter(ArrayList<Translations> buttonList, ClickAppCallBack listener, String baseUrl) {
+        this.mBtnList = buttonList;
+        this.listener = listener;
+        this.baseUrl = baseUrl;
+    }
+
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        binding = DataBindingUtil.inflate(layoutInflater, R.layout.item_more_apps, parent, false);
+        return new ViewHolder(binding.getRoot(), binding, listener);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        Translations btn = mBtnList.get(position);
+        holder.bind(btn);
+        if (position == 0) {
+            ((ViewGroup.MarginLayoutParams) binding.image.getLayoutParams()).setMargins(8, 0, 0, 8);
+            binding.image.setLayoutParams(new LinearLayout.LayoutParams(282, 282));
+        } else {
+            binding.image.setLayoutParams(new LinearLayout.LayoutParams(282, 138));
+            ((ViewGroup.MarginLayoutParams) binding.image.getLayoutParams()).setMargins(8, 0, 0, 8);
+        }
+    }
+
+
+    @Override
+    public int getItemCount() {
+        if (mBtnList != null)
+            return mBtnList.size();
+        return 0;
+    }
+
+    public interface ClickAppCallBack {
+        void click(Translations action);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private ItemMoreAppsBinding binding;
+
+        public ViewHolder(View itemView, ItemMoreAppsBinding itemMoreAppsBinding, ClickAppCallBack simpleCallBack) {
+            super(itemView);
+            this.binding = itemMoreAppsBinding;
+
+        }
+
+        public void bind(Translations item) {
+            if (item != null) {
+                binding.image.setOnFocusChangeListener((view, b) -> {
+                    if (b) {
+                        new ImageHelper().loadRoundCorner(baseUrl + item.getPictureFocused(), binding.image);
+                    } else
+                        new ImageHelper().loadRoundCorner(baseUrl + item.getPicture(), binding.image);
+                });
+                new ImageHelper().loadRoundCorner(baseUrl + item.getPicture(), binding.image);
+                binding.image.setOnClickListener(v -> listener.click(item));
+
+                if (mBtnList.indexOf(item) == 0) {
+                    binding.getRoot().clearFocus();
+                    binding.image.clearFocus();
+                    binding.image.requestFocus();
+                    binding.image.requestFocus();
+                }
+            }
+        }
+    }
+}

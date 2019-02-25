@@ -3,6 +3,8 @@ package verion.desing.launcher.database
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import verion.desing.launcher.database.tables.Descriptions
+import verion.desing.launcher.database.tables.Titles
 import verion.desing.launcher.database.tables.*
 
 
@@ -47,22 +49,52 @@ class Converters {
 
     @TypeConverter
     fun fromArrayListSubmenuToArrayListString(list: ArrayList<Submenus>): String {
-        val listType = object : TypeToken<ArrayList<Submenus>>() {
+        val listType = object : TypeToken<List<Submenus>>() {
         }.type
         val gson = Gson()
         return gson.toJson(list, listType)
     }
 
     @TypeConverter
-    fun fromStringToArrayListPictures(value: String): ArrayList<Pictures> {
-        val listType = object : TypeToken<ArrayList<Pictures>>() {
+    fun fromStringToArrayListPictures(value: String): ArrayList<Translations> {
+        val listType = object : TypeToken<ArrayList<Translations>>() {
         }.type
         return Gson().fromJson(value, listType)
     }
 
     @TypeConverter
-    fun fromPicturesToArrayListString(list: ArrayList<Pictures>): String {
-        val listType = object : TypeToken<ArrayList<Pictures>>() {
+    fun fromPicturesToArrayListString(list: ArrayList<Translations>): String {
+        val listType = object : TypeToken<ArrayList<Translations>>() {
+        }.type
+        val gson = Gson()
+        return gson.toJson(list, listType)
+    }
+
+    @TypeConverter
+    fun fromStringToArrayListTitles(value: String): ArrayList<Titles> {
+        val listType = object : TypeToken<List<Titles>>() {
+        }.type
+        return Gson().fromJson(value, listType)
+    }
+
+    @TypeConverter
+    fun fromTitlesToArrayListString(list: ArrayList<Titles>): String {
+        val listType = object : TypeToken<List<Titles>>() {
+        }.type
+        val gson = Gson()
+        return gson.toJson(list, listType)
+    }
+
+    @TypeConverter
+    fun fromStringToArrayListDescriptions(value: String): ArrayList<Descriptions> {
+        val listType = object : TypeToken<List<Descriptions>>() {
+        }.type
+        return Gson().fromJson(value, listType)
+    }
+
+    @TypeConverter
+    fun fromDescriptionsToArrayListString(list: ArrayList<Descriptions>): String {
+        val listType = object : TypeToken<List<Descriptions>>() {
         }.type
         val gson = Gson()
         return gson.toJson(list, listType)

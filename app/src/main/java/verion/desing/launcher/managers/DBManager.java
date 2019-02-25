@@ -1,6 +1,9 @@
 package verion.desing.launcher.managers;
 
 import android.content.Context;
+import android.util.Log;
+
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
@@ -10,10 +13,13 @@ import dagger.Module;
 import dagger.Provides;
 import verion.desing.launcher.database.AppDataBase;
 import verion.desing.launcher.database.tables.Button;
+import verion.desing.launcher.database.tables.Descriptions;
+import verion.desing.launcher.database.tables.InfoCards;
 import verion.desing.launcher.database.tables.Languages;
-import verion.desing.launcher.database.tables.Pictures;
 import verion.desing.launcher.database.tables.Submenus;
 import verion.desing.launcher.database.tables.Templates;
+import verion.desing.launcher.database.tables.Titles;
+import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.listener.CallBackArrayList;
 import verion.desing.launcher.listener.CallBackGetOne;
 import verion.desing.launcher.listener.CallBackSaveData;
@@ -73,11 +79,11 @@ public class DBManager {
 
     }
 
-    public void getPicturesFromLanguage(CallBackArrayList<Pictures> listener, Context context, String id) {
+    public void getTranslationsFromLanguage(CallBackArrayList<Translations> listener, Context context, String id) {
         open(context);
         new Thread(() -> {
             try {
-                ArrayList<Pictures> pictures = (ArrayList<Pictures>) appDatabase.picturesDao().getOne(id);
+                ArrayList<Translations> pictures = (ArrayList<Translations>) appDatabase.picturesDao().getOne(id);
                 listener.finish(pictures);
 
             } catch (Exception e) {
@@ -107,24 +113,72 @@ public class DBManager {
 
     }
 
-    public void getSubmenu(final CallBackArrayList<Submenus> listener, final Context context) {
-
+    public void getSubmenu(CallBackGetOne<Submenus> listener,Context context, int id) {
         open(context);
-
         new Thread(() -> {
             // a potentially  time consuming task
             try {
-                ArrayList<Submenus> submenus = (ArrayList<Submenus>) appDatabase.submenuDao().getAll();
+                Submenus submenus = (Submenus) appDatabase.submenuDao().getOne(id);
                 if (submenus != null)
                     listener.finish(submenus);
                 else
-                    listener.error("no submenus found");
+                    listener.error("no buttons in submenu found");
             } catch (NullPointerException e) {
                 e.printStackTrace();
                 listener.error(e.getLocalizedMessage());
             }
         }).start();
+    }
 
+    public void getInfoCard(final CallBackGetOne<InfoCards> listener, final Context context, int id) {
+        open(context);
+        new Thread(() -> {
+            // a potentially  time consuming task
+            try {
+                InfoCards infoCards = appDatabase.infoCardDao().getOne(id);
+                if (infoCards != null)
+                    listener.finish(infoCards);
+                else
+                    listener.error("no infocard found");
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                listener.error(e.getLocalizedMessage());
+            }
+        }).start();
+    }
+
+    public void getTitles(final CallBackArrayList<Titles> listener, final Context context, String language) {
+        open(context);
+        new Thread(() -> {
+            // a potentially  time consuming task
+            try {
+                ArrayList<Titles> titles = (ArrayList<Titles>) appDatabase.titlesDao().getOne(language);
+                if (titles != null)
+                    listener.finish(titles);
+                else
+                    listener.error("no titles found");
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                listener.error(e.getLocalizedMessage());
+            }
+        }).start();
+    }
+
+    public void getDescriptions(final CallBackArrayList<Descriptions> listener, final Context context, String language) {
+        open(context);
+        new Thread(() -> {
+            // a potentially  time consuming task
+            try {
+                ArrayList<Descriptions> titles = (ArrayList<Descriptions>) appDatabase.descriptionsDao().getOne(language);
+                if (titles != null)
+                    listener.finish(titles);
+                else
+                    listener.error("no descriptions found");
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                listener.error(e.getLocalizedMessage());
+            }
+        }).start();
     }
 
     private synchronized void open(Context context) {

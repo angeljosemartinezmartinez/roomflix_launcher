@@ -11,6 +11,7 @@ import verion.desing.launcher.network.service.CallManager;
 import verion.desing.launcher.views.activities.LanguageSelect;
 import verion.desing.launcher.views.activities.MainMenu;
 import verion.desing.launcher.views.activities.BaseActivity;
+import verion.desing.launcher.views.activities.MoreAppsActivity;
 import verion.desing.launcher.views.adapter.LanguageAdapter;
 
 @Singleton
@@ -21,13 +22,11 @@ public interface AppComponent {
 
     void inject(BaseActivity target);
 
-
     void inject(LanguageSelect target);
 
     void inject(MainMenu target);
 
-
-    void inject(LanguageAdapter target);
+    void inject(MoreAppsActivity target);
 
 
 }

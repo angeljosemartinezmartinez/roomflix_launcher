@@ -8,12 +8,16 @@ import java.util.ArrayList;
 
 import verion.desing.launcher.database.AppDataBase;
 import verion.desing.launcher.database.tables.Button;
+import verion.desing.launcher.database.tables.Descriptions;
+import verion.desing.launcher.database.tables.InfoCards;
 import verion.desing.launcher.database.tables.Languages;
-import verion.desing.launcher.database.tables.Pictures;
+import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.database.tables.Submenus;
 import verion.desing.launcher.database.tables.Templates;
+import verion.desing.launcher.database.tables.Titles;
 import verion.desing.launcher.listener.CallBackSaveData;
 import verion.desing.launcher.network.response.ResponseAllInfo;
+import verion.desing.launcher.network.response.ResponseInfoCards;
 import verion.desing.launcher.network.response.ResponseLanguages;
 import verion.desing.launcher.network.response.ResponseSubmenu;
 import verion.desing.launcher.network.response.ResponseTemplates;
@@ -44,7 +48,9 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
             savePictures(data.templates, appDatabase);
             saveButtons(data.templates, appDatabase);
             saveSubmenu(data.submenus, appDatabase);
-
+            //saveInfoCards(data.infoCards, appDatabase);
+            //saveTitles(data.infoCards, appDatabase);
+            //saveDescriptions(data.infoCards, appDatabase);
 
             ok = true;
         } catch (Exception e) {
@@ -66,8 +72,6 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
         AppDataBase.Companion.destroyInstance();
         if (aVoid)
             listener.finish();
-
-
     }
 
     @Override
@@ -85,51 +89,44 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
         }
         appDatabase.languageDao().insertAll(langs);
         Log.d(TAG, "SAVE " + langs.size() + " LANGS");
-
     }
 
     private void saveTemplate(ResponseTemplates responseTemplates, AppDataBase appDataBase) {
         Templates templates;
         ArrayList<Button> buttons = new ArrayList<>();
-        ArrayList<Pictures> pictures = new ArrayList<>();
+        ArrayList<Translations> pictures = new ArrayList<>();
         for (ResponseTemplates.Button button : responseTemplates.buttons) {
-            for (ResponseTemplates.Button.Pictures picture : button.pictures) {
-                pictures.add(new Pictures(0, picture.locale, picture.picture, picture.pictureFocused));
+            for (ResponseTemplates.Button.Translations picture : button.pictures) {
+                pictures.add(new Translations(0, picture.locale, picture.picture, picture.pictureFocused, picture.functionType, picture.functionTarget));
             }
-            buttons.add(new Button(button.position, button.position, pictures, button.functionType,
-                    button.functionTarget));
+            buttons.add(new Button(button.position, button.position, pictures));
 
         }
         templates = new Templates(0, responseTemplates.logo, responseTemplates.background, responseTemplates.backgroundLanguages, buttons);
         appDataBase.templateDao().insertAll(templates);
-        //Log.d(TAG, "SAVE " + templates.toString() + " TEMPLATE");
+        Log.d(TAG, "SAVE::::::::::::" +  " TEMPLATE");
     }
 
     private void savePictures(ResponseTemplates responseTemplates, AppDataBase appDataBase) {
-        ArrayList<Pictures> pictures = new ArrayList<>();
+        ArrayList<Translations> pictures = new ArrayList<>();
         for (ResponseTemplates.Button button : responseTemplates.buttons) {
-            for (ResponseTemplates.Button.Pictures picture : button.pictures) {
-                pictures.add(new Pictures(0, picture.locale, picture.picture, picture.pictureFocused));
+            for (ResponseTemplates.Button.Translations picture : button.pictures) {
+                pictures.add(new Translations(0, picture.locale, picture.picture, picture.pictureFocused, picture.functionType, picture.functionTarget));
             }
-
-
         }
         appDataBase.picturesDao().insertAll(pictures);
         Log.d(TAG, "SAVE " + pictures.size() + " PICTURES");
-
     }
 
 
     private void saveButtons(ResponseTemplates responseTemplates, AppDataBase appDataBase) {
         ArrayList<Button> buttons = new ArrayList<>();
         for (ResponseTemplates.Button button : responseTemplates.buttons) {
-            ArrayList<Pictures> pictures = new ArrayList<>();
-            for (ResponseTemplates.Button.Pictures picture : button.pictures) {
-                pictures.add(new Pictures(0, picture.locale, picture.picture, picture.pictureFocused));
+            ArrayList<Translations> pictures = new ArrayList<>();
+            for (ResponseTemplates.Button.Translations picture : button.pictures) {
+                pictures.add(new Translations(0, picture.locale, picture.picture, picture.pictureFocused, picture.functionType, picture.functionTarget));
             }
-            buttons.add(new Button(button.position, button.position, pictures, button.functionType,
-                    button.functionTarget));
-
+            buttons.add(new Button(button.position, button.position, pictures));
         }
         appDataBase.buttonDao().insertAll(buttons);
         Log.d(TAG, "SAVE " + buttons.size() + " BUTTONS");
@@ -139,14 +136,13 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
     private void saveSubmenu(ArrayList<ResponseSubmenu> responseSubmenus, AppDataBase appDataBase) {
         ArrayList<Submenus> submenus = new ArrayList<>();
         ArrayList<Button> buttons = new ArrayList<>();
-        ArrayList<Pictures> pictures = new ArrayList<>();
+        ArrayList<Translations> pictures = new ArrayList<>();
         for (ResponseSubmenu submenu : responseSubmenus) {
             for (ResponseSubmenu.Button button : submenu.buttons) {
-                for (ResponseSubmenu.Button.Pictures picture : button.pictures) {
-                    pictures.add(new Pictures(button.position, picture.locale, picture.picture, picture.pictureFocused));
+                for (ResponseSubmenu.Button.Translations picture : button.pictures) {
+                    pictures.add(new Translations(button.position, picture.locale, picture.picture, picture.pictureFocused, picture.functionType, picture.functionTarget));
                 }
-                buttons.add(new Button(0, button.position, pictures, button.functionType,
-                        button.functionTarget));
+                buttons.add(new Button(0, button.position, pictures));
             }
             submenus.add(new Submenus(submenu.id, buttons));
         }
@@ -154,4 +150,42 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
         appDataBase.submenuDao().insertAll(submenus);
     }
 
+    private void saveInfoCards(ArrayList<ResponseInfoCards> responseInfoCards, AppDataBase appDataBase){
+        ArrayList<InfoCards> infoCards = new ArrayList<>();
+        ArrayList<Titles> titles = new ArrayList<>();
+        ArrayList<Descriptions> descriptions = new ArrayList<>();
+        for(ResponseInfoCards infocard: responseInfoCards){
+            for(ResponseInfoCards.Titles title: infocard.titles){
+                titles.add(new Titles(0, title.language, title.text));
+            }
+            for(ResponseInfoCards.Descriptions description: infocard.descriptions){
+                descriptions.add(new Descriptions(0, description.language, description.text));
+            }
+            infoCards.add(new InfoCards(infocard.id, titles, descriptions, infocard.picture));
+        }
+        Log.d(TAG, "SAVE " + infoCards.size() + " INFOCARDS");
+        appDataBase.infoCardDao().insertAll(infoCards);
+    }
+
+    private void saveTitles(ArrayList<ResponseInfoCards> responseInfoCards, AppDataBase appDataBase){
+        ArrayList<Titles> titles = new ArrayList<>();
+        for(ResponseInfoCards infocard: responseInfoCards){
+            for(ResponseInfoCards.Titles title: infocard.titles){
+                titles.add(new Titles(0, title.language, title.text));
+            }
+        }
+        Log.d(TAG, "SAVE " + titles.size() + " TITLES");
+        appDataBase.titlesDao().insertAll(titles);
+    }
+
+    private void saveDescriptions(ArrayList<ResponseInfoCards> responseInfoCards, AppDataBase appDataBase){
+        ArrayList<Descriptions> descriptions = new ArrayList<>();
+        for(ResponseInfoCards infocard: responseInfoCards){
+            for(ResponseInfoCards.Descriptions description: infocard.descriptions){
+                descriptions.add(new Descriptions(0, description.language, description.text));
+            }
+        }
+        Log.d(TAG, "SAVE " + descriptions.size() + " DESCRIPTIONS");
+        appDataBase.descriptionsDao().insertAll(descriptions);
+    }
 }
