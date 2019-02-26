@@ -9,24 +9,31 @@ public class ResponseInfoCards {
 
     @SerializedName("id")
     public int id;
-    @SerializedName("titles")
-    public ArrayList<Titles> titles;
-    @SerializedName("descriptions")
-    public ArrayList<Descriptions> descriptions;
-    @SerializedName("picture")
-    public String picture;
+    @SerializedName("translations")
+    public ArrayList<Translations> translations;
+    @SerializedName("childs")
+    public ArrayList<Child> childs;
 
-    public class Titles implements Serializable {
+    public class Translations implements Serializable {
         @SerializedName("language")
-        public String language;
-        @SerializedName("text")
-        public String text;
+        public String locale;
+        @SerializedName("picture")
+        public String picture;
+
     }
 
-    public class Descriptions implements Serializable {
-        @SerializedName("language")
-        public String language;
-        @SerializedName("text")
-        public String text;
+    public class Child implements Serializable{
+        @SerializedName("id")
+        public int id;
+        @SerializedName("translations")
+        public ArrayList<Translations> translations;
+
+        public class Translations implements Serializable {
+            @SerializedName("language")
+            public String locale;
+            @SerializedName("picture")
+            public String picture;
+
+        }
     }
 }

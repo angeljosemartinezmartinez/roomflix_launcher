@@ -8,7 +8,6 @@ import android.widget.LinearLayout;
 import java.util.ArrayList;
 
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import verion.desing.launcher.R;
 import verion.desing.launcher.database.tables.Translations;
@@ -56,7 +55,7 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder> 
     @Override
     public int getItemCount() {
         if (mBtnList != null)
-            return 4;
+            return mBtnList.size();
         return 0;
     }
 

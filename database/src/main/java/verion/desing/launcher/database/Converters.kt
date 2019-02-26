@@ -3,8 +3,8 @@ package verion.desing.launcher.database
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import verion.desing.launcher.database.tables.Descriptions
-import verion.desing.launcher.database.tables.Titles
+import verion.desing.launcher.database.models.Child
+import verion.desing.launcher.database.models.Translation
 import verion.desing.launcher.database.tables.*
 
 
@@ -71,30 +71,30 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromStringToArrayListTitles(value: String): ArrayList<Titles> {
-        val listType = object : TypeToken<List<Titles>>() {
+    fun fromStringToArrayListTranslation(value: String): ArrayList<Translation> {
+        val listType = object : TypeToken<List<Translation>>() {
         }.type
         return Gson().fromJson(value, listType)
     }
 
     @TypeConverter
-    fun fromTitlesToArrayListString(list: ArrayList<Titles>): String {
-        val listType = object : TypeToken<List<Titles>>() {
+    fun fromTranslationToArrayListString(list: ArrayList<Translation>): String {
+        val listType = object : TypeToken<List<Translation>>() {
         }.type
         val gson = Gson()
         return gson.toJson(list, listType)
     }
 
     @TypeConverter
-    fun fromStringToArrayListDescriptions(value: String): ArrayList<Descriptions> {
-        val listType = object : TypeToken<List<Descriptions>>() {
+    fun fromStringToArrayListChild(value: String): ArrayList<Child> {
+        val listType = object : TypeToken<List<Child>>() {
         }.type
         return Gson().fromJson(value, listType)
     }
 
     @TypeConverter
-    fun fromDescriptionsToArrayListString(list: ArrayList<Descriptions>): String {
-        val listType = object : TypeToken<List<Descriptions>>() {
+    fun fromChildToArrayListString(list: ArrayList<Child>): String {
+        val listType = object : TypeToken<List<Child>>() {
         }.type
         val gson = Gson()
         return gson.toJson(list, listType)

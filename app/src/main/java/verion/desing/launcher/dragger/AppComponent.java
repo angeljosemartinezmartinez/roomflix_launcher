@@ -8,6 +8,7 @@ import verion.desing.launcher.helpers.ImageHelper;
 import verion.desing.launcher.helpers.PermissionHelper;
 import verion.desing.launcher.managers.DBManager;
 import verion.desing.launcher.network.service.CallManager;
+import verion.desing.launcher.views.activities.InfoCardActivity;
 import verion.desing.launcher.views.activities.LanguageSelect;
 import verion.desing.launcher.views.activities.MainMenu;
 import verion.desing.launcher.views.activities.BaseActivity;
@@ -27,6 +28,8 @@ public interface AppComponent {
     void inject(MainMenu target);
 
     void inject(MoreAppsActivity target);
+
+    void inject(InfoCardActivity target);
 
 
 }

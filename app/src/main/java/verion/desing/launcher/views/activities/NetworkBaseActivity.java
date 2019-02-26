@@ -37,14 +37,12 @@ public class NetworkBaseActivity extends BaseActivity {
         call.getDataFromServer(macAddress, new CallBackData<ResponseAllInfo>() {
             @Override
             public void finishAction(ResponseAllInfo body) {
-                if(isDataDifferent(body)){
+                //if (isDataDifferent(body)) {
                     mySharedPreferences.putString(Constants.SHARED_PREFERENCES.BASE_URL, body.baseUrl);
                     saveData(body, callBackAllInfoCheck);
-                }
-                else{
+                /*} else {
                     Logger.d("DATA NOT DIFFERENT");
-                    callBackAllInfoCheck.dataNoChange();
-                }
+                }*/
             }
 
             @Override
@@ -53,6 +51,7 @@ public class NetworkBaseActivity extends BaseActivity {
             }
         });
     }
+
 
     private void saveBackground(ResponseAllInfo body) {
         String background = body.templates.background;
@@ -67,9 +66,9 @@ public class NetworkBaseActivity extends BaseActivity {
     private void saveDefaultLanguage(ResponseAllInfo body) {
         String codeLangDefault;
         for (int i = 0; i < body.languages.size(); i++) {
-            if (body.languages.get(i).isDefault){
-                codeLangDefault =  body.languages.get(i).code;
-                mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LANG_DEFAULT,codeLangDefault);
+            if (body.languages.get(i).isDefault) {
+                codeLangDefault = body.languages.get(i).code;
+                mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LANG_DEFAULT, codeLangDefault);
                 Log.d(TAG, codeLangDefault);
             }
         }
@@ -81,7 +80,6 @@ public class NetworkBaseActivity extends BaseActivity {
         dateNow = dateFormat.format(date);
         return dateNow;
     }
-
 
 
     private void saveData(ResponseAllInfo body, CallBackAllInfoCheck callBackAllInfoCheck) {
@@ -175,19 +173,18 @@ public class NetworkBaseActivity extends BaseActivity {
         }
     }
 
-    private void infoCard(String args){
+    private void infoCard(String args) {
         mySharedPreferences.putInt(Constants.SHARED_PREFERENCES.INFOCARD_INDEX, Integer.parseInt(args));
         Intent i = new Intent(getApplicationContext(), InfoCardActivity.class);
         startActivity(i);
 
     }
 
-    private void startSubmenu(String argsSubmenu){
+    private void startSubmenu(String argsSubmenu) {
         mySharedPreferences.putInt(Constants.SHARED_PREFERENCES.ID_SUBMENU, Integer.parseInt(argsSubmenu));
         Intent i = new Intent(getApplicationContext(), MoreAppsActivity.class);
         startActivity(i);
     }
-
 
 
     public void changeLanguage(Context context) {

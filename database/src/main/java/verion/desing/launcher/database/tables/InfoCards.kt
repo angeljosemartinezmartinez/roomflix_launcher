@@ -2,11 +2,12 @@ package verion.desing.launcher.database.tables
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import verion.desing.launcher.database.models.Child
+import verion.desing.launcher.database.models.Translation
 
 @Entity(tableName = "infoCards")
 data class InfoCards (
         @PrimaryKey(autoGenerate = false) var id: Int,
-        var titles: ArrayList<Titles>,
-        var descriptions: ArrayList<Descriptions>,
-        var picture: String
+        var translations: ArrayList<Translation>? = ArrayList(),
+        var child: ArrayList<Child>? = ArrayList()
 )

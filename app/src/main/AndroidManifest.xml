@@ -61,6 +61,7 @@
             />
         <activity android:name=".views.activities.MoreAppsActivity"
             />
+        <activity android:name=".views.activities.InfoCardActivity" />
     </application>
 
 </manifest>

@@ -127,8 +127,9 @@ public class MoreAppsActivity extends NetworkBaseActivity {
         ArrayList<Translations> itemsTemp = new ArrayList<>();
         for (Translations item : mTranslationsList) {
             itemsFiltered.add(item);
-            if (itemsFiltered.indexOf(item) > 3 && itemsFiltered.indexOf(item) <= 7)
+            if ((itemsFiltered.indexOf(item) > 3 && itemsFiltered.indexOf(item) <= 7) && itemsTemp.size() < 4){
                 itemsTemp.add(item);
+            }
         }
         return itemsTemp;
     }

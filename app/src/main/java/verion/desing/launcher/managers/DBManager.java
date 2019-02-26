@@ -13,12 +13,10 @@ import dagger.Module;
 import dagger.Provides;
 import verion.desing.launcher.database.AppDataBase;
 import verion.desing.launcher.database.tables.Button;
-import verion.desing.launcher.database.tables.Descriptions;
 import verion.desing.launcher.database.tables.InfoCards;
 import verion.desing.launcher.database.tables.Languages;
 import verion.desing.launcher.database.tables.Submenus;
 import verion.desing.launcher.database.tables.Templates;
-import verion.desing.launcher.database.tables.Titles;
 import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.listener.CallBackArrayList;
 import verion.desing.launcher.listener.CallBackGetOne;
@@ -140,40 +138,6 @@ public class DBManager {
                     listener.finish(infoCards);
                 else
                     listener.error("no infocard found");
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-                listener.error(e.getLocalizedMessage());
-            }
-        }).start();
-    }
-
-    public void getTitles(final CallBackArrayList<Titles> listener, final Context context, String language) {
-        open(context);
-        new Thread(() -> {
-            // a potentially  time consuming task
-            try {
-                ArrayList<Titles> titles = (ArrayList<Titles>) appDatabase.titlesDao().getOne(language);
-                if (titles != null)
-                    listener.finish(titles);
-                else
-                    listener.error("no titles found");
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-                listener.error(e.getLocalizedMessage());
-            }
-        }).start();
-    }
-
-    public void getDescriptions(final CallBackArrayList<Descriptions> listener, final Context context, String language) {
-        open(context);
-        new Thread(() -> {
-            // a potentially  time consuming task
-            try {
-                ArrayList<Descriptions> titles = (ArrayList<Descriptions>) appDatabase.descriptionsDao().getOne(language);
-                if (titles != null)
-                    listener.finish(titles);
-                else
-                    listener.error("no descriptions found");
             } catch (NullPointerException e) {
                 e.printStackTrace();
                 listener.error(e.getLocalizedMessage());
