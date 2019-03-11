@@ -1,9 +1,6 @@
 package verion.desing.launcher.database.daos
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import verion.desing.launcher.database.tables.Translations
 
 @Dao
@@ -17,6 +14,9 @@ interface PicturesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(translations: Translations)
+
+    @Update
+    fun updateAll(pictures: List<Translations>):Int
 
     @Query("DELETE from pictures")
     fun deleteAll()

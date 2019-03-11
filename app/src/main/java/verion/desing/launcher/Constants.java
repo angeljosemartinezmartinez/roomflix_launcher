@@ -7,10 +7,8 @@ public class Constants {
     public class SHARED_PREFERENCES {
         public static final String MAC_CHEKED = "hasMac";
         public static final String MAC = "SPMac";
-        public static final String URL_ICON = "urlIcon";
         public static final String URL_BACK = "urlBack";
         public static final String URL_BACK_LANG = "urlBacklANG";
-        public static final String SMARTMODE = "smartMode";
         public static final String LANGUAGE_ID = "IDIOMASHARED";
         public static final String HOTSPOT = "hotspot";
         public static final String HOTSPOT_PS = "hotspotpsw";
@@ -18,9 +16,6 @@ public class Constants {
         public static final String POPUP_INDEX = "popupIndex";
         public static final String TIMEZONE = "timezone";
         public static final String POPUP_COUNTER = "popUpCounter";
-        public static final String CART_LIST = "SPCartList";
-        public static final String CART_COUNTER_ITEM = "cartCounterItem";
-        public static final String STORE_DATA = "storeData";
         public static final String APK_DATE = "apkDate";
         public static final String URL_LANG = "urlLang";
         public static final String LANG_DEFAULT = "langDefault";
@@ -29,6 +24,7 @@ public class Constants {
         public static final String BASE_URL = "baseUrl";
         public static final String ID_SUBMENU = "idSubmenu";
         public static final String INFOCARD_INDEX = "infocardIndex";
+        public static final String CODE_SETTINGS = "codeSettings";
     }
 
     public class ANALYTICS {

@@ -1,22 +1,28 @@
 package verion.desing.launcher.views.activities;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
+
+import com.orhanobut.logger.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
-import androidx.annotation.RequiresApi;
 import androidx.databinding.DataBindingUtil;
-import retrofit2.Call;
-import retrofit2.Response;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
 import verion.desing.launcher.database.tables.Button;
@@ -24,47 +30,70 @@ import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.databinding.ActivityMainBinding;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.listener.CallBackArrayList;
+import verion.desing.launcher.listener.CallBackCheckConnection;
+import verion.desing.launcher.utils.KeyCodesConverter;
 
 public class MainMenu extends NetworkBaseActivity {
 
     private static final String TAG = "MainMenu";
     private ActivityMainBinding binding;
-    private ArrayList<Button> buttons;
+    private ArrayList<verion.desing.launcher.model.Button> buttons;
     private String baseUrl;
     private String background;
     private String langID;
     private ArrayList<Button> mButtonsList = new ArrayList<>();
     private ArrayList<Translations> mPicturesList = new ArrayList<>();
     private Handler autoHideLoader;
+    private long lastKeyClick;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-       // autoHideLoader = new Handler();
-        langID = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
-        baseUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
-        background = baseUrl + mySharedPreferences.getString(Constants.SHARED_PREFERENCES.URL_BACK);
-        setVideoView();
         setClock();
-        executeCall();
         buttons = new ArrayList<>();
+        setDay();
         checkPermission();
-
+        checkCasesConnection();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+
+    private void checkCasesConnection() {
+        checkCasesConnection(new CallBackCheckConnection() {
+            @Override
+            public void success() {
+                executeCall();
+            }
+
+            @Override
+            public void noPing() {
+                hideLoader();
+                runOnUiThread(() -> binding.background.setBackgroundColor(getResources().getColor(R.color.transparent, getTheme())));
+                runOnUiThread(() -> connectionError("no ping"));
+            }
+
+            @Override
+            public void noConnection() {
+                hideLoader();
+                runOnUiThread(() -> connectionError("no connection"));
+            }
+        });
+    }
+
+    private void setDay() {
+        Date myDate = new Date();
+        SimpleDateFormat dmyFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        String dmy = dmyFormat.format(myDate);
+        binding.day.setText(dmy);
     }
 
     public void executeCall() {
         callAllInfo(new CallBackAllInfoCheck() {
             @Override
             public void dataChange() {
-                runOnUiThread(() ->{
-                    generationMain();
+                runOnUiThread(() -> {
                     hideLoader();
+                    generationMain();
                 });
             }
 
@@ -81,32 +110,40 @@ public class MainMenu extends NetworkBaseActivity {
         });
     }
 
+    private void generateFromDevice() {
+        setBtnFromDevice();
+        imageHelper.loadRoundCorner("/storage/emulated/0/Download/language_background/demoimgfondofondoHotelplay.png", binding.background);
+        setStreaming();
+    }
+
     private void generationMain() {
+        setMySharedPreferencesData();
         setStreaming();
         setBackground();
         setPictures();
-        openSettings("com.android.settings");
+    }
+
+    private void setMySharedPreferencesData() {
+        langID = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
+        baseUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
+        background = baseUrl + mySharedPreferences.getString(Constants.SHARED_PREFERENCES.URL_BACK);
     }
 
     private void setStreaming() {
+        setVideoView();
         goStreaming(binding.video, "/storage/emulated/0/Download/ARRECIFE_GRAN_HOTEL.mp4");
     }
 
     private void setBackground() {
-        try{
+        try {
             imageHelper.loadRoundCorner(background, binding.background);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void setPictures() {
-        if (langID.equals("")) {
-            langID = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANG_DEFAULT);
-            getTranslations(langID);
-        } else {
-            getTranslations(langID);
-        }
+        getTranslations(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANG_DEFAULT));
     }
 
     private void getTranslations(String language) {
@@ -129,7 +166,14 @@ public class MainMenu extends NetworkBaseActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        executeCall();
+        checkCasesConnection();
+        getTranslations(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        checkCasesConnection();
     }
 
     private void setClock() {
@@ -146,17 +190,65 @@ public class MainMenu extends NetworkBaseActivity {
 //        super.onBackPressed();
     }
 
-    private void openSettings(String nPackage) {
-        binding.icoSettings.setOnClickListener(view -> {
-            startPackage(nPackage);
+    public void openDialog() {
+        Dialog dialog = new Dialog(MainMenu.this); // Context, this, etc.
+        dialog.setContentView(R.layout.fragment_settings);
+        dialog.setTitle(R.string.app_name);
+        EditText inputText = dialog.findViewById(R.id.input_text);
+        TextView btnInput = dialog.findViewById(R.id.btn);
+        btnInput.setOnFocusChangeListener((view, b) -> {
+            if(b)
+                btnInput.setTextColor(getResources().getColor(R.color.orange, getTheme()));
+            else
+                btnInput.setTextColor(getResources().getColor(R.color.md_grey_500, getTheme()));
         });
-        binding.icoSettings.setOnFocusChangeListener((view, b) -> {
-            if (b) {
-                binding.icoSettings.setTextColor(getResources().getColor(R.color.orange, getTheme()));
-            } else
-                binding.icoSettings.setTextColor(getResources().getColor(R.color.white, getTheme()));
+        btnInput.setOnLongClickListener(view -> {
+            if(inputText.getText().toString() != null && !inputText.getText().toString().equals(""))
+                launchCode(inputText.getText().toString());
+            dialog.dismiss();
+            return true;
+        });
+        dialog.show();
+    }
 
-        });
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+        if (action == KeyEvent.ACTION_DOWN && KeyCodesConverter.isNumber(keyCode)) {
+            setCode(KeyCodesConverter.convertKeyCodeToNumber(keyCode));
+            return false;
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    public boolean setCode(int number) {
+        Logger.d(number);
+        if (System.currentTimeMillis() - lastKeyClick < 1000) {
+            code = code + String.valueOf(number);
+            if (code.length() == 7) {
+                Logger.d(code);
+                launchCode(code);
+                code = "";
+                return true;
+            }
+        } else {
+            code = String.valueOf(number);
+        }
+        lastKeyClick = System.currentTimeMillis();
+        return false;
+    }
+
+    private void launchCode(String value) {
+        switch (value.trim()){
+            case "143":
+                startPackage("com.android.settings");
+                break;
+            case "1431430":
+                openDialog();
+                break;
+        }
+
     }
 
     private void checkPermission() {
@@ -231,11 +323,11 @@ public class MainMenu extends NetworkBaseActivity {
             runOnUiThread(() -> {
                 btnFor.setOnFocusChangeListener((view, b) -> {
                     if (b)
-                        imageHelper.loadRoundCorner(baseUrl + translation.getPictureFocused(), btnFor);
+                        imageHelper.loadRoundCorner(baseUrl + translation.getPictureFocused(), btnFor, MainMenu.this);
                     else
-                        imageHelper.loadRoundCorner(baseUrl + translation.getPicture(), btnFor);
+                        imageHelper.loadRoundCorner(baseUrl + translation.getPicture(), btnFor, MainMenu.this);
                 });
-                imageHelper.loadRoundCorner(baseUrl + translation.getPicture(), btnFor);
+                imageHelper.loadRoundCorner(baseUrl + translation.getPicture(), btnFor, MainMenu.this);
                 btnFor.setOnClickListener(view -> {
                     goFunction(translation.getFunctionType(), translation.getFunctionTarget());
                 });
@@ -244,9 +336,26 @@ public class MainMenu extends NetworkBaseActivity {
 
     }
 
+    public void setBtnImagesFromDevice(ArrayList<verion.desing.launcher.model.Button> translations) {
+        if (translations == null) return;
+        for (verion.desing.launcher.model.Button translation : translations) {
+            int i = translations.indexOf(translation);
+            String btnID = "btn" + i;
+            int resID = getResources().getIdentifier(btnID, "id", getPackageName());
+            final ImageButton btnFor = binding.getRoot().findViewById(resID);
+            btnFor.setVisibility(View.VISIBLE);
+            runOnUiThread(() -> {
+                btnFor.setOnFocusChangeListener((view, b) -> {
+                    if (b)
+                        imageHelper.loadRoundCorner(translation.getImgFocused(), btnFor);
+                    else
+                        imageHelper.loadRoundCorner(translation.getImg(), btnFor);
+                });
+                imageHelper.loadRoundCorner(translation.getImg(), btnFor);
+            });
+        }
 
-
-
+    }
 
     private void setBtnFromDevice() {
         ArrayList<String> btns = new ArrayList<>();
@@ -254,7 +363,6 @@ public class MainMenu extends NetworkBaseActivity {
         File imgStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                 + "/" + "button");
         for (int i = 0; i < 17; i++) {
-
             if (imgStorage.exists()) {
                 btns.add(imgStorage.getAbsolutePath() + "/" + imgStorage.listFiles()[i].getName());
             }
@@ -263,21 +371,81 @@ public class MainMenu extends NetworkBaseActivity {
             if (imgStorageFocused.exists()) {
                 buttonsFocused.add(imgStorageFocused.getAbsolutePath() + "/" + imgStorageFocused.listFiles()[i].getName());
             }
-            //buttons.add(new Button(btns.get(i), buttonsFocused.get(i)));
+            buttons.add(new verion.desing.launcher.model.Button(btns.get(i), buttonsFocused.get(i)));
         }
+        setBtnImagesFromDevice(buttons);
     }
 
-    private void hideLoader(){
-        runOnUiThread(() -> {
-            binding.loader.setVisibility(View.GONE);
-           // autoHideLoader.removeCallbacks(null);
+    private void setBtnFromDevice(ArrayList<Translations> translations) {
+        mDBManager.setButtonImages(translations, getApplicationContext(), new CallBackArrayList<Translations>() {
+            @Override
+            public void finish(ArrayList<Translations> listButtons) {
+                File imgStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                        + "/" + "button");
+                if (imgStorage.exists()) {
+                    for (int i = 1; i < imgStorage.list().length; i++) {
+                        String img = baseUrl + listButtons.get(i).getPicture();
+                        String imgReplaced = img.replace("/", "").replace("http:", "")
+                                .replace("hotelplay.tv", "").replace("demo", "")
+                                .replace("img_new_api", "");
+                        if (imgReplaced.equals(imgStorage.listFiles()[i].getName())) {
+                            Log.d(TAG, "Img: " + imgReplaced);
+                            listButtons.get(i).setPicture(imgStorage.getAbsolutePath() + "/" + imgStorage.listFiles()[i].getName());
+                        } else
+                            listButtons.get(i).setPicture(listButtons.get(i).getPicture());
+                    }
+                } else {
+                    for (int i = 0; i < translations.size(); i++) {
+                        translations.get(i).setPicture(listButtons.get(i).getPicture());
+                    }
+                }
+            }
+
+            @Override
+            public void error(String localizedMessage) {
+            }
+        });
+        mDBManager.setButtonImages(translations, getApplicationContext(), new CallBackArrayList<Translations>() {
+            @Override
+            public void finish(ArrayList<Translations> listButtons) {
+                File imgStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                        + "/" + "button_focused");
+                if (imgStorage.exists()) {
+                    for (int i = 1; i < imgStorage.list().length; i++) {
+                        String img = baseUrl + listButtons.get(i).getPictureFocused();
+                        String imgReplaced = img.replace("/", "").replace("http:", "")
+                                .replace("hotelplay.tv", "").replace("demo", "")
+                                .replace("img_new_api", "");
+                        if (imgReplaced.equals(imgStorage.listFiles()[i].getName())) {
+                            Log.d(TAG, "Focused: " + imgReplaced);
+                            listButtons.get(i).setPictureFocused(imgStorage.getAbsolutePath() + "/" + imgStorage.listFiles()[i].getName());
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < listButtons.size(); i++) {
+                        translations.get(i).setPictureFocused(listButtons.get(i).getPictureFocused());
+                    }
+                }
+
+            }
+
+            @Override
+            public void error(String localizedMessage) {
+            }
         });
     }
 
-    private void showLoader(){
+    private void hideLoader() {
+        runOnUiThread(() -> {
+            binding.loader.setVisibility(View.GONE);
+            // autoHideLoader.removeCallbacks(null);
+        });
+    }
+
+    private void showLoader() {
         runOnUiThread(() -> {
             binding.loader.setVisibility(View.VISIBLE);
-           // autoHideLoader.removeCallbacks(null);
+            // autoHideLoader.removeCallbacks(null);
         });
     }
 

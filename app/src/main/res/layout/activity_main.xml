@@ -13,39 +13,72 @@
             android:id="@+id/background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/black"
             android:scaleType="fitXY" />
-
-        <TextView
-            android:id="@+id/ico_settings"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="24dp"
-            android:text="{gmd_settings}"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:textAlignment="textEnd"
-            android:textColor="@color/white"
-            android:textSize="35sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <TextClock
             android:id="@+id/toptextClock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:layout_marginEnd="60dp"
+            android:layout_marginEnd="90dp"
             android:focusable="false"
             android:focusableInTouchMode="false"
+            android:fontFamily="@font/montserrat_light"
             android:format12Hour="null"
             android:format24Hour="hh:mm"
             android:textAlignment="textEnd"
             android:textColor="@android:color/white"
             android:textSize="25sp"
-            app:layout_constraintEnd_toStartOf="@+id/ico_settings"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
+        <TextView
+            android:id="@+id/ico_day"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="38dp"
+            android:layout_marginEnd="38dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:fontFamily="@font/montserrat_light"
+            android:text="{gmd_today}"
+            android:textAlignment="textEnd"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toStartOf="@+id/toptextClock"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:fontFamily="@font/montserrat_light"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toStartOf="@+id/ico_day"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/ico_clock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="38dp"
+            android:text="{gmd_access_time}"
+            android:textAlignment="textEnd"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            app:layout_constraintStart_toEndOf="@+id/toptextClock"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/myVideo"
@@ -131,7 +164,6 @@
             android:background="@color/transparent"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:nextFocusUp="@id/ico_settings"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="@+id/btn2"
             app:layout_constraintStart_toEndOf="@+id/btn2"

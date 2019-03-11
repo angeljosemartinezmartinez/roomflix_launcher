@@ -41,7 +41,7 @@ public class CallManager {
 
             @Override
             public void onFailure(Call<ResponseAllInfo> call, Throwable t) {
-                Log.d(TAG, "Error: " + t.getCause().toString());
+                Log.d(TAG, "Error: " + t.getLocalizedMessage());
                 listener.error("F");
             }
         });

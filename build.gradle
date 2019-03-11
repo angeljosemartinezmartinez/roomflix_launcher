@@ -10,7 +10,7 @@ buildscript {
         
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.1'
+        classpath 'com.android.tools.build:gradle:3.3.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.0"
         classpath 'org.jetbrains.kotlin:kotlin-android-extensions:1.3.0'
         classpath 'org.jetbrains.kotlin:kotlin-runtime:1.2.61'
@@ -46,6 +46,6 @@ ext{
     room_version = "2.0.0-alpha1"
     supportLibVersion = '27.1.1'
     buildToolsVersion = '28.0.0'
-    databinding_compiler='3.3.1'//Change with gradle version
+    databinding_compiler='3.3.2'//Change with gradle version
     okhttp3_version = '3.10.0'
 }

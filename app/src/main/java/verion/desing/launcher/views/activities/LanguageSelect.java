@@ -70,7 +70,6 @@ public class LanguageSelect extends NetworkBaseActivity {
         binding.recycler.setAdapter(new LanguageAdapter(s, (CallBackViewEvents<Languages>) (language, v) -> {
             String IDLanguage = language.getCode();
             final String backgroundLang = baseURl + language.getPicture();
-            Log.d(TAG, language.getPicture());
             mySharedPreferences.putString(Constants.SHARED_PREFERENCES.URL_LANG, backgroundLang);
             selectLang(IDLanguage, backgroundLang);
         }, baseURl));

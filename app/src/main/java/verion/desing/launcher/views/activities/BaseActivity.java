@@ -6,36 +6,29 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.mikepenz.iconics.Iconics;
 import com.mikepenz.iconics.context.IconicsContextWrapper;
 import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 
 import javax.inject.Inject;
 
 import androidx.appcompat.app.AppCompatActivity;
 import verion.desing.launcher.Constants;
-import verion.desing.launcher.database.tables.Languages;
 import verion.desing.launcher.dragger.LauncherApplication;
 import verion.desing.launcher.dragger.MySharedPreferences;
 import verion.desing.launcher.helpers.FileHelper;
 import verion.desing.launcher.helpers.ImageHelper;
-import verion.desing.launcher.listener.CallBackAllInfoCheck;
-import verion.desing.launcher.listener.CallBackSaveData;
 import verion.desing.launcher.managers.DBManager;
-import verion.desing.launcher.network.callbacks.CallBackData;
-import verion.desing.launcher.network.response.ResponseAllInfo;
 import verion.desing.launcher.network.service.CallManager;
+import verion.desing.launcher.utils.KeyCodesConverter;
 import verion.desing.launcher.views.fragment.FragmentCodes;
 
 public class BaseActivity extends AppCompatActivity {
@@ -52,10 +45,10 @@ public class BaseActivity extends AppCompatActivity {
     @Inject
     CallManager call;
     public String code;
+    private long lastKeyClick;    //Last key time
     public String macAddress;
     public AlertDialog dialog;
-    public boolean inserting;
-    public boolean dataSave;
+    public boolean hasError = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +61,6 @@ public class BaseActivity extends AppCompatActivity {
             macAddress = getMacAddress().replaceAll(":", "");
             mySharedPreferences.putString(Constants.SHARED_PREFERENCES.MAC, macAddress);
         }
-        inserting = false;
-        dataSave = false;
         //macAddress = "C44EAC158C1C";
 
     }
@@ -82,17 +73,39 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-
+    public void connectionError(String error){
+        hasError = true;
+        Intent i = new Intent(this, ErrorActivity.class);
+        i.putExtra(Constants.INTENT_EXTRA.SPLASH_ERROR_MODE, true);
+        i.putExtra(Constants.INTENT_EXTRA.SPLASH_ERROR_MESSAGE, error);
+        startActivity(i);
+    }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         int action = event.getAction();
         int keyCode = event.getKeyCode();
-        /*if (action == KeyEvent.ACTION_DOWN && KeyCodesConverter.isNumber(keyCode)) {
+        if (action == KeyEvent.ACTION_DOWN && KeyCodesConverter.isNumber(keyCode)) {
             setCode(KeyCodesConverter.convertKeyCodeToNumber(keyCode));
             return false;
-        }*/
+        }
         return super.dispatchKeyEvent(event);
+    }
+
+    public boolean setCode(int number) {
+        Logger.d(number);
+        if (System.currentTimeMillis() - lastKeyClick < 1000) {
+            code = code + String.valueOf(number);
+            if (code.length() == 7) {
+                Logger.d(code);
+                code = "";
+                return true;
+            }
+        } else {
+            code = String.valueOf(number);
+        }
+        lastKeyClick = System.currentTimeMillis();
+        return false;
     }
 
     @Override
@@ -116,10 +129,8 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-
-
-
     protected void goStreaming(final VideoView vidView, final String enlace) {
+//        if(enlace == null) return;
         Uri vidUri = Uri.parse(enlace);
         vidView.setVideoURI(vidUri);
         vidView.setOnPreparedListener(mp -> mp.setOnVideoSizeChangedListener((mp1, arg1, arg2) -> {

@@ -145,6 +145,19 @@ public class DBManager {
         }).start();
     }
 
+    public void setButtonImages(ArrayList<Translations> b, Context context, CallBackArrayList<Translations> callBackUpdateButton){
+        new Thread( () ->{
+            try {
+                open(context);
+                appDatabase.picturesDao().updateAll(b);
+                callBackUpdateButton.finish(b);
+            } catch (Exception e) {
+                e.printStackTrace();
+                callBackUpdateButton.error(e.getLocalizedMessage());
+            }
+        }).start();
+    }
+
     private synchronized void open(Context context) {
         try {
             if (appDatabase == null || !appDatabase.isOpen())

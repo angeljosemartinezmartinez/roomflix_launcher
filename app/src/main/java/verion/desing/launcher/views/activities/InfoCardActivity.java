@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.inject.Inject;
 
@@ -63,6 +64,7 @@ public class InfoCardActivity extends NetworkBaseActivity {
                             setChilds(childs);
                         }
                         setImage(template.getTranslations());
+                        Collections.reverse(mTranslationsList);
                         ScreenSlidePagerAdapter myAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager(), mTranslationsList);
                         binding.viewPager.setAdapter(myAdapter);
                         binding.indicator.setViewPager(binding.viewPager);

@@ -5,44 +5,98 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import verion.desing.launcher.Constants;
+import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
+import verion.desing.launcher.listener.CallBackCheckConnection;
 import verion.desing.launcher.listener.CallBackSaveData;
 import verion.desing.launcher.network.callbacks.CallBackData;
 import verion.desing.launcher.network.response.ResponseAllInfo;
+import verion.desing.launcher.network.response.ResponseTemplates;
+import verion.desing.launcher.utils.NetWorkUtils;
 
 public class NetworkBaseActivity extends BaseActivity {
 
     private static final String TAG = "NetworkBaseActivity";
     private String dateNow;
+    private boolean inserting;
+    private boolean dataSave;
+    private String baseUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        inserting = false;
+        dataSave = false;
+    }
+
+    public void checkCasesConnection(CallBackCheckConnection callBackCheckConnection) {
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (checkConnection(getApplicationContext()))
+                    callBackCheckConnection.success();
+                else
+                    callBackCheckConnection.noConnection();
+                if (NetWorkUtils.checkOnlineState(getApplicationContext())){
+                    callBackCheckConnection.success();
+                }
+                else
+                    callBackCheckConnection.noPing();
+
+            }
+        }, 0, 60000);
+    }
+
+    public boolean checkConnection(Context c) {
+        try {
+            return (NetWorkUtils.isNetworkAvailable(c));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void callAllInfo(CallBackAllInfoCheck callBackAllInfoCheck) {
         call.getDataFromServer(macAddress, new CallBackData<ResponseAllInfo>() {
             @Override
             public void finishAction(ResponseAllInfo body) {
-                //if (isDataDifferent(body)) {
-                    mySharedPreferences.putString(Constants.SHARED_PREFERENCES.BASE_URL, body.baseUrl);
+                if (isDataDifferent(body)) {
                     saveData(body, callBackAllInfoCheck);
-                /*} else {
+                    getImgFromCall(body);
+                } else {
                     Logger.d("DATA NOT DIFFERENT");
-                }*/
+                    if (callBackAllInfoCheck != null) {
+                        callBackAllInfoCheck.dataNoChange();
+                    }
+                }
             }
 
             @Override
@@ -52,6 +106,84 @@ public class NetworkBaseActivity extends BaseActivity {
         });
     }
 
+    private void getImgFromCall(ResponseAllInfo body) {
+        ResponseTemplates mBtnList = body.templates;
+        ArrayList<Translations> btns = getButtons(mBtnList);
+        saveTemplateImages(btns);
+        saveTemplateImagesFocused(btns);
+    }
+
+    private ArrayList<Translations> getButtons(ResponseTemplates templates) {
+        ArrayList<Translations> pictures = new ArrayList<>();
+        for (ResponseTemplates.Button button : templates.buttons) {
+            for (ResponseTemplates.Button.Translations picture : button.pictures) {
+                pictures.add(new Translations(0, "", picture.picture, picture.pictureFocused, 1, ""));
+            }
+        }
+        return pictures;
+    }
+
+    public void saveTemplateImages(ArrayList<Translations> button) {
+        ArrayList<String> img = new ArrayList<>();
+        for (int i = 0; i < button.size(); i++) {
+            if (!button.get(i).getPicture().equals("")) {
+                img.add(baseUrl + button.get(i).getPicture());
+            }
+        }
+        downloadImages(img, "button");
+    }
+
+    public void saveTemplateImagesFocused(ArrayList<Translations> buttonFocused) {
+        ArrayList<String> focusImg = new ArrayList<>();
+        for (int i = 0; i < buttonFocused.size(); i++) {
+            if (!buttonFocused.get(i).getPictureFocused().equals("")) {
+                focusImg.add(baseUrl + buttonFocused.get(i).getPictureFocused());
+            }
+        }
+        downloadImages(focusImg, "button_focused");
+
+    }
+
+    private void downloadImages(ArrayList<String> img, String directory) {
+        new Thread(() -> {
+            for (int i = 0; i < img.size(); i++) {
+                try {
+                    URL url = new URL(img.get(i));
+                    HttpURLConnection c = (HttpURLConnection) url.openConnection();
+                    c.setRequestMethod("GET");
+                    c.connect();
+                    File imgStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                            + "/" + directory);
+                    if (!imgStorage.exists()) {
+                        imgStorage.mkdir();
+                    }
+                    String imgDownloaded = img.get(i).replace("/", "");
+                    File outputFile = new File(imgStorage, imgDownloaded.replace("http:", "")
+                            .replace("hotelplay.tv", "").replace("demo", "")
+                            .replace("img_new_api", ""));
+                    if (!outputFile.exists()) {
+                        outputFile.createNewFile();
+                    }
+                    FileOutputStream fos = new FileOutputStream(outputFile);
+                    InputStream is = c.getInputStream();
+                    byte[] buffer = new byte[2048];
+                    int len1;
+                    while ((len1 = is.read(buffer)) != -1) {
+                        fos.write(buffer, 0, len1);
+                    }
+                    fos.flush();
+                    fos.close();
+                    is.close();
+                    c.disconnect();
+                } catch (MalformedURLException e) {
+                    Log.d(TAG, "URL format not valid");
+                } catch (IOException e) {
+                    Log.d(TAG, "No such file o directory");
+                }
+            }
+
+        }).start();
+    }
 
     private void saveBackground(ResponseAllInfo body) {
         String background = body.templates.background;
@@ -69,7 +201,6 @@ public class NetworkBaseActivity extends BaseActivity {
             if (body.languages.get(i).isDefault) {
                 codeLangDefault = body.languages.get(i).code;
                 mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LANG_DEFAULT, codeLangDefault);
-                Log.d(TAG, codeLangDefault);
             }
         }
     }
@@ -87,6 +218,8 @@ public class NetworkBaseActivity extends BaseActivity {
         saveBackground(body);
         saveBackgroundLanguages(body);
         saveDefaultLanguage(body);
+        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.BASE_URL, body.baseUrl);
+        baseUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
         insertDataBaseData(body, new CallBackSaveData() {
             @Override
             public void finish() {
@@ -137,13 +270,6 @@ public class NetworkBaseActivity extends BaseActivity {
         } else {
             mDBManager.delete(this);
             mySharedPreferences.putInt(Constants.SHARED_PREFERENCES.HASH_ALL_INFO, actual);
-            /*String date = body.mac.devices.get(0).apk.getFecha();
-            Log.d(TAG, "Different date: " + date + " shared preferences date: "
-                    + mySharedPreferences.getString(Constants.SHARED_PREFERENCES.APK_DATE));
-            if (!date.equals(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.APK_DATE))) {
-                checkUpdate(body.mac.devices.get(0).apk.getApk(), body.mac.devices.get(0).apk.getPkg());
-            }*/
-            //clearGlideCache(this);
             return true;
         }
     }
