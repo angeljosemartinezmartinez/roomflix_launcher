@@ -30,8 +30,7 @@ public class FragmentCodes extends DialogFragment {
         AlertDialog.Builder builder;
         builder = new AlertDialog.Builder(context);
         builder.setCancelable(false)
-                .setTitle(R.string.title_exit)
-                .setMessage(R.string.explanation_exit_codes)
+                .setView(R.layout.fragment_exit)
                 .setPositiveButton("Ok", null);
         AlertDialog dialog = builder.create();
         dialog.setOnShowListener(dialogInterface -> {

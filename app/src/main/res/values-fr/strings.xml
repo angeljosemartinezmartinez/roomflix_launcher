@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="title_exit">Attention</string>
+    <string name="explanation_exit">Tu es arrivé de HotelPlay</string>
+    <string name="explanation_exit1">
+        Tu information personnel il sera élimine quand tu sors de la chambre\nEn plus de ton information ne sera pas traité par nous ou par tiers part
+    </string>
+</resources>

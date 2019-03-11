@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="title_exit">Atención</string>
+    <string name="explanation_exit">
+        Va a salir de HotelPlay
+    </string>
+    <string name="explanation_exit1">Sus datos personales serán borrados cuando salga de la habitación\nAdemás sus datos personales no serán tratados por nosotros ni por terceros</string>
+
+</resources>

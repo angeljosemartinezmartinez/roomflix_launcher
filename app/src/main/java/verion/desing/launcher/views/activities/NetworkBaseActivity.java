@@ -56,7 +56,7 @@ public class NetworkBaseActivity extends BaseActivity {
         dataSave = false;
     }
 
-    public void checkCasesConnection(CallBackCheckConnection callBackCheckConnection) {
+    /*public void checkCasesConnection(CallBackCheckConnection callBackCheckConnection) {
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -71,8 +71,8 @@ public class NetworkBaseActivity extends BaseActivity {
                     callBackCheckConnection.noPing();
 
             }
-        }, 0, 60000);
-    }
+        }, 0, 600000);
+    }*/
 
     public boolean checkConnection(Context c) {
         try {

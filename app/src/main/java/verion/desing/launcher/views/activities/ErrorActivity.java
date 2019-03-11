@@ -22,7 +22,7 @@ public class ErrorActivity extends NetworkBaseActivity {
         imageHelper.loadRoundCorner(R.drawable.error_403, binding.background);
         Bundle b = getIntent().getExtras();
         checkErrorMode(b);
-        checkCasesConnection(new CallBackCheckConnection() {
+        /*checkCasesConnection(new CallBackCheckConnection() {
             @Override
             public void success() {
                 startActivity(new Intent(getApplicationContext(), MainMenu.class));
@@ -37,7 +37,7 @@ public class ErrorActivity extends NetworkBaseActivity {
             public void noConnection() {
                 runOnUiThread(() -> binding.textError.setText((b.getString(Constants.INTENT_EXTRA.SPLASH_ERROR_MESSAGE))));
             }
-        });
+        });*/
     }
 
     private boolean checkErrorMode(Bundle b) {
