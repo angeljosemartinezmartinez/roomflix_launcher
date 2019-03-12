@@ -1,6 +1,5 @@
 package verion.desing.launcher.views.activities;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -50,11 +49,13 @@ public class MainMenu extends NetworkBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        autoHideLoader = new Handler();
         setClock();
         buttons = new ArrayList<>();
         setDay();
         checkPermission();
         checkCasesConnection();
+        showLoader();
     }
 
 
@@ -88,19 +89,21 @@ public class MainMenu extends NetworkBaseActivity {
     }
 
     public void executeCall() {
+        showLoader();
         callAllInfo(new CallBackAllInfoCheck() {
             @Override
             public void dataChange() {
                 runOnUiThread(() -> {
-                    hideLoader();
                     generationMain();
+                    hideLoader();
+
                 });
             }
 
             @Override
             public void dataNoChange() {
-                hideLoader();
                 generationMain();
+                hideLoader();
             }
 
             @Override
@@ -197,13 +200,13 @@ public class MainMenu extends NetworkBaseActivity {
         EditText inputText = dialog.findViewById(R.id.input_text);
         TextView btnInput = dialog.findViewById(R.id.btn);
         btnInput.setOnFocusChangeListener((view, b) -> {
-            if(b)
+            if (b)
                 btnInput.setTextColor(getResources().getColor(R.color.orange, getTheme()));
             else
                 btnInput.setTextColor(getResources().getColor(R.color.md_grey_500, getTheme()));
         });
         btnInput.setOnLongClickListener(view -> {
-            if(inputText.getText().toString() != null && !inputText.getText().toString().equals(""))
+            if (inputText.getText().toString() != null && !inputText.getText().toString().equals(""))
                 launchCode(inputText.getText().toString());
             dialog.dismiss();
             return true;
@@ -240,7 +243,7 @@ public class MainMenu extends NetworkBaseActivity {
     }
 
     private void launchCode(String value) {
-        switch (value.trim()){
+        switch (value.trim()) {
             case "143":
                 startPackage("com.android.settings");
                 break;
@@ -438,14 +441,14 @@ public class MainMenu extends NetworkBaseActivity {
     private void hideLoader() {
         runOnUiThread(() -> {
             binding.loader.setVisibility(View.GONE);
-            // autoHideLoader.removeCallbacks(null);
+            autoHideLoader.removeCallbacks(null);
         });
     }
 
     private void showLoader() {
         runOnUiThread(() -> {
             binding.loader.setVisibility(View.VISIBLE);
-            // autoHideLoader.removeCallbacks(null);
+            autoHideLoader.removeCallbacks(null);
         });
     }
 
