@@ -3,7 +3,6 @@ package verion.desing.launcher.utils;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -28,19 +27,18 @@ public class NetWorkUtils {
         }
     }
 
-    public static boolean checkOnlineState(Context context) {
-        ConnectivityManager CManager =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo NInfo = CManager.getActiveNetworkInfo();
-        if (NInfo != null && NInfo.isConnectedOrConnecting()) {
-            try {
-                return InetAddress.getByName("http://www.google.com").isReachable(1000);
-            } catch (UnknownHostException ex){
-                return false;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public static boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+
         return false;
     }
 }

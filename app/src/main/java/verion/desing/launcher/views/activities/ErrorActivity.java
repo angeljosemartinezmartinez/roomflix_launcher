@@ -2,7 +2,6 @@ package verion.desing.launcher.views.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.databinding.DataBindingUtil;
 import verion.desing.launcher.Constants;
@@ -22,7 +21,7 @@ public class ErrorActivity extends NetworkBaseActivity {
         imageHelper.loadRoundCorner(R.drawable.error_403, binding.background);
         Bundle b = getIntent().getExtras();
         checkErrorMode(b);
-        /*checkCasesConnection(new CallBackCheckConnection() {
+        checkCasesConnection(new CallBackCheckConnection() {
             @Override
             public void success() {
                 startActivity(new Intent(getApplicationContext(), MainMenu.class));
@@ -30,21 +29,26 @@ public class ErrorActivity extends NetworkBaseActivity {
 
             @Override
             public void noPing() {
-                runOnUiThread(() -> binding.textError.setText((b.getString(Constants.INTENT_EXTRA.SPLASH_ERROR_MESSAGE))));
+                runOnUiThread(() -> binding.textError.setText((b.getString(Constants.INTENT_EXTRA.ERROR_MESSAGE))));
             }
 
             @Override
             public void noConnection() {
-                runOnUiThread(() -> binding.textError.setText((b.getString(Constants.INTENT_EXTRA.SPLASH_ERROR_MESSAGE))));
+                runOnUiThread(() -> binding.textError.setText((b.getString(Constants.INTENT_EXTRA.ERROR_MESSAGE))));
             }
-        });*/
+        });
     }
 
     private boolean checkErrorMode(Bundle b) {
-        if (b.getBoolean(Constants.INTENT_EXTRA.SPLASH_ERROR_MODE)) {
-            binding.textError.setText((b.getString(Constants.INTENT_EXTRA.SPLASH_ERROR_MESSAGE)));
+        if (b.getBoolean(Constants.INTENT_EXTRA.ERROR_TYPE)) {
+            binding.textError.setText((b.getString(Constants.INTENT_EXTRA.ERROR_MESSAGE)));
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
     }
 }

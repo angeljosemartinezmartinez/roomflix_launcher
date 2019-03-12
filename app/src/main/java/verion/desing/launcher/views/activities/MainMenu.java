@@ -54,12 +54,11 @@ public class MainMenu extends NetworkBaseActivity {
         buttons = new ArrayList<>();
         setDay();
         checkPermission();
-//        checkCasesConnection();
-        executeCall();
+        checkCasesConnection();
     }
 
 
-    /*private void checkCasesConnection() {
+    private void checkCasesConnection() {
         checkCasesConnection(new CallBackCheckConnection() {
             @Override
             public void success() {
@@ -79,7 +78,7 @@ public class MainMenu extends NetworkBaseActivity {
                 runOnUiThread(() -> connectionError("no connection"));
             }
         });
-    }*/
+    }
 
     private void setDay() {
         Date myDate = new Date();
@@ -144,7 +143,7 @@ public class MainMenu extends NetworkBaseActivity {
     }
 
     private void setPictures() {
-        getTranslations(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANG_DEFAULT));
+        getTranslations(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID));
     }
 
     private void getTranslations(String language) {
@@ -167,14 +166,14 @@ public class MainMenu extends NetworkBaseActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        executeCall();
+        checkCasesConnection();
         getTranslations(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID));
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        executeCall();
+//        checkCasesConnection();
     }
 
     private void setClock() {

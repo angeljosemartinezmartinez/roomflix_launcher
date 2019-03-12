@@ -37,9 +37,9 @@ public class Constants {
 
     public class INTENT_EXTRA {
 
-        public static final String SPLASH_ERROR_MODE = "extraSplash";
+        public static final String ERROR_TYPE = "extraSplash";
         public static final String SHOP_ITEM = "extraShopItems";
-        public static final String SPLASH_ERROR_MESSAGE = "extraError";
+        public static final String ERROR_MESSAGE = "extraError";
     }
 
 

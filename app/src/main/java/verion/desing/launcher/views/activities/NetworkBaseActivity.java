@@ -12,17 +12,14 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,23 +53,23 @@ public class NetworkBaseActivity extends BaseActivity {
         dataSave = false;
     }
 
-    /*public void checkCasesConnection(CallBackCheckConnection callBackCheckConnection) {
+    public void checkCasesConnection(CallBackCheckConnection callBackCheckConnection) {
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (checkConnection(getApplicationContext()))
+                if (checkConnection(getApplicationContext()) && NetWorkUtils.isOnline())
                     callBackCheckConnection.success();
-                else
-                    callBackCheckConnection.noConnection();
-                if (NetWorkUtils.checkOnlineState(getApplicationContext())){
-                    callBackCheckConnection.success();
+                else {
+                    if (!checkConnection(getApplicationContext()))
+                        callBackCheckConnection.noConnection();
+                    else
+                        callBackCheckConnection.noPing();
                 }
-                else
-                    callBackCheckConnection.noPing();
+
 
             }
-        }, 0, 600000);
-    }*/
+        }, 0, 60000);
+    }
 
     public boolean checkConnection(Context c) {
         try {
@@ -200,7 +197,7 @@ public class NetworkBaseActivity extends BaseActivity {
         for (int i = 0; i < body.languages.size(); i++) {
             if (body.languages.get(i).isDefault) {
                 codeLangDefault = body.languages.get(i).code;
-                mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LANG_DEFAULT, codeLangDefault);
+                mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LANGUAGE_ID, codeLangDefault);
             }
         }
     }

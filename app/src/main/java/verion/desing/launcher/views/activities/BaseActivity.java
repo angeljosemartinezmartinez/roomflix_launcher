@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -76,8 +75,8 @@ public class BaseActivity extends AppCompatActivity {
     public void connectionError(String error){
         hasError = true;
         Intent i = new Intent(this, ErrorActivity.class);
-        i.putExtra(Constants.INTENT_EXTRA.SPLASH_ERROR_MODE, true);
-        i.putExtra(Constants.INTENT_EXTRA.SPLASH_ERROR_MESSAGE, error);
+        i.putExtra(Constants.INTENT_EXTRA.ERROR_TYPE, true);
+        i.putExtra(Constants.INTENT_EXTRA.ERROR_MESSAGE, error);
         startActivity(i);
     }
 
