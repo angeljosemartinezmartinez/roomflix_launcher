@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.orhanobut.logger.Logger;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -27,7 +28,7 @@ import verion.desing.launcher.listener.CallBackViewEvents;
 import verion.desing.launcher.utils.Utils;
 import verion.desing.launcher.views.adapter.LanguageAdapter;
 
-public class LanguageSelect extends NetworkBaseActivity {
+public class LanguageSelect extends BaseActivity {
 
     private static final String TAG = "LanguageSelect";
     private ActivityIdiomasBinding binding;
@@ -36,6 +37,7 @@ public class LanguageSelect extends NetworkBaseActivity {
     ImageHelper imageHelper;
     private String background;
     private Handler autoHideLoader;
+    private String logo;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,8 +46,11 @@ public class LanguageSelect extends NetworkBaseActivity {
         ((LauncherApplication) getApplicationContext()).getAppComponent().inject(this);
         autoHideLoader = new Handler();
         baseURl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
+        logo = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LOGO);
         background = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.URL_BACK_LANG);
         imageHelper.loadRoundCorner(baseURl + background, binding.background);
+//        imageHelper.loadRoundCorner(logo, binding.logo);
+        Picasso.get().load(logo).into(binding.logo);
         hideLoader();
         getLanguageButtons();
     }
@@ -85,6 +90,11 @@ public class LanguageSelect extends NetworkBaseActivity {
     protected void onResume() {
         super.onResume();
         getLanguageButtons();
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
     }
 
     private synchronized void selectLang(String idLangSelected, final String langBackground) {

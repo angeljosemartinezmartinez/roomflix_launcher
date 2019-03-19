@@ -20,11 +20,7 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -68,7 +64,7 @@ public class NetworkBaseActivity extends BaseActivity {
 
 
             }
-        }, 0, 60000);
+        }, 0, 300000);
     }
 
     public boolean checkConnection(Context c) {
@@ -87,7 +83,7 @@ public class NetworkBaseActivity extends BaseActivity {
             public void finishAction(ResponseAllInfo body) {
                 if (isDataDifferent(body)) {
                     saveData(body, callBackAllInfoCheck);
-                    getImgFromCall(body);
+//                    getImgFromCall(body);
                 } else {
                     Logger.d("DATA NOT DIFFERENT");
                     if (callBackAllInfoCheck != null) {
@@ -171,11 +167,11 @@ public class NetworkBaseActivity extends BaseActivity {
                     fos.flush();
                     fos.close();
                     is.close();
-                    c.disconnect();
+//                    c.disconnect();
                 } catch (MalformedURLException e) {
                     Log.d(TAG, "URL format not valid");
                 } catch (IOException e) {
-                    Log.d(TAG, "No such file o directory");
+                    Log.d(TAG, e.getLocalizedMessage());
                 }
             }
 
@@ -198,17 +194,15 @@ public class NetworkBaseActivity extends BaseActivity {
             if (body.languages.get(i).isDefault) {
                 codeLangDefault = body.languages.get(i).code;
                 mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LANGUAGE_ID, codeLangDefault);
+                mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LANG_DEFAULT, codeLangDefault);
             }
         }
     }
 
-    public String getDate() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
-        Date date = new Date();
-        dateNow = dateFormat.format(date);
-        return dateNow;
+    private void saveLogo(ResponseAllInfo body) {
+        String logo = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL) + body.templates.logo;
+        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LOGO, logo);
     }
-
 
     private void saveData(ResponseAllInfo body, CallBackAllInfoCheck callBackAllInfoCheck) {
         Logger.d("DATA DIFFERENT");
@@ -217,6 +211,7 @@ public class NetworkBaseActivity extends BaseActivity {
         saveDefaultLanguage(body);
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.BASE_URL, body.baseUrl);
         baseUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
+        saveLogo(body);
         insertDataBaseData(body, new CallBackSaveData() {
             @Override
             public void finish() {
@@ -273,6 +268,10 @@ public class NetworkBaseActivity extends BaseActivity {
 
     public synchronized void goFunction(int function, String args) {
         Logger.d(function + "-" + args);
+        if (args.equals("null")) {
+            comingSoon(this);
+            return;
+        }
         switch (function) {
             case 1:
                 appOpener(args);

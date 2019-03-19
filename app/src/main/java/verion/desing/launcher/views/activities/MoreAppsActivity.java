@@ -1,7 +1,9 @@
 package verion.desing.launcher.views.activities;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -34,20 +36,27 @@ public class MoreAppsActivity extends NetworkBaseActivity {
     private ArrayList<Translations> mTranslationsList;
     private int idSubmenu;
     private String actualLang;
+    private Handler autoHideLoader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((LauncherApplication) getApplicationContext()).getAppComponent().inject(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_more_apps);
+        mBtnList = new ArrayList<>();
+        mTranslationsList = new ArrayList<>();
+        autoHideLoader = new Handler();
+        showLoader();
+        chargeSharedPreferencesData();
+        imageHelper.loadRoundCorner(background, binding.background);
+        idSubmenu = mySharedPreferences.getInt(Constants.SHARED_PREFERENCES.ID_SUBMENU);
+        getSubmenuFromBtn();
+    }
+
+    private void chargeSharedPreferencesData() {
         baseUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
         background = baseUrl + mySharedPreferences.getString(Constants.SHARED_PREFERENCES.URL_BACK);
         actualLang = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
-        imageHelper.loadRoundCorner(background, binding.background);
-        mBtnList = new ArrayList<>();
-        mTranslationsList = new ArrayList<>();
-        idSubmenu = mySharedPreferences.getInt(Constants.SHARED_PREFERENCES.ID_SUBMENU);
-        getSubmenuFromBtn();
     }
 
     private void getSubmenuFromBtn() {
@@ -62,6 +71,7 @@ public class MoreAppsActivity extends NetworkBaseActivity {
                         getTranslations(mBtnList);
                     setFirstPage();
                     setSecondPage();
+                    hideLoader();
                 });
             }
 
@@ -132,5 +142,19 @@ public class MoreAppsActivity extends NetworkBaseActivity {
             }
         }
         return itemsTemp;
+    }
+
+    private void hideLoader() {
+        runOnUiThread(() -> {
+            binding.loader.setVisibility(View.GONE);
+            autoHideLoader.removeCallbacks(null);
+        });
+    }
+
+    private void showLoader() {
+        runOnUiThread(() -> {
+            binding.loader.setVisibility(View.VISIBLE);
+            autoHideLoader.removeCallbacks(null);
+        });
     }
 }

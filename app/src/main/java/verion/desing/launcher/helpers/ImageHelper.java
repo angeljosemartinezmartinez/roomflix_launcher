@@ -134,7 +134,7 @@ public class ImageHelper {
         if (!((Activity) context).isFinishing())
             Glide.with(context).load(url)
                     .apply(new RequestOptions()
-//                        .transforms(new CenterCrop(), new RoundedCorners(context, 0, 0))
+                        .transforms(new CenterCrop(), new RoundedCorners(context, 0, 0))
                             .dontAnimate().diskCacheStrategy(DiskCacheStrategy.NONE)).into(view);
     }
 

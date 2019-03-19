@@ -6,4 +6,9 @@
     <string name="explanation_exit1">
         Tu information personnel il sera élimine quand tu sors de la chambre\nEn plus de ton information ne sera pas traité par nous ou par tiers part
     </string>
+    <string name="explanation_exit_codes">Nous avons fait quelques fonctionnement, laisser nous quelques minute</string>
+    <string name="back" >ALLER DOS</string>
+    <string name="ok" >OK</string>
+    <string name="mouse" >ACTIVER/DÉSACTIVER SOURIS</string>
+    <string name="top_bottom" >DESSUS/DESSOUS/GAUCHE/DROIT</string>
 </resources>

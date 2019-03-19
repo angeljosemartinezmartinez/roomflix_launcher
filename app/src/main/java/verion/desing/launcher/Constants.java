@@ -20,11 +20,12 @@ public class Constants {
         public static final String URL_LANG = "urlLang";
         public static final String LANG_DEFAULT = "langDefault";
         public static final String TEMPLATE_DEFAULT = "templateDefault";
-        public static final String BTN_LIST = "btnDefault" ;
+        public static final String BTN_LIST = "btnDefault";
         public static final String BASE_URL = "baseUrl";
         public static final String ID_SUBMENU = "idSubmenu";
         public static final String INFOCARD_INDEX = "infocardIndex";
         public static final String CODE_SETTINGS = "codeSettings";
+        public static final String LOGO = "logo";
     }
 
     public class ANALYTICS {
@@ -61,12 +62,12 @@ public class Constants {
         public static final String AUTOREBOOT = "1431434";
         public static final String REBOOT = "1431435";
         public static final String DROP = "1431436";
-        public static final String SCHEDULERESTART = "1431437";
         public static final String DROID_SETTINGS = "1431438";
         public static final String SHOW_IP = "1431439";
         public static final String TCP_IP = "1444441";
-        public static final String MAC = "1444442";
+        public static final String MAC = "1431437";
 
+        public static final String DIALOG = "143";
     }
 
     public class STORE {

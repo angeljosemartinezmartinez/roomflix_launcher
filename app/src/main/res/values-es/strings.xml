@@ -6,5 +6,10 @@
         Va a salir de HotelPlay
     </string>
     <string name="explanation_exit1">Sus datos personales serán borrados cuando salga de la habitación\nAdemás sus datos personales no serán tratados por nosotros ni por terceros</string>
+    <string name="explanation_exit_codes">Estamos haciendo algunos cambios, danos un segundo</string>
 
+    <string name="back" >IR ATRÁS</string>
+    <string name="ok" >OK</string>
+    <string name="mouse" >ACTIVAR/DESACTIVAR MOUSE</string>
+    <string name="top_bottom" >ARRIBA/ABAJO/IZQUIERDA/DERECHA</string>
 </resources>

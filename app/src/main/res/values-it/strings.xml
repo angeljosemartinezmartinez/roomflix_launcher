@@ -8,5 +8,9 @@
     <string name="explanation_exit1">
         Suo dato personale saranno cancellare quando tu esci de la stanza\nInoltre suo dato personale no usciranno trattato per noi né per terzo
     </string>
-
+    <string name="explanation_exit_codes">Noi facciamo alcuni operazione, dare si alcuni minuto</string>
+    <string name="back" >ARRIVARE RETRO</string>
+    <string name="ok" >OK</string>
+    <string name="mouse" >ATTIVARE/DISATTIVARE MOUSE</string>
+    <string name="top_bottom" >ALTO/IN FONDO/DESTRO/SINISTRA</string>
 </resources>

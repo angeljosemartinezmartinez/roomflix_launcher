@@ -10,4 +10,9 @@
         Your personal information will be deleted when you go out from the room\nAlso your data wont be processed by us or by third part
     </string>
 
+    <string name="back" >GO BACK</string>
+    <string name="ok" >OK</string>
+    <string name="mouse" >ENABLE/DISABLE MOUSE</string>
+    <string name="top_bottom" >UP/DOWN/RIGHT/LEFT</string>
+
 </resources>

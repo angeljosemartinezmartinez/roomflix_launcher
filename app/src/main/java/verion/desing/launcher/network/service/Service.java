@@ -11,7 +11,7 @@ import verion.desing.launcher.network.response.ResponseTemplates;
 public interface Service {
 
     @Headers("Cache-Control: max-age=40")
-    @GET("{mac}")
+    @GET("/api/main/{mac}")
     Call<ResponseAllInfo> getData(@Path("mac") String id);
 
 

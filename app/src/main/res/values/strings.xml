@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VerionLauncher</string>
+    <string name="app_name" translatable="false">VerionLauncher</string>
     <string name="title_exit">Warning</string>
     <string name="explanation_exit_codes">We are doing some operations, let us some minutes</string>
     <string name="explanation_exit">
@@ -8,4 +8,8 @@
     <string name="explanation_exit1">
         Your personal information will be deleted when you go out from the room\nAlso your data wont be processed by us or by third part
     </string>
+    <string name="back" >GO BACK</string>
+    <string name="ok" >OK</string>
+    <string name="mouse" >ENABLE/DISABLE MOUSE</string>
+    <string name="top_bottom" >UP/DOWN/RIGHT/LEFT</string>
 </resources>

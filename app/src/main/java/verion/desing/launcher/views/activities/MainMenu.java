@@ -2,6 +2,7 @@ package verion.desing.launcher.views.activities;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 
@@ -31,6 +33,8 @@ import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.listener.CallBackArrayList;
 import verion.desing.launcher.listener.CallBackCheckConnection;
 import verion.desing.launcher.utils.KeyCodesConverter;
+import verion.desing.launcher.utils.NetWorkUtils;
+import verion.desing.launcher.utils.Utils;
 
 public class MainMenu extends NetworkBaseActivity {
 
@@ -52,18 +56,33 @@ public class MainMenu extends NetworkBaseActivity {
         autoHideLoader = new Handler();
         setClock();
         buttons = new ArrayList<>();
-        setDay();
         checkPermission();
-        checkCasesConnection();
         showLoader();
+        try {
+            Thread.sleep(30000);
+            checkCasesConnection(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANG_DEFAULT));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void changeLanguage() {
+        try {
+            String langActual = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
+            Utils.change_setting(new Locale(langActual.toUpperCase(), langActual.toLowerCase()), this);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
-    private void checkCasesConnection() {
+    private void checkCasesConnection(String lang) {
         checkCasesConnection(new CallBackCheckConnection() {
             @Override
             public void success() {
-                executeCall();
+                executeCall(lang);
             }
 
             @Override
@@ -83,12 +102,12 @@ public class MainMenu extends NetworkBaseActivity {
 
     private void setDay() {
         Date myDate = new Date();
-        SimpleDateFormat dmyFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        SimpleDateFormat dmyFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.FRENCH);
         String dmy = dmyFormat.format(myDate);
         binding.day.setText(dmy);
     }
 
-    public void executeCall() {
+    public void executeCall(String langID) {
         showLoader();
         callAllInfo(new CallBackAllInfoCheck() {
             @Override
@@ -120,6 +139,7 @@ public class MainMenu extends NetworkBaseActivity {
     }
 
     private void generationMain() {
+        setDay();
         setMySharedPreferencesData();
         setStreaming();
         setBackground();
@@ -133,8 +153,8 @@ public class MainMenu extends NetworkBaseActivity {
     }
 
     private void setStreaming() {
+        goStreaming(binding.video,"/storage/emulated/0/Download/ARRECIFE_GRAN_HOTEL.mp4");
         setVideoView();
-        goStreaming(binding.video, "/storage/emulated/0/Download/ARRECIFE_GRAN_HOTEL.mp4");
     }
 
     private void setBackground() {
@@ -169,14 +189,12 @@ public class MainMenu extends NetworkBaseActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        checkCasesConnection();
-        getTranslations(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID));
+        checkCasesConnection(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID));
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        checkCasesConnection();
     }
 
     private void setClock() {
@@ -250,6 +268,69 @@ public class MainMenu extends NetworkBaseActivity {
             case "1431430":
                 openDialog();
                 break;
+            case Constants.Codes.INSTALLER: {
+                appOpener("com.droidlogic.appinstall");
+                break;
+            }
+            case Constants.Codes.TEAMVIEWER: {
+                appOpener("com.teamviewer.host.market");
+                break;
+            }
+            case Constants.Codes.MARKET: {
+                appOpener("com.android.vending");
+                break;
+            }
+            case Constants.Codes.AUTOREBOOT: {
+                appOpener("com.pereira.autoreboot");
+                break;
+            }
+            case Constants.Codes.REBOOT: {
+                try {
+                    Process p = Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "reboot"});
+                    p.waitFor();
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+            /*case Constants.Codes.DROP: {
+                mySharedPreferences.deleteAll();
+                try {
+                    Runtime runtime = Runtime.getRuntime();
+                    runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "rm -r /data/dalvik-cache"});
+                    runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "rm -r /cache/dalvik-cache"});
+                    runtime.exec(new String[]{"/system/bin/su", "-c", "rm -rf data/data/verion.desing.launcher/databases/"});
+                    String packageName = getApplicationContext().getPackageName();
+                    runtime.exec(new String[]{"/system/bin/su", "-c", "pm clear " + packageName});
+                    executeCall();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }*/
+            case Constants.Codes.MAC: {
+                Toast.makeText(this, macAddress, Toast.LENGTH_LONG).show();
+                break;
+            }
+            case Constants.Codes.DROID_SETTINGS: {
+                appOpener("com.droidlogic.tv.settings");
+                break;
+            }
+
+            case Constants.Codes.SHOW_IP: {
+                String ip = Utils.getIPAddress(true);
+                Toast.makeText(this, ip, Toast.LENGTH_LONG).show();
+                break;
+            }
+            case Constants.Codes.TCP_IP: {
+                try {
+                    Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "setprop service.adb.tcp.port 5555"});
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
         }
 
     }
