@@ -3,6 +3,7 @@ package verion.desing.launcher.views.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -10,6 +11,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.mikepenz.iconics.context.IconicsContextWrapper;
 import com.orhanobut.logger.Logger;
 
 import java.io.File;
@@ -21,6 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -32,6 +35,7 @@ import verion.desing.launcher.listener.CallBackSaveData;
 import verion.desing.launcher.network.callbacks.CallBackData;
 import verion.desing.launcher.network.response.ResponseAllInfo;
 import verion.desing.launcher.network.response.ResponseTemplates;
+import verion.desing.launcher.utils.ContextWrapper;
 import verion.desing.launcher.utils.NetWorkUtils;
 
 public class NetworkBaseActivity extends BaseActivity {
@@ -184,7 +188,7 @@ public class NetworkBaseActivity extends BaseActivity {
     }
 
     private void saveBackgroundLanguages(ResponseAllInfo body) {
-        String backgroundLanguages = body.templates.backgroundLanguages;
+        String backgroundLanguages = body.templates.background;
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.URL_BACK_LANG, backgroundLanguages);
     }
 
@@ -197,6 +201,11 @@ public class NetworkBaseActivity extends BaseActivity {
                 mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LANG_DEFAULT, codeLangDefault);
             }
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(IconicsContextWrapper.wrap(newBase));
     }
 
     private void saveLogo(ResponseAllInfo body) {

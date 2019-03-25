@@ -10,8 +10,6 @@ public class ResponseTemplates {
     public String logo;
     @SerializedName("background")
     public String background;
-    @SerializedName("backgroundLanguages")
-    public String backgroundLanguages;
     @SerializedName("buttons")
     public ArrayList<Button> buttons;
 
@@ -41,7 +39,7 @@ public class ResponseTemplates {
         return "ResponseTemplates{" +
                 "logo='" + logo + '\'' +
                 ", background='" + background + '\'' +
-                ", backgroundLanguages='" + backgroundLanguages + '\'' +
+                ", backgroundLanguages='" + '\'' +
                 ", buttons=" + buttons +
                 '}';
     }

@@ -10,6 +10,5 @@ data class Templates (
         @PrimaryKey(autoGenerate = false) var code :Int = 0,
         var logo: String? = "",
         var background: String? = "",
-        var backgroundLanguages: String? = "",
         var buttons: ArrayList<Button>?
 ): Serializable

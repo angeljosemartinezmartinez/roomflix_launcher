@@ -1,7 +1,6 @@
 package verion.desing.launcher.views.activities;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,7 +13,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
-import verion.desing.launcher.database.models.Child;
 import verion.desing.launcher.database.models.Translation;
 import verion.desing.launcher.database.tables.InfoCards;
 import verion.desing.launcher.databinding.ActivityInfocardBinding;
@@ -32,7 +30,7 @@ public class InfoCardActivity extends NetworkBaseActivity {
     private int idInfocard;
     private InfoCards infoCard;
     private ArrayList<Translation> mTranslationsList;
-    private ArrayList<Child> childs;
+    private ArrayList<InfoCards> childs;
     private String idLanguage;
     private String baseUrl;
     private String background;
@@ -59,12 +57,11 @@ public class InfoCardActivity extends NetworkBaseActivity {
                 runOnUiThread(() -> {
                     if (template != null) {
                         infoCard = template;
-                        if (infoCard.getChild() != null) {
-                            childs = infoCard.getChild();
-                            setChilds(childs);
-                        }
-                        setImage(template.getTranslations());
-                        Collections.reverse(mTranslationsList);
+                        childs = infoCard.getChild();
+                        Collections.reverse(childs);
+                        childs.add(template);
+                        Collections.reverse(childs);
+                        setChilds(infoCard.getChild());
                         ScreenSlidePagerAdapter myAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager(), mTranslationsList);
                         binding.viewPager.setAdapter(myAdapter);
                         binding.indicator.setViewPager(binding.viewPager);
@@ -79,25 +76,16 @@ public class InfoCardActivity extends NetworkBaseActivity {
         }, getApplicationContext(), idInfocard);
     }
 
-    private void setImage(ArrayList<Translation> translations) {
-        for (Translation translation : translations) {
-            if (translation.getLanguage().equals(idLanguage)) {
-                mTranslationsList.add(translation);
-            }
-        }
-    }
-
-    private void setChilds(ArrayList<Child> childs) {
-        for (Child child : childs) {
-            for (Translation translation : child.getTranslations()) {
-                if (translation.getLanguage().equals(idLanguage)) {
-                    mTranslationsList.add(translation);
+    private void setChilds(ArrayList<InfoCards> childs) {
+        for (InfoCards infoCards : childs) {
+            for (Translation child : infoCards.getTranslations()) {
+                if (child.getLanguage().equals(idLanguage)) {
+                    mTranslationsList.add(child);
                 }
             }
         }
-        Log.d(TAG, "Size: " + childs.toString());
-    }
 
+    }
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 
@@ -107,6 +95,7 @@ public class InfoCardActivity extends NetworkBaseActivity {
             super(fm);
             mItems = items;
         }
+
 
         @Override
         public Fragment getItem(int position) {

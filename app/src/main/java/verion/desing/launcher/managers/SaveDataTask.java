@@ -100,7 +100,7 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
             buttons.add(new Button(button.position, button.position, pictures));
 
         }
-        templates = new Templates(0, responseTemplates.logo, responseTemplates.background, responseTemplates.backgroundLanguages, buttons);
+        templates = new Templates(0, responseTemplates.logo, responseTemplates.background, buttons);
         appDataBase.templateDao().insertAll(templates);
         Log.d(TAG, "SAVE::::::::::::" + "TEMPLATE");
     }
@@ -133,10 +133,10 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
 
     private void saveSubmenu(ArrayList<ResponseSubmenu> responseSubmenus, AppDataBase appDataBase) {
         ArrayList<Submenus> submenus = new ArrayList<>();
-        ArrayList<Button> buttons = new ArrayList<>();
-        ArrayList<Translations> pictures = new ArrayList<>();
         for (ResponseSubmenu submenu : responseSubmenus) {
+            ArrayList<Button> buttons = new ArrayList<>();
             for (ResponseSubmenu.Button button : submenu.buttons) {
+                ArrayList<Translations> pictures = new ArrayList<>();
                 for (ResponseSubmenu.Button.Translations picture : button.pictures) {
                     pictures.add(new Translations(button.position, picture.locale, picture.picture, picture.pictureFocused, picture.functionType, picture.functionTarget));
                 }
@@ -150,18 +150,18 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
 
     private void saveInfoCards(ArrayList<ResponseInfoCards> responseInfoCards, AppDataBase appDataBase) {
         ArrayList<InfoCards> infoCards = new ArrayList<>();
-        ArrayList<Translation> translations = new ArrayList<>();
-        ArrayList<Child> childs = new ArrayList<>();
         for (ResponseInfoCards infocard : responseInfoCards) {
-            for (ResponseInfoCards.Translations translation : infocard.translations) {
-                translations.add(new Translation(translation.locale, translation.picture));
-            }
+            ArrayList<InfoCards> childs = new ArrayList<>();
             for (ResponseInfoCards.Child child : infocard.childs) {
                 ArrayList<Translation> translationsChild = new ArrayList<>();
                 for(ResponseInfoCards.Child.Translations trans : child.translations){
                     translationsChild.add(new Translation(trans.locale, trans.picture));
                 }
-                childs.add(new Child(child.id, translationsChild));
+                childs.add(new InfoCards(child.id, translationsChild, null));
+            }
+            ArrayList<Translation> translations = new ArrayList<>();
+            for (ResponseInfoCards.Translations translation : infocard.translations) {
+                translations.add(new Translation(translation.locale, translation.picture));
             }
             infoCards.add(new InfoCards(infocard.id, translations, childs));
         }

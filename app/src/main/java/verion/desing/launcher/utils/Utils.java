@@ -1,12 +1,17 @@
 package verion.desing.launcher.utils;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
@@ -14,6 +19,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+
+import verion.desing.launcher.dragger.MySharedPreferences;
 
 public class Utils {
 
@@ -82,7 +89,7 @@ public class Utils {
     }
 
     //to change the locale
-    public static void change_setting(Locale locale, Activity a) {
+    public static void changeAppLanguage(Locale locale, Activity a) {
         try {
             Locale.setDefault(locale);
             Configuration config = a.getBaseContext().getResources().getConfiguration();

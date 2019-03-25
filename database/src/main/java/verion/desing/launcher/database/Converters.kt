@@ -86,15 +86,15 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromStringToArrayListChild(value: String): ArrayList<Child> {
-        val listType = object : TypeToken<List<Child>>() {
+    fun fromStringToArrayListInfoCards(value: String): ArrayList<InfoCards> {
+        val listType = object : TypeToken<List<InfoCards>>() {
         }.type
         return Gson().fromJson(value, listType)
     }
 
     @TypeConverter
-    fun fromChildToArrayListString(list: ArrayList<Child>): String {
-        val listType = object : TypeToken<List<Child>>() {
+    fun fromInfoCardsToArrayListString(list: ArrayList<InfoCards>): String {
+        val listType = object : TypeToken<List<InfoCards>>() {
         }.type
         val gson = Gson()
         return gson.toJson(list, listType)

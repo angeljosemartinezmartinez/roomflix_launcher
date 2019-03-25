@@ -15,7 +15,7 @@ import verion.desing.launcher.database.tables.*
         Button::class,
         Translations::class,
         InfoCards::class
-        ), version = 27, exportSchema = false)
+        ), version = 28, exportSchema = false)
 abstract class AppDataBase : RoomDatabase(){
     abstract fun languageDao():LanguageDao
     abstract fun templateDao(): TemplateDao

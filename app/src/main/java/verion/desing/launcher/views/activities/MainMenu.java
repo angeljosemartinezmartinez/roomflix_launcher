@@ -2,7 +2,7 @@ package verion.desing.launcher.views.activities;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.net.Uri;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import androidx.core.os.ConfigurationCompat;
 import androidx.databinding.DataBindingUtil;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
@@ -32,8 +33,8 @@ import verion.desing.launcher.databinding.ActivityMainBinding;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.listener.CallBackArrayList;
 import verion.desing.launcher.listener.CallBackCheckConnection;
+import verion.desing.launcher.utils.ContextWrapper;
 import verion.desing.launcher.utils.KeyCodesConverter;
-import verion.desing.launcher.utils.NetWorkUtils;
 import verion.desing.launcher.utils.Utils;
 
 public class MainMenu extends NetworkBaseActivity {
@@ -58,31 +59,21 @@ public class MainMenu extends NetworkBaseActivity {
         buttons = new ArrayList<>();
         checkPermission();
         showLoader();
-        try {
+        Log.d(TAG, "onCreate");
+        checkCasesConnection();
+        /*try {
             Thread.sleep(30000);
-            checkCasesConnection(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANG_DEFAULT));
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
 
     }
 
-    private void changeLanguage() {
-        try {
-            String langActual = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
-            Utils.change_setting(new Locale(langActual.toUpperCase(), langActual.toLowerCase()), this);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    private void checkCasesConnection(String lang) {
+    private void checkCasesConnection() {
         checkCasesConnection(new CallBackCheckConnection() {
             @Override
             public void success() {
-                executeCall(lang);
+                executeCall();
             }
 
             @Override
@@ -100,6 +91,8 @@ public class MainMenu extends NetworkBaseActivity {
         });
     }
 
+
+
     private void setDay() {
         Date myDate = new Date();
         SimpleDateFormat dmyFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.FRENCH);
@@ -107,7 +100,7 @@ public class MainMenu extends NetworkBaseActivity {
         binding.day.setText(dmy);
     }
 
-    public void executeCall(String langID) {
+    public void executeCall() {
         showLoader();
         callAllInfo(new CallBackAllInfoCheck() {
             @Override
@@ -153,7 +146,7 @@ public class MainMenu extends NetworkBaseActivity {
     }
 
     private void setStreaming() {
-        goStreaming(binding.video,"/storage/emulated/0/Download/ARRECIFE_GRAN_HOTEL.mp4");
+        goStreaming(binding.video, "/storage/emulated/0/Download/ARRECIFE_GRAN_HOTEL.mp4");
         setVideoView();
     }
 
@@ -189,7 +182,8 @@ public class MainMenu extends NetworkBaseActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        checkCasesConnection(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID));
+        Log.d(TAG, "onRestart");
+        checkCasesConnection();
     }
 
     @Override
@@ -293,22 +287,6 @@ public class MainMenu extends NetworkBaseActivity {
                 }
                 break;
             }
-            /*case Constants.Codes.DROP: {
-                mySharedPreferences.deleteAll();
-                try {
-                    Runtime runtime = Runtime.getRuntime();
-                    runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "rm -r /data/dalvik-cache"});
-                    runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "rm -r /cache/dalvik-cache"});
-                    runtime.exec(new String[]{"/system/bin/su", "-c", "rm -rf data/data/verion.desing.launcher/databases/"});
-                    String packageName = getApplicationContext().getPackageName();
-                    runtime.exec(new String[]{"/system/bin/su", "-c", "pm clear " + packageName});
-                    executeCall();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            }*/
             case Constants.Codes.MAC: {
                 Toast.makeText(this, macAddress, Toast.LENGTH_LONG).show();
                 break;
@@ -385,6 +363,7 @@ public class MainMenu extends NetworkBaseActivity {
                 }
 
         );
+        binding.video.setOnClickListener(view -> startPackage("verion.desing.video.player"));
         binding.video.setBackgroundResource(R.drawable.focus_video_view);
 
         binding.video.setOnPreparedListener(mp -> mp.setOnVideoSizeChangedListener((mp1, arg1, arg2) -> {

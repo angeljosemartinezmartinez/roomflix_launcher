@@ -1,11 +1,15 @@
 package verion.desing.launcher.views.activities;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -20,6 +24,7 @@ import com.mikepenz.iconics.context.IconicsContextWrapper;
 import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -32,6 +37,7 @@ import verion.desing.launcher.helpers.FileHelper;
 import verion.desing.launcher.helpers.ImageHelper;
 import verion.desing.launcher.managers.DBManager;
 import verion.desing.launcher.network.service.CallManager;
+import verion.desing.launcher.utils.ContextWrapper;
 import verion.desing.launcher.utils.KeyCodesConverter;
 import verion.desing.launcher.utils.Utils;
 import verion.desing.launcher.views.fragment.FragmentCodes;
@@ -54,6 +60,7 @@ public class BaseActivity extends AppCompatActivity {
     public String macAddress;
     public AlertDialog dialog;
     public boolean hasError = false;
+    public String localeLang;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +69,7 @@ public class BaseActivity extends AppCompatActivity {
         Iconics.init(getApplicationContext());
         code = "";
         macAddress = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.MAC);
+        localeLang = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
         if (macAddress.equals("")) {
             macAddress = getMacAddress().replaceAll(":", "");
             mySharedPreferences.putString(Constants.SHARED_PREFERENCES.MAC, macAddress);
@@ -85,7 +93,6 @@ public class BaseActivity extends AppCompatActivity {
         i.putExtra(Constants.INTENT_EXTRA.ERROR_MESSAGE, error);
         startActivity(i);
     }
-
 
     @Override
     protected void attachBaseContext(Context newBase) {

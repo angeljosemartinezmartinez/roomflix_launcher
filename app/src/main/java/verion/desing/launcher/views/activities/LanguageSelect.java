@@ -1,7 +1,9 @@
 package verion.desing.launcher.views.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -9,6 +11,8 @@ import android.view.View;
 import com.orhanobut.logger.Logger;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -45,6 +49,7 @@ public class LanguageSelect extends BaseActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_idiomas);
         ((LauncherApplication) getApplicationContext()).getAppComponent().inject(this);
         autoHideLoader = new Handler();
+        deleteFiles();
         baseURl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
         logo = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LOGO);
         background = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.URL_BACK_LANG);
@@ -84,6 +89,7 @@ public class LanguageSelect extends BaseActivity {
     protected void onRestart() {
         super.onRestart();
         hideLoader();
+        deleteFiles();
     }
 
     @Override
@@ -101,17 +107,47 @@ public class LanguageSelect extends BaseActivity {
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LANGUAGE_ID, idLangSelected);
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.URL_LANG, langBackground);
         try {
-            Utils.change_setting(new Locale(idLangSelected.toUpperCase(), idLangSelected.toLowerCase()), this);
-
+            Utils.changeAppLanguage(new Locale(idLangSelected.toUpperCase(), idLangSelected.toLowerCase()), this);
+            createFileLocation();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        openMainMenu();
+        openMainMenu(this);
     }
 
-    public void openMainMenu() {
+    public void createFileLocation() {
+        File locationStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                + "/" + "location");
+        if (!locationStorage.exists()) {
+            locationStorage.mkdir();
+        }
+        String language = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
+        String file = language + ".txt";
+        File outputFile = new File(locationStorage, file);
+        if (!outputFile.exists()) {
+            try {
+                outputFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private void deleteFiles() {
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                + "/" + "location");
+        String[] entries = file.list();
+           Log.d(TAG, "Files: " +  entries.length);
+        for (String s : entries) {
+            new File(file.getPath(), s).delete();
+            Log.d(TAG,"Files: " + entries.length);
+        }
+    }
+
+    public void openMainMenu(Context context) {
         Intent i;
-        i = new Intent(getApplicationContext(), MainMenu.class);
+        i = new Intent(context, MainMenu.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
