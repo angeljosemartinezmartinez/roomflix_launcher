@@ -1,45 +1,30 @@
 package verion.desing.launcher.views.activities;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.mikepenz.iconics.Iconics;
 import com.mikepenz.iconics.context.IconicsContextWrapper;
-import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
 import androidx.appcompat.app.AppCompatActivity;
 import verion.desing.launcher.Constants;
-import verion.desing.launcher.R;
 import verion.desing.launcher.dragger.LauncherApplication;
 import verion.desing.launcher.dragger.MySharedPreferences;
 import verion.desing.launcher.helpers.FileHelper;
 import verion.desing.launcher.helpers.ImageHelper;
 import verion.desing.launcher.managers.DBManager;
 import verion.desing.launcher.network.service.CallManager;
-import verion.desing.launcher.utils.ContextWrapper;
-import verion.desing.launcher.utils.KeyCodesConverter;
-import verion.desing.launcher.utils.Utils;
 import verion.desing.launcher.views.fragment.FragmentCodes;
 
 public class BaseActivity extends AppCompatActivity {

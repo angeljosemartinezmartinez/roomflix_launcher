@@ -3,6 +3,9 @@ package verion.desing.launcher.utils;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
+
+import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -40,6 +43,14 @@ public class NetWorkUtils {
         }
 
         return false;
+    }
+
+    public static boolean isWifiOn(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        Logger.d(TAG, "Wifi " + wifiInfo.isConnected());
+        return wifiInfo.isConnected();
     }
 }
 

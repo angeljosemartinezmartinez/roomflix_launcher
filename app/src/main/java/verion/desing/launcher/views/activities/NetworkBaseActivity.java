@@ -3,7 +3,6 @@ package verion.desing.launcher.views.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,7 +22,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -35,7 +33,6 @@ import verion.desing.launcher.listener.CallBackSaveData;
 import verion.desing.launcher.network.callbacks.CallBackData;
 import verion.desing.launcher.network.response.ResponseAllInfo;
 import verion.desing.launcher.network.response.ResponseTemplates;
-import verion.desing.launcher.utils.ContextWrapper;
 import verion.desing.launcher.utils.NetWorkUtils;
 
 public class NetworkBaseActivity extends BaseActivity {
@@ -60,15 +57,18 @@ public class NetworkBaseActivity extends BaseActivity {
                 if (checkConnection(getApplicationContext()) && NetWorkUtils.isOnline())
                     callBackCheckConnection.success();
                 else {
-                    if (!checkConnection(getApplicationContext()))
+                    if (NetWorkUtils.isWifiOn(getApplicationContext()))
+                        callBackCheckConnection.success();
+                    else if(!NetWorkUtils.isWifiOn(getApplicationContext()))
                         callBackCheckConnection.noConnection();
                     else
                         callBackCheckConnection.noPing();
+
                 }
 
 
             }
-        }, 0, 300000);
+        }, 0, 60000);
     }
 
     public boolean checkConnection(Context c) {
@@ -201,11 +201,6 @@ public class NetworkBaseActivity extends BaseActivity {
                 mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LANG_DEFAULT, codeLangDefault);
             }
         }
-    }
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(IconicsContextWrapper.wrap(newBase));
     }
 
     private void saveLogo(ResponseAllInfo body) {

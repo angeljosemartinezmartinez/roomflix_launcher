@@ -2,7 +2,6 @@ package verion.desing.launcher.views.activities;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import androidx.core.os.ConfigurationCompat;
 import androidx.databinding.DataBindingUtil;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
@@ -33,7 +31,6 @@ import verion.desing.launcher.databinding.ActivityMainBinding;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.listener.CallBackArrayList;
 import verion.desing.launcher.listener.CallBackCheckConnection;
-import verion.desing.launcher.utils.ContextWrapper;
 import verion.desing.launcher.utils.KeyCodesConverter;
 import verion.desing.launcher.utils.Utils;
 
@@ -49,24 +46,37 @@ public class MainMenu extends NetworkBaseActivity {
     private ArrayList<Translations> mPicturesList = new ArrayList<>();
     private Handler autoHideLoader;
     private long lastKeyClick;
+    private boolean executingCall;
+    private long lastTime;
+    private Handler waitForNetwork = new Handler();
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        executingCall = false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         autoHideLoader = new Handler();
+        showLoader();
+        executingCall = false;
         setClock();
         buttons = new ArrayList<>();
         checkPermission();
-        showLoader();
-        Log.d(TAG, "onCreate");
-        checkCasesConnection();
-        /*try {
-            Thread.sleep(30000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
+        waitAndExecute();
+    }
 
+    public synchronized void waitAndExecute() {
+        if ((System.currentTimeMillis() - lastTime) < 20000) return;
+        if (executingCall) return;
+        executingCall = true;
+        Logger.d("WAIT AND EXECUTE CALL ");
+        waitForNetwork.removeCallbacksAndMessages(null);
+        waitForNetwork.postDelayed(this::checkCasesConnection, 3000);
+        lastTime = System.currentTimeMillis();
     }
 
     private void checkCasesConnection() {
@@ -90,7 +100,6 @@ public class MainMenu extends NetworkBaseActivity {
             }
         });
     }
-
 
 
     private void setDay() {
@@ -182,7 +191,6 @@ public class MainMenu extends NetworkBaseActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.d(TAG, "onRestart");
         checkCasesConnection();
     }
 
