@@ -25,6 +25,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import verion.desing.launcher.Constants;
+import verion.desing.launcher.R;
 import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.listener.CallBackCheckConnection;
@@ -95,6 +96,9 @@ public class NetworkBaseActivity extends BaseActivity {
 
             @Override
             public void error(String s) {
+                if (s.equals("403")) {
+                    callBackAllInfoCheck.error(s);
+                }
                 Log.d(TAG, "Code: " + s);
             }
         });

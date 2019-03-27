@@ -129,6 +129,10 @@ public class MainMenu extends NetworkBaseActivity {
 
             @Override
             public void error(String macAddress) {
+                if(macAddress.equals("403")){
+                    hideLoader();
+                    runOnUiThread(() -> imageHelper.loadRoundCorner(R.drawable.dispositivo_alta_es, binding.background));
+                }
                 Log.d(TAG, "Error: " + macAddress);
             }
         });
