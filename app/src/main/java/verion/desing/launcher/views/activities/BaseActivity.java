@@ -71,11 +71,11 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-    public void connectionError(String error) {
+    public void connectionError(int drawable) {
         hasError = true;
         Intent i = new Intent(this, ErrorActivity.class);
         i.putExtra(Constants.INTENT_EXTRA.ERROR_TYPE, true);
-        i.putExtra(Constants.INTENT_EXTRA.ERROR_MESSAGE, error);
+        i.putExtra(Constants.INTENT_EXTRA.ERROR_BACKGROUND, drawable);
         startActivity(i);
     }
 

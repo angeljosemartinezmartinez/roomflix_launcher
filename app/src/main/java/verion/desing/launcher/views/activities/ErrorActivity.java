@@ -18,7 +18,7 @@ public class ErrorActivity extends NetworkBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_error);
-        imageHelper.loadRoundCorner(R.drawable.error_403, binding.background);
+
         Bundle b = getIntent().getExtras();
         checkErrorMode(b);
         checkCasesConnection(new CallBackCheckConnection() {
@@ -29,21 +29,19 @@ public class ErrorActivity extends NetworkBaseActivity {
 
             @Override
             public void noPing() {
-                runOnUiThread(() -> binding.textError.setText((b.getString(Constants.INTENT_EXTRA.ERROR_MESSAGE))));
+                runOnUiThread(() -> imageHelper.loadRoundCorner(b.getInt(Constants.INTENT_EXTRA.ERROR_BACKGROUND), binding.background));
             }
 
             @Override
             public void noConnection() {
-                runOnUiThread(() -> binding.textError.setText((b.getString(Constants.INTENT_EXTRA.ERROR_MESSAGE))));
+                runOnUiThread(() -> imageHelper.loadRoundCorner(b.getInt(Constants.INTENT_EXTRA.ERROR_BACKGROUND), binding.background));
             }
         });
     }
 
     private boolean checkErrorMode(Bundle b) {
-        if (b.getBoolean(Constants.INTENT_EXTRA.ERROR_TYPE)) {
-            binding.textError.setText((b.getString(Constants.INTENT_EXTRA.ERROR_MESSAGE)));
+        if (b.getBoolean(Constants.INTENT_EXTRA.ERROR_TYPE))
             return true;
-        }
         return false;
     }
 

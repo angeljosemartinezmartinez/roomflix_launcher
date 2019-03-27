@@ -25,7 +25,6 @@ import java.util.Locale;
 import androidx.databinding.DataBindingUtil;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
-import verion.desing.launcher.database.tables.Button;
 import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.databinding.ActivityMainBinding;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
@@ -42,7 +41,6 @@ public class MainMenu extends NetworkBaseActivity {
     private String baseUrl;
     private String background;
     private String langID;
-    private ArrayList<Button> mButtonsList = new ArrayList<>();
     private ArrayList<Translations> mPicturesList = new ArrayList<>();
     private Handler autoHideLoader;
     private long lastKeyClick;
@@ -51,14 +49,10 @@ public class MainMenu extends NetworkBaseActivity {
     private Handler waitForNetwork = new Handler();
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        executingCall = false;
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        langID = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
+        Utils.changeAppLanguage(new Locale(langID.toUpperCase(), langID.toLowerCase()), this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         autoHideLoader = new Handler();
         showLoader();
@@ -67,6 +61,12 @@ public class MainMenu extends NetworkBaseActivity {
         buttons = new ArrayList<>();
         checkPermission();
         waitAndExecute();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        executingCall = false;
     }
 
     public synchronized void waitAndExecute() {
@@ -90,13 +90,13 @@ public class MainMenu extends NetworkBaseActivity {
             public void noPing() {
                 hideLoader();
                 runOnUiThread(() -> binding.background.setBackgroundColor(getResources().getColor(R.color.transparent, getTheme())));
-                runOnUiThread(() -> connectionError("no ping"));
+                runOnUiThread(() -> connectionError(R.drawable.no_acceso_sistema_es));
             }
 
             @Override
             public void noConnection() {
                 hideLoader();
-                runOnUiThread(() -> connectionError("no connection"));
+                runOnUiThread(() -> connectionError(R.drawable.servicio_sin_conexion_es));
             }
         });
     }
@@ -191,7 +191,12 @@ public class MainMenu extends NetworkBaseActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        checkCasesConnection();
+        waitAndExecute();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -267,7 +272,7 @@ public class MainMenu extends NetworkBaseActivity {
             case "143":
                 startPackage("com.android.settings");
                 break;
-            case "1431430":
+            case Constants.Codes.SETTINGS:
                 openDialog();
                 break;
             case Constants.Codes.INSTALLER: {
@@ -291,6 +296,20 @@ public class MainMenu extends NetworkBaseActivity {
                     Process p = Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "reboot"});
                     p.waitFor();
                 } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+            case Constants.Codes.DROP: {
+                mySharedPreferences.deleteAll();
+                try {
+                    Runtime runtime = Runtime.getRuntime();
+                    runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "rm -r /data/dalvik-cache"});
+                    runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "rm -r /cache/dalvik-cache"});
+                    runtime.exec(new String[]{"/system/bin/su", "-c", "rm -r data/data/verion.desing.launcher/databases/"});
+                    String packageName = getApplicationContext().getPackageName();
+                    runtime.exec(new String[]{"/system/bin/su", "-c", "pm clear " + packageName});
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
@@ -322,7 +341,7 @@ public class MainMenu extends NetworkBaseActivity {
     }
 
     private void checkPermission() {
-        String pkg = "verion.desing.launcher";
+        String pkg = getApplicationContext().getPackageName();
         try {
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c",
                     "pm grant " + pkg + "  android.permission.REAL_GET_TASKS"});

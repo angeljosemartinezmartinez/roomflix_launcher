@@ -138,10 +138,8 @@ public class LanguageSelect extends BaseActivity {
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                 + "/" + "location");
         String[] entries = file.list();
-           Log.d(TAG, "Files: " +  entries.length);
         for (String s : entries) {
             new File(file.getPath(), s).delete();
-            Log.d(TAG,"Files: " + entries.length);
         }
     }
 

@@ -10,7 +10,6 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.mikepenz.iconics.context.IconicsContextWrapper;
 import com.orhanobut.logger.Logger;
 
 import java.io.File;
@@ -54,12 +53,10 @@ public class NetworkBaseActivity extends BaseActivity {
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (checkConnection(getApplicationContext()) && NetWorkUtils.isOnline())
+                if ((checkConnection(getApplicationContext()) && NetWorkUtils.isOnline()) || NetWorkUtils.isWifiOn(getApplicationContext()))
                     callBackCheckConnection.success();
                 else {
-                    if (NetWorkUtils.isWifiOn(getApplicationContext()))
-                        callBackCheckConnection.success();
-                    else if(!NetWorkUtils.isWifiOn(getApplicationContext()))
+                    if (!checkConnection(getApplicationContext()))
                         callBackCheckConnection.noConnection();
                     else
                         callBackCheckConnection.noPing();
@@ -68,7 +65,7 @@ public class NetworkBaseActivity extends BaseActivity {
 
 
             }
-        }, 0, 60000);
+        }, 0, 300000);
     }
 
     public boolean checkConnection(Context c) {
