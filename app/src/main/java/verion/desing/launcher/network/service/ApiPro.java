@@ -9,6 +9,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import verion.desing.launcher.BuildConfig;
+import verion.desing.launcher.Constants;
 
 public class ApiPro {
 
@@ -45,7 +46,7 @@ public class ApiPro {
 
 
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.NONE);
+        loggingInterceptor.setLevel(BuildConfig.ENVIRONMENT.equalsIgnoreCase(Constants.ENVIRONMENT.DEVELOP) ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
         httpClient.addInterceptor(chain -> {
             Request original = chain.request();
             Request.Builder requestBuilder = original.newBuilder()

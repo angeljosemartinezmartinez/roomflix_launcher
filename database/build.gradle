@@ -8,6 +8,14 @@ android {
 
     buildToolsVersion "$buildToolsVersion"
     kapt { generateStubs = true }
+    signingConfigs {
+        release {
+            keyAlias 'Verion'
+            keyPassword 'L1N4R3S'
+            storeFile file('/home/dani/AndroidStudioProjects/hotelplay/Verion.keystore')
+            storePassword 'android'
+        }
+    }
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 27
@@ -20,9 +28,20 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            jniDebuggable false
+            signingConfig signingConfigs.release
         }
+        debug {
+            minifyEnabled false
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            jniDebuggable true
+        }
+
+
     }
 
 }

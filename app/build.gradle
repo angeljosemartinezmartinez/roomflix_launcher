@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
-
+def vc = 1
 android {
     lintOptions{
         checkReleaseBuilds false
@@ -11,11 +11,21 @@ android {
         applicationId "verion.desing.launcher"
         minSdkVersion 25
         targetSdkVersion 27
-        versionCode 1
+        versionCode vc
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
+
+    signingConfigs {
+        release {
+            keyAlias 'Verion'
+            keyPassword 'L1N4R3S'
+            storeFile file('C:\\Users\\juani\\AndroidStudioProjects\\VerionLauncher\\Verion.keystore')
+            storePassword 'android'
+        }
+    }
+
     defaultConfig {
         multiDexEnabled true
     }
@@ -23,10 +33,33 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            buildConfigField "String", "ENVIRONMENT", "\"release\""
+            minifyEnabled true
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+            buildConfigField "String", "ENVIRONMENT", "\"develop\""
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
+            renderscriptDebuggable false
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
         }
     }
+
+    productFlavors {
+        normal {
+            applicationId "verion.desing.launcher"
+            versionName "1"
+            signingConfig signingConfigs.release
+            flavorDimensions "default"
+            archivesBaseName= "verionLauncher-" + vc
+        }
+    }
+
     dataBinding {
         enabled = true
     }
@@ -50,6 +83,9 @@ dependencies {
 
     //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    //Crash Helper
+    implementation 'cat.ereza:customactivityoncrash:2.2.0'
 
     //Player
     implementation 'com.google.android.exoplayer:exoplayer:2.6.1'

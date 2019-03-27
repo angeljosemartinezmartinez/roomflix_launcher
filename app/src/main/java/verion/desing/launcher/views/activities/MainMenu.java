@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import androidx.databinding.DataBindingUtil;
+import cat.ereza.customactivityoncrash.config.CaocConfig;
+import verion.desing.launcher.BuildConfig;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
 import verion.desing.launcher.database.tables.Translations;
@@ -61,6 +63,7 @@ public class MainMenu extends NetworkBaseActivity {
         buttons = new ArrayList<>();
         checkPermission();
         waitAndExecute();
+        errorControl(MainMenu.class);
     }
 
     @Override
@@ -142,6 +145,30 @@ public class MainMenu extends NetworkBaseActivity {
         setBtnFromDevice();
         imageHelper.loadRoundCorner("/storage/emulated/0/Download/language_background/demoimgfondofondoHotelplay.png", binding.background);
         setStreaming();
+    }
+
+    public void errorControl(Class<MainMenu> activityClass) {
+
+        if (BuildConfig.ENVIRONMENT.equals(Constants.ENVIRONMENT.DEVELOP)) {
+            CaocConfig.Builder.create()
+                    .enabled(false) //default: true
+                    .showErrorDetails(false) //default: true
+                    .showRestartButton(false) //default: true
+                    .trackActivities(true) //default: false
+                    .minTimeBetweenCrashesMs(2000) //default: 3000
+                    .apply();
+        } else {
+            CaocConfig.Builder.create()
+                    .enabled(true)
+                    .showErrorDetails(false)
+                    .showRestartButton(false)
+                    .restartActivity(activityClass)
+                    .errorActivity(activityClass)
+                    .apply();
+
+        }
+
+
     }
 
     private void generationMain() {
@@ -345,7 +372,7 @@ public class MainMenu extends NetworkBaseActivity {
     }
 
     private void checkPermission() {
-        String pkg = getApplicationContext().getPackageName();
+        String pkg = (BuildConfig.ENVIRONMENT.equals(Constants.ENVIRONMENT.DEVELOP)) ? "verion.desing.launcher.debug" : "verion.desing.launcher";
         try {
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c",
                     "pm grant " + pkg + "  android.permission.REAL_GET_TASKS"});

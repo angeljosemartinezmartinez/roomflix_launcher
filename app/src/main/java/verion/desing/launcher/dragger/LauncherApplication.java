@@ -8,6 +8,8 @@ import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.PrettyFormatStrategy;
 
+import verion.desing.launcher.BuildConfig;
+import verion.desing.launcher.Constants;
 import verion.desing.launcher.helpers.FileHelper;
 import verion.desing.launcher.helpers.ImageHelper;
 import verion.desing.launcher.managers.DBManager;
@@ -22,7 +24,8 @@ public class LauncherApplication extends Application {
         FormatStrategy formatStrategy = PrettyFormatStrategy.newBuilder()
                 .tag("HP-LOG")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
                 .build();
-        Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy));
+        if (BuildConfig.ENVIRONMENT.equals(Constants.ENVIRONMENT.DEVELOP))
+            Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy));
         myComponent = DaggerAppComponent.builder()
                 .sharedPreferencesModule(new SharedPreferencesModule(getApplicationContext()))
                 .callManager(new CallManager())
