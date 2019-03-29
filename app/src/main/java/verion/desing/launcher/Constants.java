@@ -19,13 +19,11 @@ public class Constants {
         public static final String APK_DATE = "apkDate";
         public static final String URL_LANG = "urlLang";
         public static final String LANG_DEFAULT = "langDefault";
-        public static final String TEMPLATE_DEFAULT = "templateDefault";
-        public static final String BTN_LIST = "btnDefault";
         public static final String BASE_URL = "baseUrl";
         public static final String ID_SUBMENU = "idSubmenu";
         public static final String INFOCARD_INDEX = "infocardIndex";
-        public static final String CODE_SETTINGS = "codeSettings";
         public static final String LOGO = "logo";
+        public static final String DEFAULT_CHANNEL = "defaultChannel";
     }
 
     public class ANALYTICS {

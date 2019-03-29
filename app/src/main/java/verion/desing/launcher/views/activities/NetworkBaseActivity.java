@@ -25,7 +25,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import verion.desing.launcher.Constants;
-import verion.desing.launcher.R;
 import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.listener.CallBackCheckConnection;
@@ -195,11 +194,14 @@ public class NetworkBaseActivity extends BaseActivity {
 
     private void saveDefaultLanguage(ResponseAllInfo body) {
         String codeLangDefault;
+        String defaultChannel;
         for (int i = 0; i < body.languages.size(); i++) {
             if (body.languages.get(i).isDefault) {
                 codeLangDefault = body.languages.get(i).code;
+                defaultChannel = body.languages.get(i).channel;
                 mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LANGUAGE_ID, codeLangDefault);
                 mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LANG_DEFAULT, codeLangDefault);
+                mySharedPreferences.putString(Constants.SHARED_PREFERENCES.DEFAULT_CHANNEL, defaultChannel);
             }
         }
     }

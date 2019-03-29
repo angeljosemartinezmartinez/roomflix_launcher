@@ -11,6 +11,8 @@ public class ResponseLanguages {
     public String picture;
     @SerializedName("isDefault")
     public boolean isDefault;
+    @SerializedName("channel")
+    public String channel;
 
     @Override
     public String toString() {
@@ -19,6 +21,7 @@ public class ResponseLanguages {
                 ", code='" + code + '\'' +
                 ", picture='" + picture + '\'' +
                 ", isDefault=" + isDefault +
+                ", channel='" + channel + '\'' +
                 '}';
     }
 }

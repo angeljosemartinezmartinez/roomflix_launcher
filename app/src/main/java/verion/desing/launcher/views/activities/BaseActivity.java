@@ -39,7 +39,7 @@ public class BaseActivity extends AppCompatActivity {
     @Inject
     public DBManager mDBManager;
     @Inject
-    CallManager call;
+    public CallManager call;
     public String code;
     private long lastKeyClick;    //Last key time
     public String macAddress;

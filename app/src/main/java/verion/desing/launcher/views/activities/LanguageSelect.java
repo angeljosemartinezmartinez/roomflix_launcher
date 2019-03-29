@@ -49,13 +49,12 @@ public class LanguageSelect extends BaseActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_idiomas);
         ((LauncherApplication) getApplicationContext()).getAppComponent().inject(this);
         autoHideLoader = new Handler();
-        deleteFiles();
+        deleteDirectoryContent();
         baseURl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
         logo = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LOGO);
         background = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.URL_BACK_LANG);
         imageHelper.loadRoundCorner(baseURl + background, binding.background);
-//        imageHelper.loadRoundCorner(logo, binding.logo);
-        Picasso.get().load(logo).into(binding.logo);
+        imageHelper.loadRoundCorner(logo, binding.logo);
         hideLoader();
         getLanguageButtons();
     }
@@ -65,7 +64,6 @@ public class LanguageSelect extends BaseActivity {
             @Override
             public void finish(ArrayList<Languages> s) {
                 runOnUiThread(() -> setLanguageView(s));
-                Log.d(TAG, "Finish");
             }
 
             @Override
@@ -80,8 +78,9 @@ public class LanguageSelect extends BaseActivity {
         binding.recycler.setAdapter(new LanguageAdapter(s, (CallBackViewEvents<Languages>) (language, v) -> {
             String IDLanguage = language.getCode();
             final String backgroundLang = baseURl + language.getPicture();
+            String defaultChannel = language.getChannel();
             mySharedPreferences.putString(Constants.SHARED_PREFERENCES.URL_LANG, backgroundLang);
-            selectLang(IDLanguage, backgroundLang);
+            selectLang(IDLanguage, backgroundLang, defaultChannel);
         }, baseURl));
     }
 
@@ -89,7 +88,7 @@ public class LanguageSelect extends BaseActivity {
     protected void onRestart() {
         super.onRestart();
         hideLoader();
-        deleteFiles();
+        deleteDirectoryContent();
     }
 
     @Override
@@ -103,9 +102,10 @@ public class LanguageSelect extends BaseActivity {
 //        super.onBackPressed();
     }
 
-    private synchronized void selectLang(String idLangSelected, final String langBackground) {
+    private synchronized void selectLang(String idLangSelected, final String langBackground, final String defaultChannel) {
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LANGUAGE_ID, idLangSelected);
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.URL_LANG, langBackground);
+        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.DEFAULT_CHANNEL, defaultChannel);
         try {
             Utils.changeAppLanguage(new Locale(idLangSelected.toUpperCase(), idLangSelected.toLowerCase()), this);
             createFileLocation();
@@ -134,12 +134,19 @@ public class LanguageSelect extends BaseActivity {
 
     }
 
-    private void deleteFiles() {
+    private void deleteDirectoryContent() {
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                 + "/" + "location");
-        String[] entries = file.list();
-        for (String s : entries) {
-            new File(file.getPath(), s).delete();
+        if (file.exists()) {
+            String[] entries = file.list();
+            for (String s : entries) {
+                new File(file.getPath(), s).delete();
+            }
+        }
+        try {
+            Runtime.getRuntime().exec(new String[]{"system/bin/su", "-c", " rm -rf /storage/emulated/0/Download/location/"});
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

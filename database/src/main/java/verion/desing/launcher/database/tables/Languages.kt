@@ -11,6 +11,7 @@ data class Languages(
         @ColumnInfo(name = "nativeName") var nativeName: String?,
         @ColumnInfo(name = "code") var code: String?,
         @ColumnInfo(name = "picture") var picture: String?,
-        @ColumnInfo(name = "isDefault") var isDefault: Boolean?
+        @ColumnInfo(name = "isDefault") var isDefault: Boolean?,
+        @ColumnInfo(name = "channel") var channel:String?
 
 ):Serializable

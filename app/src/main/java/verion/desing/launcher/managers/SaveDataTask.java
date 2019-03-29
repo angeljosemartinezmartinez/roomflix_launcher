@@ -83,7 +83,7 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
     private void saveLang(ArrayList<ResponseLanguages> languages, AppDataBase appDatabase) {
         ArrayList<Languages> langs = new ArrayList<>();
         for (ResponseLanguages data : languages) {
-            langs.add(new Languages(languages.indexOf(data), data.nativeName, data.code, data.picture, data.isDefault));
+            langs.add(new Languages(languages.indexOf(data), data.nativeName, data.code, data.picture, data.isDefault, data.channel));
         }
         appDatabase.languageDao().insertAll(langs);
         Log.d(TAG, "SAVE " + langs.size() + " LANGS");

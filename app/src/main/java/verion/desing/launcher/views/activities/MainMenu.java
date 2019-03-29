@@ -104,7 +104,6 @@ public class MainMenu extends NetworkBaseActivity {
         });
     }
 
-
     private void setDay() {
         Date myDate = new Date();
         SimpleDateFormat dmyFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.FRENCH);
@@ -118,6 +117,7 @@ public class MainMenu extends NetworkBaseActivity {
             @Override
             public void dataChange() {
                 runOnUiThread(() -> {
+                    deleteLocationDirectory();
                     generationMain();
                     hideLoader();
 
@@ -132,13 +132,21 @@ public class MainMenu extends NetworkBaseActivity {
 
             @Override
             public void error(String macAddress) {
-                if(macAddress.equals("403")){
+                if (macAddress.equals("403")) {
                     hideLoader();
                     runOnUiThread(() -> imageHelper.loadRoundCorner(R.drawable.dispositivo_alta_es, binding.background));
                 }
                 Log.d(TAG, "Error: " + macAddress);
             }
         });
+    }
+
+    private void deleteLocationDirectory() {
+        try {
+            Runtime.getRuntime().exec(new String[]{"system/bin/su", "-c", " rm -rf /storage/emulated/0/Download/location/"});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void generateFromDevice() {
@@ -186,7 +194,7 @@ public class MainMenu extends NetworkBaseActivity {
     }
 
     private void setStreaming() {
-        goStreaming(binding.video, "/storage/emulated/0/Download/ARRECIFE_GRAN_HOTEL.mp4");
+        goStreaming(binding.video, mySharedPreferences.getString(Constants.SHARED_PREFERENCES.DEFAULT_CHANNEL));
         setVideoView();
     }
 
