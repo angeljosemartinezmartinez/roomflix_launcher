@@ -33,6 +33,7 @@ import verion.desing.launcher.network.callbacks.CallBackData;
 import verion.desing.launcher.network.response.ResponseAllInfo;
 import verion.desing.launcher.network.response.ResponseTemplates;
 import verion.desing.launcher.utils.NetWorkUtils;
+import verion.desing.launcher.views.fragment.FragmentExit;
 
 public class NetworkBaseActivity extends BaseActivity {
 
@@ -281,7 +282,7 @@ public class NetworkBaseActivity extends BaseActivity {
         }
         switch (function) {
             case 1:
-                appOpener(args);
+                exitApp(args);
                 break;
             case 2:
                 openWeb(args);
@@ -300,6 +301,28 @@ public class NetworkBaseActivity extends BaseActivity {
             default:
                 comingSoon(this);
         }
+    }
+
+    private void exitApp(String nPackage) {
+        if (dialog != null)
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+                startPackage(nPackage);
+                return;
+            }
+
+        dialog = new FragmentExit().createDialog(this);
+        dialog.setOnDismissListener(dialogInterface -> {
+            startPackage(nPackage);
+        });
+        dialog.setOnCancelListener(dialogInterface -> startPackage(nPackage));
+        runOnUiThread(() -> {
+
+            dialog.show();
+            new Thread(() -> {
+                if (dialog != null) dialog.dismiss();
+            });
+        });
     }
 
     private void infoCard(String args) {

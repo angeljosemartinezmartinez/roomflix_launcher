@@ -26,6 +26,7 @@ import verion.desing.launcher.helpers.ImageHelper;
 import verion.desing.launcher.managers.DBManager;
 import verion.desing.launcher.network.service.CallManager;
 import verion.desing.launcher.views.fragment.FragmentCodes;
+import verion.desing.launcher.views.fragment.FragmentExit;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -92,7 +93,7 @@ public class BaseActivity extends AppCompatActivity {
     public String getMacAddress() {
         try {
             return mFileHelper.loadFileAsString("/sys/class/net/eth0/address")
-                    .toUpperCase().substring(0, 17);
+                    .toUpperCase().substring(0, 17).replaceAll(":", "");
         } catch (IOException e) {
             e.printStackTrace();
             return "NO:-:MAC";
@@ -143,13 +144,13 @@ public class BaseActivity extends AppCompatActivity {
 
     protected void cleanCache() {
         try {
-//            Glide.getPhotoCacheDir(this).delete();
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.netflix.mediaclient"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.amazon.avod.thirdpartyclient"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear es.plus.yomvi"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.nousguide.android.rbtv"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear rtve.tablet.android"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.google.android.youtube.tv"});
+//            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear verion.desing.video.player"});
         } catch (IOException e) {
             e.printStackTrace();
         }

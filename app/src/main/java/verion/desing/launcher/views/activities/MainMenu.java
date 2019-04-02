@@ -180,6 +180,7 @@ public class MainMenu extends NetworkBaseActivity {
     }
 
     private void generationMain() {
+        cleanCache();
         setDay();
         setMySharedPreferencesData();
         setStreaming();
@@ -236,11 +237,6 @@ public class MainMenu extends NetworkBaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     private void setClock() {
@@ -429,7 +425,11 @@ public class MainMenu extends NetworkBaseActivity {
                 }
 
         );
-        binding.video.setOnClickListener(view -> startPackage("verion.desing.video.player"));
+        if (BuildConfig.ENVIRONMENT.equals(Constants.ENVIRONMENT.DEVELOP))
+            binding.video.setOnClickListener(view -> startPackage("verion.desing.video.player.debug"));
+        else
+            binding.video.setOnClickListener(view -> startPackage("verion.desing.video.player"));
+
         binding.video.setBackgroundResource(R.drawable.focus_video_view);
 
         binding.video.setOnPreparedListener(mp -> mp.setOnVideoSizeChangedListener((mp1, arg1, arg2) -> {
