@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/green">
+        android:background="@color/md_grey_700">
 
         <TextView
             android:id="@+id/title"
@@ -25,7 +25,8 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:fontFamily="@font/montserrat_light"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -53,7 +54,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgExit" />
+        app:layout_constraintTop_toBottomOf="@+id/imgExit"
+        android:fontFamily="@font/montserrat_light"/>
 
 
     <TextView
@@ -68,6 +70,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/message" />
+        app:layout_constraintTop_toBottomOf="@+id/message"
+        android:fontFamily="@font/montserrat_light"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

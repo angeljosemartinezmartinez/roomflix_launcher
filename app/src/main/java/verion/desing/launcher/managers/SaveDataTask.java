@@ -107,7 +107,7 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
             buttons.add(new Button(button.position, button.position, pictures));
 
         }
-        templates = new Templates(0, responseTemplates.logo, responseTemplates.background, buttons);
+        templates = new Templates(0, responseTemplates.logo, responseTemplates.miniLogo, responseTemplates.background, buttons);
         appDataBase.templateDao().insertAll(templates);
         Log.d(TAG, "SAVE::::::::::::" + "TEMPLATE");
     }

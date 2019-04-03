@@ -8,6 +8,8 @@ import java.util.ArrayList;
 public class ResponseTemplates {
     @SerializedName("logo")
     public String logo;
+    @SerializedName("miniatureLogo")
+    public String miniLogo;
     @SerializedName("background")
     public String background;
     @SerializedName("buttons")

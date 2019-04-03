@@ -28,7 +28,7 @@ android {
     defaultConfig {
         multiDexEnabled true
     }
-    compileSdkVersion 'android-P'
+    compileSdkVersion 'android-28'
 
     buildTypes {
         release {

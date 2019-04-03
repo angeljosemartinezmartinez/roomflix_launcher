@@ -9,6 +9,7 @@ import java.io.Serializable
 data class Templates (
         @PrimaryKey(autoGenerate = false) var code :Int = 0,
         var logo: String? = "",
+        var miniLogo: String? = "",
         var background: String? = "",
         var buttons: ArrayList<Button>?
 ): Serializable

@@ -2,6 +2,7 @@ package verion.desing.launcher.views.activities;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -29,6 +30,7 @@ import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
 import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.databinding.ActivityMainBinding;
+import verion.desing.launcher.helpers.ImageHelper;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.listener.CallBackArrayList;
 import verion.desing.launcher.listener.CallBackCheckConnection;
@@ -57,6 +59,7 @@ public class MainMenu extends NetworkBaseActivity {
         langID = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
         Utils.changeAppLanguage(new Locale(langID.toUpperCase(), langID.toLowerCase()), this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        imageHelper.loadRoundCorner(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.MINI_LOGO), binding.logo);
         autoHideLoader = new Handler();
         showLoader();
         executingCall = false;
@@ -414,8 +417,10 @@ public class MainMenu extends NetworkBaseActivity {
         binding.video.setVisibility(View.VISIBLE);
         binding.video.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
+                binding.verTv.setVisibility(View.VISIBLE);
                 v.setBackgroundResource(R.drawable.focus_video_view);
             } else {
+                binding.verTv.setVisibility(View.INVISIBLE);
                 v.setBackgroundColor(80000000);
             }
         });
