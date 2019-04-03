@@ -150,6 +150,7 @@ public class BaseActivity extends AppCompatActivity {
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.nousguide.android.rbtv"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear rtve.tablet.android"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.google.android.youtube.tv"});
+            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.dazn"});
 //            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear verion.desing.video.player"});
         } catch (IOException e) {
             e.printStackTrace();

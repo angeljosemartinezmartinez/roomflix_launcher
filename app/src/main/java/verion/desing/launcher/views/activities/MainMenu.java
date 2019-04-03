@@ -59,7 +59,6 @@ public class MainMenu extends NetworkBaseActivity {
         langID = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
         Utils.changeAppLanguage(new Locale(langID.toUpperCase(), langID.toLowerCase()), this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        imageHelper.loadRoundCorner(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.MINI_LOGO), binding.logo);
         autoHideLoader = new Handler();
         showLoader();
         executingCall = false;
@@ -216,6 +215,7 @@ public class MainMenu extends NetworkBaseActivity {
     }
 
     private void setPictures() {
+        imageHelper.loadRoundCorner(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.MINI_LOGO), binding.logo);
         getTranslations(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID));
     }
 
