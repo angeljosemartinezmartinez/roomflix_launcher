@@ -7,12 +7,16 @@ import retrofit2.http.Path;
 import verion.desing.launcher.network.response.ResponseAllInfo;
 import verion.desing.launcher.network.response.ResponseLanguages;
 import verion.desing.launcher.network.response.ResponseTemplates;
+import verion.desing.launcher.network.response.ResponseUpdate;
 
 public interface Service {
 
     @Headers("Cache-Control: max-age=40")
     @GET("/api/main/{mac}")
     Call<ResponseAllInfo> getData(@Path("mac") String id);
+
+    @GET("/api/launcher/{mac}")
+    Call<ResponseUpdate> getUpdate(@Path("mac") String mac);
 
 
 }

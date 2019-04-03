@@ -22,6 +22,7 @@ import verion.desing.launcher.listener.CallBackArrayList;
 import verion.desing.launcher.listener.CallBackGetOne;
 import verion.desing.launcher.listener.CallBackSaveData;
 import verion.desing.launcher.network.response.ResponseAllInfo;
+import verion.desing.launcher.network.response.ResponseUpdate;
 
 @Module
 public class DBManager {
@@ -38,10 +39,9 @@ public class DBManager {
         return new DBManager();
     }
 
-    public void saveData(final ResponseAllInfo data, final Context context, final CallBackSaveData listener) {
+    public void saveData(final ResponseAllInfo data, final Context context, final CallBackSaveData listener, final ResponseUpdate update) {
         open(context);
-        SaveDataTask task = new SaveDataTask(context, listener, data);
-
+        SaveDataTask task = new SaveDataTask(context, listener, data, update);
         task.execute();
     }
 

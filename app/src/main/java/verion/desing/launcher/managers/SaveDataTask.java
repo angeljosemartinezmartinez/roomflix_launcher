@@ -7,7 +7,6 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import verion.desing.launcher.database.AppDataBase;
-import verion.desing.launcher.database.models.Child;
 import verion.desing.launcher.database.models.Translation;
 import verion.desing.launcher.database.tables.Button;
 import verion.desing.launcher.database.tables.InfoCards;
@@ -15,24 +14,28 @@ import verion.desing.launcher.database.tables.Languages;
 import verion.desing.launcher.database.tables.Submenus;
 import verion.desing.launcher.database.tables.Templates;
 import verion.desing.launcher.database.tables.Translations;
+import verion.desing.launcher.database.tables.Update;
 import verion.desing.launcher.listener.CallBackSaveData;
 import verion.desing.launcher.network.response.ResponseAllInfo;
 import verion.desing.launcher.network.response.ResponseInfoCards;
 import verion.desing.launcher.network.response.ResponseLanguages;
 import verion.desing.launcher.network.response.ResponseSubmenu;
 import verion.desing.launcher.network.response.ResponseTemplates;
+import verion.desing.launcher.network.response.ResponseUpdate;
 
 public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
     private static final String TAG = "SaveDataTask";
     private final Context context;
     private CallBackSaveData listener;
     private ResponseAllInfo data;
+    private ResponseUpdate dataUpdate;
     private AppDataBase appDatabase;
 
-    SaveDataTask(Context context, CallBackSaveData listener, ResponseAllInfo data) {
+    SaveDataTask(Context context, CallBackSaveData listener, ResponseAllInfo data, ResponseUpdate update) {
         this.listener = listener;
         this.data = data;
         this.context = context;
+        this.dataUpdate = update;
         appDatabase = AppDataBase.Companion.getInstance(context);
 
     }
@@ -49,7 +52,7 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
             saveButtons(data.templates, appDatabase);
             saveSubmenu(data.submenus, appDatabase);
             saveInfoCards(data.infoCards, appDatabase);
-
+            saveUpdate(dataUpdate, appDatabase);
             ok = true;
         } catch (Exception e) {
             appDatabase.close();
@@ -79,6 +82,10 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
         AppDataBase.Companion.destroyInstance();
     }
 
+    private void saveUpdate(ResponseUpdate update, AppDataBase appDataBase){
+        appDataBase.updateDao().insert(new Update(update.baseUrl, update.date, update.pkg, update.apk ));
+        Log.d(TAG, "SAVE: " + update.toString());
+    }
 
     private void saveLang(ArrayList<ResponseLanguages> languages, AppDataBase appDatabase) {
         ArrayList<Languages> langs = new ArrayList<>();
@@ -154,7 +161,7 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
             ArrayList<InfoCards> childs = new ArrayList<>();
             for (ResponseInfoCards.Child child : infocard.childs) {
                 ArrayList<Translation> translationsChild = new ArrayList<>();
-                for(ResponseInfoCards.Child.Translations trans : child.translations){
+                for (ResponseInfoCards.Child.Translations trans : child.translations) {
                     translationsChild.add(new Translation(trans.locale, trans.picture));
                 }
                 childs.add(new InfoCards(child.id, translationsChild, null));

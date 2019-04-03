@@ -57,7 +57,8 @@
             android:name=".views.activities.LanguageSelect"
             android:clearTaskOnLaunch="false"
             android:launchMode="singleTask" />
-        <activity android:name=".views.activities.MoreAppsActivity" />
+        <activity android:launchMode="singleTask"
+            android:name=".views.activities.MoreAppsActivity" />
         <activity
             android:name=".views.activities.InfoCardActivity"
             android:launchMode="singleTask" />

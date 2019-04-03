@@ -49,6 +49,7 @@ public class MainMenu extends NetworkBaseActivity {
     private boolean executingCall;
     private long lastTime;
     private Handler waitForNetwork = new Handler();
+    private boolean restart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,18 +60,29 @@ public class MainMenu extends NetworkBaseActivity {
         autoHideLoader = new Handler();
         showLoader();
         executingCall = false;
+        restart = false;
         setClock();
         buttons = new ArrayList<>();
         checkPermission();
-        waitAndExecute();
         errorControl(MainMenu.class);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cleanCache();
+        waitAndExecute();
+        binding.video.start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        binding.video.pause();
         executingCall = false;
     }
+
+
 
     public synchronized void waitAndExecute() {
         if ((System.currentTimeMillis() - lastTime) < 20000) return;
@@ -113,6 +125,7 @@ public class MainMenu extends NetworkBaseActivity {
 
     public void executeCall() {
         showLoader();
+        callUpdate();
         callAllInfo(new CallBackAllInfoCheck() {
             @Override
             public void dataChange() {
@@ -120,7 +133,6 @@ public class MainMenu extends NetworkBaseActivity {
                     deleteLocationDirectory();
                     generationMain();
                     hideLoader();
-
                 });
             }
 
@@ -149,12 +161,6 @@ public class MainMenu extends NetworkBaseActivity {
         }
     }
 
-    private void generateFromDevice() {
-        setBtnFromDevice();
-        imageHelper.loadRoundCorner("/storage/emulated/0/Download/language_background/demoimgfondofondoHotelplay.png", binding.background);
-        setStreaming();
-    }
-
     public void errorControl(Class<MainMenu> activityClass) {
 
         if (BuildConfig.ENVIRONMENT.equals(Constants.ENVIRONMENT.DEVELOP)) {
@@ -180,7 +186,6 @@ public class MainMenu extends NetworkBaseActivity {
     }
 
     private void generationMain() {
-        cleanCache();
         setDay();
         setMySharedPreferencesData();
         setStreaming();
@@ -231,12 +236,10 @@ public class MainMenu extends NetworkBaseActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        restart = true;
         waitAndExecute();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
+        binding.video.start();
+        hideLoader();
     }
 
     private void setClock() {
@@ -426,9 +429,15 @@ public class MainMenu extends NetworkBaseActivity {
 
         );
         if (BuildConfig.ENVIRONMENT.equals(Constants.ENVIRONMENT.DEVELOP))
-            binding.video.setOnClickListener(view -> startPackage("verion.desing.video.player.debug"));
+            binding.video.setOnClickListener(view -> {
+                showLoader();
+                startPackage("verion.desing.video.player.debug");
+            });
         else
-            binding.video.setOnClickListener(view -> startPackage("verion.desing.video.player"));
+            binding.video.setOnClickListener(view -> {
+                showLoader();
+                startPackage("verion.desing.video.player");
+            });
 
         binding.video.setBackgroundResource(R.drawable.focus_video_view);
 

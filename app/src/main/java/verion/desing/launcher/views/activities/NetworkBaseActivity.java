@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
@@ -32,6 +35,9 @@ import verion.desing.launcher.listener.CallBackSaveData;
 import verion.desing.launcher.network.callbacks.CallBackData;
 import verion.desing.launcher.network.response.ResponseAllInfo;
 import verion.desing.launcher.network.response.ResponseTemplates;
+import verion.desing.launcher.network.response.ResponseUpdate;
+import verion.desing.launcher.network.service.ApiPro;
+import verion.desing.launcher.network.service.Service;
 import verion.desing.launcher.utils.NetWorkUtils;
 import verion.desing.launcher.views.fragment.FragmentExit;
 
@@ -42,6 +48,8 @@ public class NetworkBaseActivity extends BaseActivity {
     private boolean inserting;
     private boolean dataSave;
     private String baseUrl;
+    Type typeOfObjectsListNew = new TypeToken<ResponseUpdate>() {
+    }.getType();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,12 +87,28 @@ public class NetworkBaseActivity extends BaseActivity {
         return false;
     }
 
+    public void callUpdate() {
+        call.getUpdate(macAddress, new CallBackData<ResponseUpdate>() {
+            @Override
+            public void finishAction(ResponseUpdate body) {
+                saveDateApk(body.date);
+
+                mySharedPreferences.putStringObject(Constants.SHARED_PREFERENCES.HASH_UPDATE, body, typeOfObjectsListNew);
+            }
+
+            @Override
+            public void error(String s) {
+
+            }
+        });
+    }
+
     public void callAllInfo(CallBackAllInfoCheck callBackAllInfoCheck) {
         call.getDataFromServer(macAddress, new CallBackData<ResponseAllInfo>() {
             @Override
             public void finishAction(ResponseAllInfo body) {
                 if (isDataDifferent(body)) {
-                    saveData(body, callBackAllInfoCheck);
+                    saveData(body, callBackAllInfoCheck, (ResponseUpdate)mySharedPreferences.getObject(Constants.SHARED_PREFERENCES.HASH_UPDATE, typeOfObjectsListNew));
 //                    getImgFromCall(body);
                 } else {
                     Logger.d("DATA NOT DIFFERENT");
@@ -98,10 +122,96 @@ public class NetworkBaseActivity extends BaseActivity {
             public void error(String s) {
                 if (s.equals("403")) {
                     callBackAllInfoCheck.error(s);
-                }
+                } else if (s.equals("503"))
+                    callBackAllInfoCheck.dataNoChange();
                 Log.d(TAG, "Code: " + s);
             }
         });
+    }
+
+    private void saveDateApk(String fecha) {
+        if (fecha != null)
+            mySharedPreferences.putString(Constants.SHARED_PREFERENCES.APK_DATE, fecha);
+    }
+
+    /**
+     * Download and create a directory where is saved the app
+     *
+     * @param apk where is downloaded
+     * @param pkg of the app
+     */
+    private void checkUpdate(String apk, String pkg) {
+        new Thread(() -> {
+            try {
+                URL url = new URL(apk);
+                HttpURLConnection c = (HttpURLConnection) url.openConnection();
+                c.setRequestMethod("GET");
+                c.connect();
+                File apkStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                        + "/" + "apks");
+                if (!apkStorage.exists()) {
+                    apkStorage.mkdir();
+                }
+                String apkDownloaded = apk.substring(38).trim();
+                File outputFile = new File(apkStorage, apkDownloaded);
+                if (!outputFile.exists()) {
+                    outputFile.createNewFile();
+                }
+                FileOutputStream fos = new FileOutputStream(outputFile);
+                InputStream is = c.getInputStream();
+                byte[] buffer = new byte[1024];
+                int len1;
+                while ((len1 = is.read(buffer)) != -1) {
+                    fos.write(buffer, 0, len1);
+                }
+                fos.close();
+                is.close();
+                installProcess(apkStorage.getAbsolutePath() + apkDownloaded, pkg);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    /**
+     * Install an application downloaded from panel
+     *
+     * @param path where is specified apk
+     * @param pkg  package of the app
+     */
+    public void installProcess(String path, String pkg) {
+        Process pro1;
+        try {
+            pro1 = Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "chmod 777 " + path});
+            try {
+                pro1.waitFor();
+            } catch (InterruptedException e) {
+                Logger.d(e);
+                e.printStackTrace();
+            }
+            Logger.d(path);
+            Process pro2 = Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm install -r -d -g " + path});
+            try {
+                pro2.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                Logger.d(e);
+
+            }
+            Process pro3 = Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm install -r -i " + pkg + " -d -g  " + path});
+            try {
+                pro3.waitFor();
+            } catch (InterruptedException e) {
+                Logger.d(e);
+
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            Logger.d(e);
+            e.printStackTrace();
+        }
     }
 
     private void getImgFromCall(ResponseAllInfo body) {
@@ -212,13 +322,17 @@ public class NetworkBaseActivity extends BaseActivity {
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LOGO, logo);
     }
 
-    private void saveData(ResponseAllInfo body, CallBackAllInfoCheck callBackAllInfoCheck) {
+    private void saveData(ResponseAllInfo body, CallBackAllInfoCheck callBackAllInfoCheck, ResponseUpdate update) {
         Logger.d("DATA DIFFERENT");
         saveBackground(body);
         saveBackgroundLanguages(body);
         saveDefaultLanguage(body);
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.BASE_URL, body.baseUrl);
         baseUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
+        if(update != null){
+            String fecha = update.date;
+            saveDateApk(fecha);
+        }
         saveLogo(body);
         insertDataBaseData(body, new CallBackSaveData() {
             @Override
@@ -230,10 +344,10 @@ public class NetworkBaseActivity extends BaseActivity {
             public void error(String s) {
                 callBackAllInfoCheck.error(s);
             }
-        });
+        }, update);
     }
 
-    public synchronized void insertDataBaseData(final ResponseAllInfo body, CallBackSaveData callBackSaveData) {
+    public synchronized void insertDataBaseData(final ResponseAllInfo body, CallBackSaveData callBackSaveData, ResponseUpdate update) {
         if (inserting) return;
         inserting = true;
         mDBManager.saveData(body, getApplicationContext(), new CallBackSaveData() {
@@ -248,8 +362,9 @@ public class NetworkBaseActivity extends BaseActivity {
             public void error(String s) {
                 callBackSaveData.error(s);
             }
-        });
+        },update );
     }
+
 
     private int putHashCall(ResponseAllInfo body) {
         Gson g = new Gson();
@@ -270,6 +385,12 @@ public class NetworkBaseActivity extends BaseActivity {
         } else {
             mDBManager.delete(this);
             mySharedPreferences.putInt(Constants.SHARED_PREFERENCES.HASH_ALL_INFO, actual);
+            ResponseUpdate update = (ResponseUpdate) mySharedPreferences.getObject(Constants.SHARED_PREFERENCES.HASH_UPDATE, typeOfObjectsListNew);
+            String date = update.date;
+            Log.d(TAG, "Different date: " + date + " shared preferences date: "
+                    + mySharedPreferences.getString(Constants.SHARED_PREFERENCES.APK_DATE));
+            if(!date.equals(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.APK_DATE)))
+                checkUpdate(update.apk, update.pkg);
             return true;
         }
     }

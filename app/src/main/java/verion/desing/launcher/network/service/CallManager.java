@@ -11,6 +11,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import verion.desing.launcher.network.callbacks.CallBackData;
 import verion.desing.launcher.network.response.ResponseAllInfo;
+import verion.desing.launcher.network.response.ResponseUpdate;
 
 @Module
 public class CallManager {
@@ -47,4 +48,31 @@ public class CallManager {
         });
 
     }
+
+
+    public void getUpdate(String mac, CallBackData listener){
+        ApiPro.createService(Service.class);
+        Call<ResponseUpdate> call = ApiPro.createService(Service.class).getUpdate(mac);
+        call.enqueue(new Callback<ResponseUpdate>() {
+            @Override
+            public void onResponse(Call<ResponseUpdate> call, Response<ResponseUpdate> response) {
+                try {
+                    if (response.isSuccessful()) {
+                        listener.finishAction(response.body());
+                    } else listener.error(String.valueOf(response.code()));
+                } catch (Exception e) {
+                    listener.error("C");
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseUpdate> call, Throwable t) {
+                Log.d(TAG, "Error: " + t.getLocalizedMessage());
+                listener.error("F");
+            }
+        });
+    }
+
 }
