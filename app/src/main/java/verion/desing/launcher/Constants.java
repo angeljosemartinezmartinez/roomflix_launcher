@@ -23,6 +23,7 @@ public class Constants {
         public static final String ID_SUBMENU = "idSubmenu";
         public static final String INFOCARD_INDEX = "infocardIndex";
         public static final String LOGO = "logo";
+        public static final String MINI_LOGO = "miniLogo";
         public static final String DEFAULT_CHANNEL = "defaultChannel";
     }
 

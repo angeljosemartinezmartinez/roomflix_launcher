@@ -115,10 +115,7 @@ public class ImageHelper {
     public void loadRoundCorner(String url, ImageView view) {
         Context context = view.getContext();
         if (!((Activity) context).isFinishing())
-            Glide.with(context).load(url)
-                    .apply(new RequestOptions()
-                            .transforms(new CenterCrop(), new RoundedCorners(context, 0, 0))
-                            .dontAnimate().diskCacheStrategy(DiskCacheStrategy.NONE)).into(view);
+            Glide.with(context).load(url).into(view);
     }
 
     public void loadRoundCorner(int url, ImageView view) {

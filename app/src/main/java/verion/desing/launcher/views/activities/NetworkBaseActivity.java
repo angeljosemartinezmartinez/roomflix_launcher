@@ -209,7 +209,9 @@ public class NetworkBaseActivity extends BaseActivity {
 
     private void saveLogo(ResponseAllInfo body) {
         String logo = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL) + body.templates.logo;
+        String miniLogo = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL) + body.templates.miniLogo;
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.LOGO, logo);
+        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.MINI_LOGO, miniLogo);
     }
 
     private void saveData(ResponseAllInfo body, CallBackAllInfoCheck callBackAllInfoCheck) {
