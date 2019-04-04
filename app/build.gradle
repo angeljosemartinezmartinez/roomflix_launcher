@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
-def vc = 6000
+def vc = 6001
 android {
     lintOptions{
         checkReleaseBuilds false
@@ -52,7 +52,7 @@ android {
     productFlavors {
         normal {
             applicationId "verion.desing.launcher"
-            versionName "6.0.0.0"
+            versionName "6.0.0.1"
             signingConfig signingConfigs.release
             flavorDimensions "default"
             archivesBaseName= "verionLauncher-" + vc
