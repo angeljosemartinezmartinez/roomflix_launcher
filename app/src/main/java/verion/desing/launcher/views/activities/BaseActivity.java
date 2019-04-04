@@ -146,12 +146,15 @@ public class BaseActivity extends AppCompatActivity {
         try {
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.netflix.mediaclient"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.amazon.avod.thirdpartyclient"});
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear es.plus.yomvi"});
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.nousguide.android.rbtv"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear rtve.tablet.android"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.google.android.youtube.tv"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.dazn"});
-//            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear verion.desing.video.player"});
+            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.a3.sgt"});
+            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.bskyb.skygo"});
+            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear tv.wuaki"});
+            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.mubi"});
+            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear de.sky.bw"});
+            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear fr.tf1.mytf1"});
         } catch (IOException e) {
             e.printStackTrace();
         }

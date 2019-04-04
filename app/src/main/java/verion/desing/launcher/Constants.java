@@ -14,6 +14,7 @@ public class Constants {
         public static final String HOTSPOT_PS = "hotspotpsw";
         public static final String HASH_ALL_INFO = "hashallinfo";
         public static final String HASH_UPDATE = "hashupdate";
+        public static final String UPDATE_OBJECT = "updateObject";
         public static final String POPUP_INDEX = "popupIndex";
         public static final String TIMEZONE = "timezone";
         public static final String POPUP_COUNTER = "popUpCounter";

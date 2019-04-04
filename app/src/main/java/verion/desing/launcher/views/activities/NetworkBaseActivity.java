@@ -24,9 +24,6 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
@@ -36,8 +33,6 @@ import verion.desing.launcher.network.callbacks.CallBackData;
 import verion.desing.launcher.network.response.ResponseAllInfo;
 import verion.desing.launcher.network.response.ResponseTemplates;
 import verion.desing.launcher.network.response.ResponseUpdate;
-import verion.desing.launcher.network.service.ApiPro;
-import verion.desing.launcher.network.service.Service;
 import verion.desing.launcher.utils.NetWorkUtils;
 import verion.desing.launcher.views.fragment.FragmentExit;
 
@@ -91,9 +86,9 @@ public class NetworkBaseActivity extends BaseActivity {
         call.getUpdate(macAddress, new CallBackData<ResponseUpdate>() {
             @Override
             public void finishAction(ResponseUpdate body) {
-                saveDateApk(body.date);
-
-                mySharedPreferences.putStringObject(Constants.SHARED_PREFERENCES.HASH_UPDATE, body, typeOfObjectsListNew);
+                mySharedPreferences.putStringObject(Constants.SHARED_PREFERENCES.UPDATE_OBJECT, body, typeOfObjectsListNew);
+                if (isUpdateDifferent(body))
+                    saveDateApk(body.date);
             }
 
             @Override
@@ -103,13 +98,43 @@ public class NetworkBaseActivity extends BaseActivity {
         });
     }
 
+    private boolean isUpdateDifferent(ResponseUpdate body) {
+        int actual = putCallUpdate(body);
+        int last = mySharedPreferences.getInt(Constants.SHARED_PREFERENCES.HASH_UPDATE);
+        if (last == (actual)) {
+            Logger.d("UPDATE NOT CHANGED");
+            return false;
+        } else {
+            Logger.d("UPDATE CHANGED");
+            String date = body.date;
+            Log.d(TAG, "Different date: " + date + " shared preferences date: "
+                    + mySharedPreferences.getString(Constants.SHARED_PREFERENCES.APK_DATE));
+            if (!date.equals(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.APK_DATE))) {
+                String apk = body.baseUrl + body.apk;
+                checkUpdate(apk, body.pkg);
+            }
+            mySharedPreferences.putInt(Constants.SHARED_PREFERENCES.HASH_UPDATE, actual);
+            mySharedPreferences.putStringObject(Constants.SHARED_PREFERENCES.UPDATE_OBJECT, body, typeOfObjectsListNew);
+            return true;
+        }
+    }
+
+    private int putCallUpdate(ResponseUpdate update) {
+        Gson g = new Gson();
+        Type typeOfObjectsListNew = new TypeToken<ResponseUpdate>() {
+        }.getType();
+        String jsonResponse = g.toJson(update, typeOfObjectsListNew);
+        int hash = jsonResponse.hashCode();
+        return hash;
+    }
+
     public void callAllInfo(CallBackAllInfoCheck callBackAllInfoCheck) {
         call.getDataFromServer(macAddress, new CallBackData<ResponseAllInfo>() {
             @Override
             public void finishAction(ResponseAllInfo body) {
                 if (isDataDifferent(body)) {
-                    saveData(body, callBackAllInfoCheck, (ResponseUpdate)mySharedPreferences.getObject(Constants.SHARED_PREFERENCES.HASH_UPDATE, typeOfObjectsListNew));
-//                    getImgFromCall(body);
+                    saveData(body, callBackAllInfoCheck,
+                            (ResponseUpdate) mySharedPreferences.getObject(Constants.SHARED_PREFERENCES.UPDATE_OBJECT, typeOfObjectsListNew));
                 } else {
                     Logger.d("DATA NOT DIFFERENT");
                     if (callBackAllInfoCheck != null) {
@@ -331,10 +356,6 @@ public class NetworkBaseActivity extends BaseActivity {
         saveDefaultLanguage(body);
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.BASE_URL, body.baseUrl);
         baseUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
-        if(update != null){
-            String fecha = update.date;
-            saveDateApk(fecha);
-        }
         saveLogo(body);
         insertDataBaseData(body, new CallBackSaveData() {
             @Override
@@ -364,7 +385,7 @@ public class NetworkBaseActivity extends BaseActivity {
             public void error(String s) {
                 callBackSaveData.error(s);
             }
-        },update );
+        }, update);
     }
 
 
@@ -387,19 +408,13 @@ public class NetworkBaseActivity extends BaseActivity {
         } else {
             mDBManager.delete(this);
             mySharedPreferences.putInt(Constants.SHARED_PREFERENCES.HASH_ALL_INFO, actual);
-            ResponseUpdate update = (ResponseUpdate) mySharedPreferences.getObject(Constants.SHARED_PREFERENCES.HASH_UPDATE, typeOfObjectsListNew);
-            String date = update.date;
-            Log.d(TAG, "Different date: " + date + " shared preferences date: "
-                    + mySharedPreferences.getString(Constants.SHARED_PREFERENCES.APK_DATE));
-            if(!date.equals(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.APK_DATE)))
-                checkUpdate(update.apk, update.pkg);
             return true;
         }
     }
 
     public synchronized void goFunction(int function, String args) {
         Logger.d(function + "-" + args);
-        if (args.equals("null")) {
+        if (args.equals("") && function != 6) {
             comingSoon(this);
             return;
         }
