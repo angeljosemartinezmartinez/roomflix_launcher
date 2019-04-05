@@ -27,6 +27,7 @@ public class Constants {
         public static final String LOGO = "logo";
         public static final String MINI_LOGO = "miniLogo";
         public static final String DEFAULT_CHANNEL = "defaultChannel";
+        public static final String ID_MOREAPPS = "idMoreApps";
     }
 
     public class ANALYTICS {
