@@ -11,7 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import verion.desing.launcher.R;
 import verion.desing.launcher.database.tables.Translations;
-import verion.desing.launcher.databinding.ItemMoreAppsBinding;
+import verion.desing.launcher.databinding.ItemSubmenuBinding;
 import verion.desing.launcher.helpers.ImageHelper;
 
 public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder> {
@@ -19,7 +19,7 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder> 
     private String baseUrl;
     public ClickAppCallBack listener;
     private ArrayList<Translations> mBtnList;
-    private ItemMoreAppsBinding binding;
+    private ItemSubmenuBinding binding;
 
     public ChildAdapter(ArrayList<Translations> buttonList, ClickAppCallBack listener, String baseUrl) {
         this.mBtnList = buttonList;
@@ -31,7 +31,7 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        binding = DataBindingUtil.inflate(layoutInflater, R.layout.item_more_apps, parent, false);
+        binding = DataBindingUtil.inflate(layoutInflater, R.layout.item_submenu, parent, false);
         return new ViewHolder(binding.getRoot(), binding, listener);
     }
 
@@ -65,11 +65,11 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder> 
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private ItemMoreAppsBinding binding;
+        private ItemSubmenuBinding binding;
 
-        public ViewHolder(View itemView, ItemMoreAppsBinding itemMoreAppsBinding, ClickAppCallBack simpleCallBack) {
+        public ViewHolder(View itemView, ItemSubmenuBinding itemSubmenuBinding, ClickAppCallBack simpleCallBack) {
             super(itemView);
-            this.binding = itemMoreAppsBinding;
+            this.binding = itemSubmenuBinding;
 
         }
 

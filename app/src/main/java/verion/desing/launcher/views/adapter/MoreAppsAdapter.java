@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import verion.desing.launcher.R;
 import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.databinding.ItemMoreAppsBinding;
+import verion.desing.launcher.databinding.ItemSubmenuBinding;
 import verion.desing.launcher.helpers.ImageHelper;
 
 /**
@@ -22,7 +23,7 @@ public class MoreAppsAdapter extends RecyclerView.Adapter<MoreAppsAdapter.ViewHo
 
     public ClickAppCallBack listener;
     private ArrayList<Translations> mBtnList;
-    private ItemMoreAppsBinding binding;
+    private ItemSubmenuBinding binding;
     private String baseUrl;
 
     public MoreAppsAdapter(ArrayList<Translations> buttonList, ClickAppCallBack listener, String baseUrl) {
@@ -35,7 +36,7 @@ public class MoreAppsAdapter extends RecyclerView.Adapter<MoreAppsAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        binding = DataBindingUtil.inflate(layoutInflater, R.layout.item_more_apps, parent, false);
+        binding = DataBindingUtil.inflate(layoutInflater, R.layout.item_submenu, parent, false);
         return new ViewHolder(binding.getRoot(), binding, listener);
     }
 
@@ -65,11 +66,11 @@ public class MoreAppsAdapter extends RecyclerView.Adapter<MoreAppsAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private ItemMoreAppsBinding binding;
+        private ItemSubmenuBinding binding;
 
-        public ViewHolder(View itemView, ItemMoreAppsBinding itemMoreAppsBinding, ClickAppCallBack simpleCallBack) {
+        public ViewHolder(View itemView, ItemSubmenuBinding itemSubmenuBinding, ClickAppCallBack simpleCallBack) {
             super(itemView);
-            this.binding = itemMoreAppsBinding;
+            this.binding = itemSubmenuBinding;
 
         }
 
