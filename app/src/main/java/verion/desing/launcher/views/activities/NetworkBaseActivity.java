@@ -432,6 +432,7 @@ public class NetworkBaseActivity extends BaseActivity {
                 infoCard(args);
                 break;
             case 5:
+                startMoreAppsSubmenu(args);
                 break;
             case 6:
                 changeLanguage(this);
@@ -439,6 +440,16 @@ public class NetworkBaseActivity extends BaseActivity {
             default:
                 comingSoon(this);
         }
+    }
+
+    private void startMoreAppsSubmenu(String args) {
+        if(args != null) {
+            int argsInt = Integer.parseInt(args);
+            mySharedPreferences.putInt(Constants.SHARED_PREFERENCES.ID_MOREAPPS, argsInt);
+        }
+
+        Intent i = new Intent(getApplicationContext(), MoreAppsSubmenuActivity.class);
+        startActivity(i);
     }
 
     private void exitApp(String nPackage) {

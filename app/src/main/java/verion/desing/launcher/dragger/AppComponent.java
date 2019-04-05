@@ -13,6 +13,7 @@ import verion.desing.launcher.views.activities.LanguageSelect;
 import verion.desing.launcher.views.activities.MainMenu;
 import verion.desing.launcher.views.activities.BaseActivity;
 import verion.desing.launcher.views.activities.MoreAppsActivity;
+import verion.desing.launcher.views.activities.MoreAppsSubmenuActivity;
 
 @Singleton
 @Component(modules = {SharedPreferencesModule.class, ImageHelper.class, FileHelper.class, CallManager.class, DBManager.class, PermissionHelper.class})
@@ -29,5 +30,7 @@ public interface AppComponent {
     void inject(MoreAppsActivity target);
 
     void inject(InfoCardActivity target);
+
+    void inject(MoreAppsSubmenuActivity target);
 
 }

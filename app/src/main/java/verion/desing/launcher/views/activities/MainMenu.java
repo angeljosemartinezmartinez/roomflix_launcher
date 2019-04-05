@@ -2,6 +2,7 @@ package verion.desing.launcher.views.activities;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
@@ -473,6 +474,13 @@ public class MainMenu extends NetworkBaseActivity {
                 imageHelper.loadRoundCorner(baseUrl + translation.getPicture(), btnFor, MainMenu.this);
                 btnFor.setOnClickListener(view -> {
                     goFunction(translation.getFunctionType(), translation.getFunctionTarget());
+                });
+                binding.btn6.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(getApplicationContext(), MoreAppsSubmenuActivity.class);
+                        startActivity(i);
+                    }
                 });
             });
         }
