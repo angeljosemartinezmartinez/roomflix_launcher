@@ -60,19 +60,18 @@ public class MainMenu extends NetworkBaseActivity {
         Utils.changeAppLanguage(new Locale(langID.toUpperCase(), langID.toLowerCase()), this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         autoHideLoader = new Handler();
-        showLoader();
         executingCall = false;
         restart = false;
         setClock();
         buttons = new ArrayList<>();
         checkPermission();
-        errorControl(MainMenu.class);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         cleanCache();
+        Logger.d( "onResume");
         waitAndExecute();
         binding.video.start();
     }
@@ -434,15 +433,9 @@ public class MainMenu extends NetworkBaseActivity {
 
         );
         if (BuildConfig.ENVIRONMENT.equals(Constants.ENVIRONMENT.DEVELOP))
-            binding.video.setOnClickListener(view -> {
-                showLoader();
-                startPackage("verion.desing.video.player.debug");
-            });
+            binding.video.setOnClickListener(view -> startPackage("verion.desing.video.player.debug"));
         else
-            binding.video.setOnClickListener(view -> {
-                showLoader();
-                startPackage("verion.desing.video.player");
-            });
+            binding.video.setOnClickListener(view -> startPackage("verion.desing.video.player"));
 
         binding.video.setBackgroundResource(R.drawable.focus_video_view);
 

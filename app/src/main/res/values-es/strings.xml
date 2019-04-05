@@ -5,7 +5,7 @@
     <string name="explanation_exit">
         Va a salir de HotelPlay
     </string>
-    <string name="explanation_exit1">Sus datos personales serán borrados cuando salga de la habitación\nAdemás sus datos personales no serán tratados por nosotros ni por terceros</string>
+    <string name="explanation_exit1">Sus datos personales serán borrados cuando salga de la aplicación\nAdemás sus datos personales no serán tratados por nosotros ni por terceros</string>
     <string name="explanation_exit_codes">Estamos haciendo algunos cambios, danos un segundo</string>
 
     <string name="back" >IR ATRÁS</string>

@@ -445,6 +445,16 @@
             android:focusable="false"
             android:focusableInTouchMode="false" />
 
+        <ImageView
+            android:id="@+id/powered"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/powered_by_hotelplay"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

@@ -83,8 +83,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
                 if (item.getCode().toLowerCase().equals("en")) {
                     binding.image.requestFocus();
                     binding.image.setBackground(binding.getRoot().getContext()
-                            .getResources().getDrawable(R.drawable.backstreaming));
-//                    binding.image.clearFocus();
+                            .getResources().getDrawable(R.drawable.backstreaming, itemView.getContext().getTheme()));
                     binding.image.requestFocus();
                     binding.image.bringToFront();
                 }

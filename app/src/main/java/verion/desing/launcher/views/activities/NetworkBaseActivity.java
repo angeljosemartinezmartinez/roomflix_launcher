@@ -239,7 +239,7 @@ public class NetworkBaseActivity extends BaseActivity {
         }
     }
 
-    private void getImgFromCall(ResponseAllInfo body) {
+    /*private void getImgFromCall(ResponseAllInfo body) {
         ResponseTemplates mBtnList = body.templates;
         ArrayList<Translations> btns = getButtons(mBtnList);
         saveTemplateImages(btns);
@@ -275,9 +275,9 @@ public class NetworkBaseActivity extends BaseActivity {
         }
         downloadImages(focusImg, "button_focused");
 
-    }
+    }*/
 
-    private void downloadImages(ArrayList<String> img, String directory) {
+    /*private void downloadImages(ArrayList<String> img, String directory) {
         new Thread(() -> {
             for (int i = 0; i < img.size(); i++) {
                 try {
@@ -316,7 +316,7 @@ public class NetworkBaseActivity extends BaseActivity {
             }
 
         }).start();
-    }
+    }*/
 
     private void saveBackground(ResponseAllInfo body) {
         String background = body.templates.background;
