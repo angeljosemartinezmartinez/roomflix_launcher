@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import verion.desing.launcher.database.models.Child
 import verion.desing.launcher.database.models.Translation
+import verion.desing.launcher.database.models.TranslationSubmenu
 import verion.desing.launcher.database.tables.*
 
 
@@ -101,15 +102,15 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromStringToArrayListLanguages(value: String): List<Languages> {
-        val listType = object : TypeToken<List<Languages>>() {
+    fun fromStringToArrayListLanguages(value: String): ArrayList<TranslationSubmenu> {
+        val listType = object : TypeToken<ArrayList<TranslationSubmenu>>() {
         }.type
         return Gson().fromJson(value, listType)
     }
 
     @TypeConverter
-    fun fromArrayListLanguagesToString(list: List<Languages>): String {
-        val listType = object : TypeToken<List<Languages>>() {
+    fun fromArrayListLanguagesToString(list: ArrayList<TranslationSubmenu>): String {
+        val listType = object : TypeToken<ArrayList<TranslationSubmenu>>() {
         }.type
         val gson = Gson()
         return gson.toJson(list, listType)

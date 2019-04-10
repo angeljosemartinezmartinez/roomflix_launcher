@@ -72,14 +72,6 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-    public void connectionError(int drawable) {
-        hasError = true;
-        Intent i = new Intent(this, ErrorActivity.class);
-        i.putExtra(Constants.INTENT_EXTRA.ERROR_TYPE, true);
-        i.putExtra(Constants.INTENT_EXTRA.ERROR_BACKGROUND, drawable);
-        startActivity(i);
-    }
-
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(IconicsContextWrapper.wrap(newBase));

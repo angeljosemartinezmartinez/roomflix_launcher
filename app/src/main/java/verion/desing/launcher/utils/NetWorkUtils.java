@@ -49,7 +49,6 @@ public class NetWorkUtils {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        Logger.d(TAG, "Wifi " + wifiInfo.isConnected());
         return wifiInfo.isConnected();
     }
 }

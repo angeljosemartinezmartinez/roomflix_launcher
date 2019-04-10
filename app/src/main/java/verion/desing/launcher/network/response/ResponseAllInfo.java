@@ -17,4 +17,6 @@ public class ResponseAllInfo {
     public ArrayList<ResponseSubmenu> submenus;
     @SerializedName("infoCards")
     public ArrayList<ResponseInfoCards> infoCards;
+    @SerializedName("configuration")
+    public ResponseConfiguration configuration;
 }

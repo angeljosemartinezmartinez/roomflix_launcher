@@ -12,4 +12,5 @@
     <string name="ok" >OK</string>
     <string name="mouse" >ENABLE/DISABLE MOUSE</string>
     <string name="top_bottom" >UP/DOWN/RIGHT/LEFT</string>
+    <string name="loading_please_wait" translatable="false">Loading.... please wait</string>
 </resources>

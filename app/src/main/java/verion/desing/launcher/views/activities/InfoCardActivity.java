@@ -34,6 +34,7 @@ public class InfoCardActivity extends NetworkBaseActivity {
     private String idLanguage;
     private String baseUrl;
     private String background;
+    private String logo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +45,27 @@ public class InfoCardActivity extends NetworkBaseActivity {
         childs = new ArrayList<>();
         idInfocard = mySharedPreferences.getInt(Constants.SHARED_PREFERENCES.INFOCARD_INDEX);
         idLanguage = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
+        generateUI();
+        getInfocard();
+
+    }
+
+    private void setClock() {
+        binding.help.toptextClock.setFormat12Hour(null);
+        binding.help.toptextClock.setFormat24Hour("HH:mm");
+        String timezone = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.TIMEZONE);
+        if (timezone != "")
+            binding.help.toptextClock.setTimeZone(timezone);
+    }
+
+    private void generateUI() {
         background = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.URL_BACK);
         baseUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
+        logo = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.MINI_LOGO);
         imageHelper.loadRoundCorner(baseUrl + background, binding.background);
-        getInfocard();
+        imageHelper.loadRoundCorner(logo, binding.help.logo);
+        setClock();
+        setDay(binding.help.day);
     }
 
     private void getInfocard() {

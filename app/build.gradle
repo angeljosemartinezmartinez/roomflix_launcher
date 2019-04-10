@@ -83,9 +83,6 @@ dependencies {
     //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    //Crash Helper
-    implementation 'cat.ereza:customactivityoncrash:2.2.0'
-
     //Player
     implementation 'com.google.android.exoplayer:exoplayer:2.6.1'
 

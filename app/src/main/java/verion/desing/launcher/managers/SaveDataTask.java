@@ -8,7 +8,9 @@ import java.util.ArrayList;
 
 import verion.desing.launcher.database.AppDataBase;
 import verion.desing.launcher.database.models.Translation;
+import verion.desing.launcher.database.models.TranslationSubmenu;
 import verion.desing.launcher.database.tables.Button;
+import verion.desing.launcher.database.tables.Configuration;
 import verion.desing.launcher.database.tables.InfoCards;
 import verion.desing.launcher.database.tables.Languages;
 import verion.desing.launcher.database.tables.Submenus;
@@ -17,6 +19,7 @@ import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.database.tables.Update;
 import verion.desing.launcher.listener.CallBackSaveData;
 import verion.desing.launcher.network.response.ResponseAllInfo;
+import verion.desing.launcher.network.response.ResponseConfiguration;
 import verion.desing.launcher.network.response.ResponseInfoCards;
 import verion.desing.launcher.network.response.ResponseLanguages;
 import verion.desing.launcher.network.response.ResponseSubmenu;
@@ -53,6 +56,7 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
             saveSubmenu(data.submenus, appDatabase);
             saveInfoCards(data.infoCards, appDatabase);
             saveUpdate(dataUpdate, appDatabase);
+            saveConfiguration(data.configuration, appDatabase);
             ok = true;
         } catch (Exception e) {
             appDatabase.close();
@@ -82,9 +86,17 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
         AppDataBase.Companion.destroyInstance();
     }
 
-    private void saveUpdate(ResponseUpdate update, AppDataBase appDataBase){
-        appDataBase.updateDao().insert(new Update(update.baseUrl, update.date, update.pkg, update.apk ));
+    private void saveUpdate(ResponseUpdate update, AppDataBase appDataBase) {
+        appDataBase.updateDao().insert(new Update(update.baseUrl, update.date, update.pkg, update.apk));
         Log.d(TAG, "SAVE: " + update.toString());
+    }
+
+    private void saveConfiguration(ResponseConfiguration responseConfiguration, AppDataBase appDataBase) {
+            Configuration configuration;
+            configuration = new Configuration(responseConfiguration.timeZone);
+            appDataBase.configurationDao().insert(configuration);
+            Log.d(TAG, "SAVE::::::" + configuration.toString() + " CONFIGURATION");
+
     }
 
     private void saveLang(ArrayList<ResponseLanguages> languages, AppDataBase appDatabase) {
@@ -149,7 +161,11 @@ public class SaveDataTask extends AsyncTask<Void, Void, Boolean> {
                 }
                 buttons.add(new Button(0, button.position, pictures));
             }
-            submenus.add(new Submenus(submenu.id, buttons));
+            ArrayList<TranslationSubmenu> translationSubmenus = new ArrayList<>();
+            for (ResponseSubmenu.TranslationSubmenu translationSubmenu : submenu.translations) {
+                translationSubmenus.add(new TranslationSubmenu(translationSubmenu.language, translationSubmenu.title));
+            }
+            submenus.add(new Submenus(submenu.id, translationSubmenus, buttons));
         }
         Log.d(TAG, "SAVE " + submenus.size() + " SUBMENUS");
         appDataBase.submenuDao().insertAll(submenus);

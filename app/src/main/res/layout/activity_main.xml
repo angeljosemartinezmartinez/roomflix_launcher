@@ -16,19 +16,6 @@
             android:scaleType="fitXY" />
 
         <ImageView
-            android:id="@+id/logo"
-            android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitXY"
-            app:layout_constraintBottom_toTopOf="@+id/myVideo"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
             android:id="@+id/ver_tv"
             android:layout_width="60dp"
             android:layout_height="27dp"
@@ -38,69 +25,6 @@
             app:layout_constraintBottom_toTopOf="@+id/myVideo"
             app:layout_constraintEnd_toEndOf="@+id/myVideo"
             android:visibility="invisible"/>
-
-        <TextClock
-            android:id="@+id/toptextClock"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="27dp"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:fontFamily="@font/montserrat_light"
-            android:format12Hour="null"
-            android:format24Hour="hh:mm"
-            android:textAlignment="textEnd"
-            android:textColor="@android:color/white"
-            android:textSize="23sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <TextView
-            android:id="@+id/ico_day"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="275dp"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:fontFamily="@font/montserrat_light"
-            android:text="{gmd_today}"
-            android:textAlignment="textEnd"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-        <TextView
-            android:id="@+id/day"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="140dp"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:fontFamily="@font/roboto_regular"
-            android:textSize="23sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-        <TextView
-            android:id="@+id/ico_clock"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="8dp"
-            android:text="{gmd_access_time}"
-            android:textAlignment="textEnd"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            app:layout_constraintEnd_toStartOf="@+id/toptextClock"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/myVideo"
@@ -346,114 +270,17 @@
             app:layout_constraintStart_toEndOf="@+id/btn12"
             app:layout_constraintTop_toBottomOf="@+id/btn15" />
 
-        <ImageView
-            android:id="@+id/ok"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/ok"
-            app:layout_constraintStart_toStartOf="@+id/btn1"
-            app:layout_constraintTop_toBottomOf="@+id/btn1" />
-
-        <TextView
-            android:id="@+id/text_ok"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:text="@string/ok"
-            android:textColor="@color/white"
-            app:layout_constraintStart_toEndOf="@+id/ok"
-            app:layout_constraintTop_toBottomOf="@+id/btn1" />
-
-        <ImageView
-            android:id="@+id/mouse"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/activar_mouse"
-            app:layout_constraintStart_toEndOf="@+id/text_ok"
-            app:layout_constraintTop_toBottomOf="@+id/btn1" />
-
-        <TextView
-            android:id="@+id/text_mouse"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/mouse"
-            android:textColor="@color/white"
-            app:layout_constraintStart_toEndOf="@+id/mouse"
-            app:layout_constraintTop_toBottomOf="@+id/btn1" />
-
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/atras"
-            app:layout_constraintStart_toEndOf="@+id/text_mouse"
-            app:layout_constraintTop_toBottomOf="@+id/btn6" />
-
-        <TextView
-            android:id="@+id/text_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/back"
-            android:textColor="@color/white"
-            app:layout_constraintStart_toEndOf="@+id/back"
-            app:layout_constraintTop_toBottomOf="@+id/btn5" />
-
-        <ImageView
-            android:id="@+id/top_bottom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/arriba_abajo"
-            app:layout_constraintStart_toEndOf="@+id/text_back"
-            app:layout_constraintTop_toBottomOf="@+id/btn12" />
-
-        <ImageView
-            android:id="@+id/right_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/izquierda_derecha"
-            app:layout_constraintStart_toEndOf="@+id/top_bottom"
-            app:layout_constraintTop_toBottomOf="@+id/btn12" />
-
-        <TextView
-            android:id="@+id/text_direction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/top_bottom"
-            android:textColor="@color/white"
-            app:layout_constraintStart_toEndOf="@+id/right_left"
-            app:layout_constraintTop_toBottomOf="@+id/btn9" />
+        <include
+            android:id="@+id/help"
+            layout="@layout/help_remote_control"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
 
         <include
             android:id="@+id/loader"
             layout="@layout/loader"
             android:focusable="false"
             android:focusableInTouchMode="false" />
-
-        <ImageView
-            android:id="@+id/powered"
-            android:layout_width="120dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/powered_by_hotelplay"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

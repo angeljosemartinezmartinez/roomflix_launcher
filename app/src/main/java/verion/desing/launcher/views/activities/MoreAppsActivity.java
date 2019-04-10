@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
+import verion.desing.launcher.database.models.TranslationSubmenu;
 import verion.desing.launcher.database.tables.Button;
 import verion.desing.launcher.database.tables.Submenus;
 import verion.desing.launcher.database.tables.Translations;
@@ -37,6 +38,7 @@ public class MoreAppsActivity extends NetworkBaseActivity {
     private int idSubmenu;
     private String actualLang;
     private Handler autoHideLoader;
+    private String logo;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,14 +51,28 @@ public class MoreAppsActivity extends NetworkBaseActivity {
         showLoader();
         chargeSharedPreferencesData();
         imageHelper.loadRoundCorner(background, binding.background);
+        imageHelper.loadRoundCorner(logo, binding.help.logo);
         idSubmenu = mySharedPreferences.getInt(Constants.SHARED_PREFERENCES.ID_SUBMENU);
         getSubmenuFromBtn();
+        setClock();
+        setDay(binding.help.day);
+    }
+
+    private void setClock() {
+        binding.help.toptextClock.setFormat12Hour(null);
+        binding.help.toptextClock.setFormat24Hour("HH:mm");
+        String timezone = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.TIMEZONE);
+
+        if (timezone != "")
+            binding.help.toptextClock.setTimeZone(timezone);
     }
 
     private void chargeSharedPreferencesData() {
         baseUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
         background = baseUrl + mySharedPreferences.getString(Constants.SHARED_PREFERENCES.URL_BACK);
         actualLang = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
+        logo = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.MINI_LOGO);
+        Log.d(TAG, "logo: " + logo);
     }
 
     private void getSubmenuFromBtn() {
@@ -69,6 +85,7 @@ public class MoreAppsActivity extends NetworkBaseActivity {
                     mBtnList = mSubmenu.getButtons();
                     if (mBtnList != null)
                         getTranslations(mBtnList);
+                    getTitle(mSubmenu.getTranslations());
                     setFirstPage();
                     setSecondPage();
                     hideLoader();
@@ -88,6 +105,15 @@ public class MoreAppsActivity extends NetworkBaseActivity {
                 if (translations.getLocale().equals(actualLang)) {
                     mTranslationsList.add(translations);
                 }
+            }
+        }
+
+    }
+
+    private void getTitle(ArrayList<TranslationSubmenu> translationList) {
+        for (TranslationSubmenu trans : translationList) {
+            if (trans.getLanguage().equals(actualLang)) {
+                binding.title.setText(trans.getTitle());
             }
         }
 
@@ -137,7 +163,7 @@ public class MoreAppsActivity extends NetworkBaseActivity {
         ArrayList<Translations> itemsTemp = new ArrayList<>();
         for (Translations item : mTranslationsList) {
             itemsFiltered.add(item);
-            if ((itemsFiltered.indexOf(item) > 3 && itemsFiltered.indexOf(item) <= 7) && itemsTemp.size() < 4){
+            if ((itemsFiltered.indexOf(item) > 3 && itemsFiltered.indexOf(item) <= 7) && itemsTemp.size() < 4) {
                 itemsTemp.add(item);
             }
         }

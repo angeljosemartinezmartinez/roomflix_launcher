@@ -6,7 +6,7 @@
         android:layout_width="282dp"
         android:layout_height="282dp"
         android:background="@color/transparent"
-        android:layout_margin="16dp"
+        android:layout_margin="6dp"
         android:focusable="true"/>
 
 

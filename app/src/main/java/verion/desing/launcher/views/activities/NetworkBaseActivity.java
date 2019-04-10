@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -20,18 +22,18 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import verion.desing.launcher.Constants;
-import verion.desing.launcher.database.tables.Translations;
+import verion.desing.launcher.R;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.listener.CallBackCheckConnection;
 import verion.desing.launcher.listener.CallBackSaveData;
 import verion.desing.launcher.network.callbacks.CallBackData;
 import verion.desing.launcher.network.response.ResponseAllInfo;
-import verion.desing.launcher.network.response.ResponseTemplates;
+import verion.desing.launcher.network.response.ResponseConfiguration;
 import verion.desing.launcher.network.response.ResponseUpdate;
 import verion.desing.launcher.utils.NetWorkUtils;
 import verion.desing.launcher.views.fragment.FragmentExit;
@@ -54,22 +56,26 @@ public class NetworkBaseActivity extends BaseActivity {
     }
 
     public void checkCasesConnection(CallBackCheckConnection callBackCheckConnection) {
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                if ((checkConnection(getApplicationContext()) && NetWorkUtils.isOnline()) || NetWorkUtils.isWifiOn(getApplicationContext()))
-                    callBackCheckConnection.success();
-                else {
-                    if (!checkConnection(getApplicationContext()))
-                        callBackCheckConnection.noConnection();
-                    else
-                        callBackCheckConnection.noPing();
-
+        do {
+            if (NetWorkUtils.isOnline()) {
+                callBackCheckConnection.success();
+                break;
+            } else {
+                Log.d(TAG, "doing process");
+                if (!checkConnection(getApplicationContext()))
+                    callBackCheckConnection.noConnection();
+                else
+                    callBackCheckConnection.noPing();
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-
-
             }
-        }, 0, 300000);
+
+        }
+        while (true);
+
     }
 
     public boolean checkConnection(Context c) {
@@ -239,85 +245,6 @@ public class NetworkBaseActivity extends BaseActivity {
         }
     }
 
-    /*private void getImgFromCall(ResponseAllInfo body) {
-        ResponseTemplates mBtnList = body.templates;
-        ArrayList<Translations> btns = getButtons(mBtnList);
-        saveTemplateImages(btns);
-        saveTemplateImagesFocused(btns);
-    }
-
-    private ArrayList<Translations> getButtons(ResponseTemplates templates) {
-        ArrayList<Translations> pictures = new ArrayList<>();
-        for (ResponseTemplates.Button button : templates.buttons) {
-            for (ResponseTemplates.Button.Translations picture : button.pictures) {
-                pictures.add(new Translations(0, "", picture.picture, picture.pictureFocused, 1, ""));
-            }
-        }
-        return pictures;
-    }
-
-    public void saveTemplateImages(ArrayList<Translations> button) {
-        ArrayList<String> img = new ArrayList<>();
-        for (int i = 0; i < button.size(); i++) {
-            if (!button.get(i).getPicture().equals("")) {
-                img.add(baseUrl + button.get(i).getPicture());
-            }
-        }
-        downloadImages(img, "button");
-    }
-
-    public void saveTemplateImagesFocused(ArrayList<Translations> buttonFocused) {
-        ArrayList<String> focusImg = new ArrayList<>();
-        for (int i = 0; i < buttonFocused.size(); i++) {
-            if (!buttonFocused.get(i).getPictureFocused().equals("")) {
-                focusImg.add(baseUrl + buttonFocused.get(i).getPictureFocused());
-            }
-        }
-        downloadImages(focusImg, "button_focused");
-
-    }*/
-
-    /*private void downloadImages(ArrayList<String> img, String directory) {
-        new Thread(() -> {
-            for (int i = 0; i < img.size(); i++) {
-                try {
-                    URL url = new URL(img.get(i));
-                    HttpURLConnection c = (HttpURLConnection) url.openConnection();
-                    c.setRequestMethod("GET");
-                    c.connect();
-                    File imgStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                            + "/" + directory);
-                    if (!imgStorage.exists()) {
-                        imgStorage.mkdir();
-                    }
-                    String imgDownloaded = img.get(i).replace("/", "");
-                    File outputFile = new File(imgStorage, imgDownloaded.replace("http:", "")
-                            .replace("hotelplay.tv", "").replace("demo", "")
-                            .replace("img_new_api", ""));
-                    if (!outputFile.exists()) {
-                        outputFile.createNewFile();
-                    }
-                    FileOutputStream fos = new FileOutputStream(outputFile);
-                    InputStream is = c.getInputStream();
-                    byte[] buffer = new byte[2048];
-                    int len1;
-                    while ((len1 = is.read(buffer)) != -1) {
-                        fos.write(buffer, 0, len1);
-                    }
-                    fos.flush();
-                    fos.close();
-                    is.close();
-//                    c.disconnect();
-                } catch (MalformedURLException e) {
-                    Log.d(TAG, "URL format not valid");
-                } catch (IOException e) {
-                    Log.d(TAG, e.getLocalizedMessage());
-                }
-            }
-
-        }).start();
-    }*/
-
     private void saveBackground(ResponseAllInfo body) {
         String background = body.templates.background;
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.URL_BACK, background);
@@ -354,6 +281,7 @@ public class NetworkBaseActivity extends BaseActivity {
         saveBackground(body);
         saveBackgroundLanguages(body);
         saveDefaultLanguage(body);
+        saveTimezone(body.configuration);
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.BASE_URL, body.baseUrl);
         baseUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
         saveLogo(body);
@@ -442,8 +370,42 @@ public class NetworkBaseActivity extends BaseActivity {
         }
     }
 
+    public void setDay(TextView day) {
+        Date myDate = new Date();
+        SimpleDateFormat dmyFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.FRENCH);
+        String dmy = dmyFormat.format(myDate);
+        day.setText(dmy);
+    }
+
+    private void saveTimezone(ResponseConfiguration configuration) {
+        String timezone = configuration.timeZone + "";
+        switch (configuration.timeZone + "") {
+            case "0": {
+                timezone = "Europe/London";
+                break;
+            }
+            case "1": {
+                timezone = "Europe/Madrid";
+
+                break;
+            }
+            case "-1": {
+                timezone = "Europe/Madrid";
+                break;
+            }
+            case "-2": {
+                timezone = "Europe/Madrid";
+                break;
+            }
+            default:
+                timezone = "Europe/Madrid";
+
+        }
+        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.TIMEZONE, timezone);
+    }
+
     private void startMoreAppsSubmenu(String args) {
-        if(args != null) {
+        if (args != null) {
             int argsInt = Integer.parseInt(args);
             mySharedPreferences.putInt(Constants.SHARED_PREFERENCES.ID_MOREAPPS, argsInt);
         }

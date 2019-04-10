@@ -8,8 +8,17 @@ import java.util.ArrayList;
 public class ResponseSubmenu {
     @SerializedName("id")
     public int id;
+    @SerializedName("translations")
+    public ArrayList<TranslationSubmenu> translations;
     @SerializedName("buttons")
     public ArrayList<Button> buttons;
+
+    public class TranslationSubmenu implements Serializable{
+        @SerializedName("language")
+        public String language;
+        @SerializedName("title")
+        public String title;
+    }
 
     public class Button implements Serializable {
         @SerializedName("position")

@@ -3,7 +3,6 @@ package verion.desing.launcher.views.activities;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -25,13 +24,11 @@ import java.util.Date;
 import java.util.Locale;
 
 import androidx.databinding.DataBindingUtil;
-import cat.ereza.customactivityoncrash.config.CaocConfig;
 import verion.desing.launcher.BuildConfig;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
 import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.databinding.ActivityMainBinding;
-import verion.desing.launcher.helpers.ImageHelper;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.listener.CallBackArrayList;
 import verion.desing.launcher.listener.CallBackCheckConnection;
@@ -72,8 +69,7 @@ public class MainMenu extends NetworkBaseActivity {
     protected void onResume() {
         super.onResume();
         cleanCache();
-        Logger.d( "onResume");
-        waitAndExecute();
+        checkCasesConnection();
         binding.video.start();
     }
 
@@ -82,18 +78,6 @@ public class MainMenu extends NetworkBaseActivity {
         super.onPause();
         binding.video.pause();
         executingCall = false;
-    }
-
-
-
-    public synchronized void waitAndExecute() {
-        if ((System.currentTimeMillis() - lastTime) < 20000) return;
-        if (executingCall) return;
-        executingCall = true;
-        Logger.d("WAIT AND EXECUTE CALL ");
-        waitForNetwork.removeCallbacksAndMessages(null);
-        waitForNetwork.postDelayed(this::checkCasesConnection, 3000);
-        lastTime = System.currentTimeMillis();
     }
 
     private void checkCasesConnection() {
@@ -105,24 +89,12 @@ public class MainMenu extends NetworkBaseActivity {
 
             @Override
             public void noPing() {
-                hideLoader();
-                runOnUiThread(() -> binding.background.setBackgroundColor(getResources().getColor(R.color.transparent, getTheme())));
-                runOnUiThread(() -> connectionError(R.drawable.no_acceso_sistema_es));
             }
 
             @Override
             public void noConnection() {
-                hideLoader();
-                runOnUiThread(() -> connectionError(R.drawable.servicio_sin_conexion_es));
             }
         });
-    }
-
-    private void setDay() {
-        Date myDate = new Date();
-        SimpleDateFormat dmyFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.FRENCH);
-        String dmy = dmyFormat.format(myDate);
-        binding.day.setText(dmy);
     }
 
     public void executeCall() {
@@ -163,32 +135,9 @@ public class MainMenu extends NetworkBaseActivity {
         }
     }
 
-    public void errorControl(Class<MainMenu> activityClass) {
-
-        if (BuildConfig.ENVIRONMENT.equals(Constants.ENVIRONMENT.DEVELOP)) {
-            CaocConfig.Builder.create()
-                    .enabled(false) //default: true
-                    .showErrorDetails(false) //default: true
-                    .showRestartButton(false) //default: true
-                    .trackActivities(true) //default: false
-                    .minTimeBetweenCrashesMs(2000) //default: 3000
-                    .apply();
-        } else {
-            CaocConfig.Builder.create()
-                    .enabled(true)
-                    .showErrorDetails(false)
-                    .showRestartButton(false)
-                    .restartActivity(activityClass)
-                    .errorActivity(activityClass)
-                    .apply();
-
-        }
-
-
-    }
 
     private void generationMain() {
-        setDay();
+        setDay(binding.help.day);
         setMySharedPreferencesData();
         setStreaming();
         setBackground();
@@ -215,7 +164,7 @@ public class MainMenu extends NetworkBaseActivity {
     }
 
     private void setPictures() {
-        imageHelper.loadRoundCorner(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.MINI_LOGO), binding.logo);
+        imageHelper.loadRoundCorner(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.MINI_LOGO), binding.help.logo);
         getTranslations(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID));
     }
 
@@ -240,17 +189,17 @@ public class MainMenu extends NetworkBaseActivity {
     protected void onRestart() {
         super.onRestart();
         restart = true;
-        waitAndExecute();
+        checkCasesConnection();
         binding.video.start();
         hideLoader();
     }
 
     private void setClock() {
-        binding.toptextClock.setFormat12Hour(null);
-        binding.toptextClock.setFormat24Hour("HH:mm");
-        String timezone = "Europe/Madrid";
+        binding.help.toptextClock.setFormat12Hour(null);
+        binding.help.toptextClock.setFormat24Hour("HH:mm");
+        String timezone = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.TIMEZONE);
         if (timezone != "")
-            binding.toptextClock.setTimeZone(timezone);
+            binding.help.toptextClock.setTimeZone(timezone);
     }
 
 
@@ -385,10 +334,6 @@ public class MainMenu extends NetworkBaseActivity {
         String pkg = (BuildConfig.ENVIRONMENT.equals(Constants.ENVIRONMENT.DEVELOP)) ? "verion.desing.launcher.debug" : "verion.desing.launcher";
         try {
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c",
-                    "pm grant " + pkg + "  android.permission.REAL_GET_TASKS"});
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c",
-                    "pm grant " + pkg + "  android.permission.SET_TIME"});
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c",
                     "pm grant " + pkg + "  android.permission.READ_EXTERNAL_STORAGE"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c",
                     "pm grant " + pkg + "  android.permission.WRITE_EXTERNAL_STORAGE"});
@@ -401,10 +346,6 @@ public class MainMenu extends NetworkBaseActivity {
             Process p = Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c",
                     "pm grant " + pkg + "  android.permission.WRITE_SETTINGS"});
             p.waitFor();
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c",
-                    "pm grant " + pkg + "  android.permission.SET_TIME_ZONE"});
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c",
-                    "pm grant " + pkg + "  android.permission.SET_TIME"});
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
 
@@ -468,13 +409,6 @@ public class MainMenu extends NetworkBaseActivity {
                 btnFor.setOnClickListener(view -> {
                     goFunction(translation.getFunctionType(), translation.getFunctionTarget());
                 });
-                binding.btn6.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent i = new Intent(getApplicationContext(), MoreAppsSubmenuActivity.class);
-                        startActivity(i);
-                    }
-                });
             });
         }
 
@@ -499,84 +433,6 @@ public class MainMenu extends NetworkBaseActivity {
             });
         }
 
-    }
-
-    private void setBtnFromDevice() {
-        ArrayList<String> btns = new ArrayList<>();
-        ArrayList<String> buttonsFocused = new ArrayList<>();
-        File imgStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                + "/" + "button");
-        for (int i = 0; i < 17; i++) {
-            if (imgStorage.exists()) {
-                btns.add(imgStorage.getAbsolutePath() + "/" + imgStorage.listFiles()[i].getName());
-            }
-            File imgStorageFocused = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                    + "/" + "button_focused");
-            if (imgStorageFocused.exists()) {
-                buttonsFocused.add(imgStorageFocused.getAbsolutePath() + "/" + imgStorageFocused.listFiles()[i].getName());
-            }
-            buttons.add(new verion.desing.launcher.model.Button(btns.get(i), buttonsFocused.get(i)));
-        }
-        setBtnImagesFromDevice(buttons);
-    }
-
-    private void setBtnFromDevice(ArrayList<Translations> translations) {
-        mDBManager.setButtonImages(translations, getApplicationContext(), new CallBackArrayList<Translations>() {
-            @Override
-            public void finish(ArrayList<Translations> listButtons) {
-                File imgStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                        + "/" + "button");
-                if (imgStorage.exists()) {
-                    for (int i = 1; i < imgStorage.list().length; i++) {
-                        String img = baseUrl + listButtons.get(i).getPicture();
-                        String imgReplaced = img.replace("/", "").replace("http:", "")
-                                .replace("hotelplay.tv", "").replace("demo", "")
-                                .replace("img_new_api", "");
-                        if (imgReplaced.equals(imgStorage.listFiles()[i].getName())) {
-                            Log.d(TAG, "Img: " + imgReplaced);
-                            listButtons.get(i).setPicture(imgStorage.getAbsolutePath() + "/" + imgStorage.listFiles()[i].getName());
-                        } else
-                            listButtons.get(i).setPicture(listButtons.get(i).getPicture());
-                    }
-                } else {
-                    for (int i = 0; i < translations.size(); i++) {
-                        translations.get(i).setPicture(listButtons.get(i).getPicture());
-                    }
-                }
-            }
-
-            @Override
-            public void error(String localizedMessage) {
-            }
-        });
-        mDBManager.setButtonImages(translations, getApplicationContext(), new CallBackArrayList<Translations>() {
-            @Override
-            public void finish(ArrayList<Translations> listButtons) {
-                File imgStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                        + "/" + "button_focused");
-                if (imgStorage.exists()) {
-                    for (int i = 1; i < imgStorage.list().length; i++) {
-                        String img = baseUrl + listButtons.get(i).getPictureFocused();
-                        String imgReplaced = img.replace("/", "").replace("http:", "")
-                                .replace("hotelplay.tv", "").replace("demo", "")
-                                .replace("img_new_api", "");
-                        if (imgReplaced.equals(imgStorage.listFiles()[i].getName())) {
-                            Log.d(TAG, "Focused: " + imgReplaced);
-                            listButtons.get(i).setPictureFocused(imgStorage.getAbsolutePath() + "/" + imgStorage.listFiles()[i].getName());
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < listButtons.size(); i++) {
-                        translations.get(i).setPictureFocused(listButtons.get(i).getPictureFocused());
-                    }
-                }
-
-            }
-
-            @Override
-            public void error(String localizedMessage) {
-            }
-        });
     }
 
     private void hideLoader() {

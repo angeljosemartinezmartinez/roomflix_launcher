@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
+import verion.desing.launcher.database.models.TranslationSubmenu;
 import verion.desing.launcher.database.tables.Button;
 import verion.desing.launcher.database.tables.Submenus;
 import verion.desing.launcher.database.tables.Translations;
@@ -35,6 +36,7 @@ public class MoreAppsSubmenuActivity extends NetworkBaseActivity {
     private String baseUrl;
     @Inject
     DBManager mDBManager;
+    private String logo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +48,19 @@ public class MoreAppsSubmenuActivity extends NetworkBaseActivity {
         chargeSharedPreferencesData();
         idSubmenu = mySharedPreferences.getInt(Constants.SHARED_PREFERENCES.ID_MOREAPPS);
         imageHelper.loadRoundCorner(background, binding.background);
+        imageHelper.loadRoundCorner(logo, binding.help.logo);
         getSubmenuFromBtn();
+        setClock();
+        setDay(binding.help.day);
 
+    }
+
+    private void setClock() {
+        binding.help.toptextClock.setFormat12Hour(null);
+        binding.help.toptextClock.setFormat24Hour("HH:mm");
+        String timezone = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.TIMEZONE);
+        if (timezone != "")
+            binding.help.toptextClock.setTimeZone(timezone);
     }
 
     private void getSubmenuFromBtn() {
@@ -60,7 +73,7 @@ public class MoreAppsSubmenuActivity extends NetworkBaseActivity {
                 mBtnList = mSubmenu.getButtons();
                 if (mBtnList != null)
                     getTranslations(mBtnList);
-
+                getTitle(mSubmenu.getTranslations());
                     setRecycler();
                 });
             }
@@ -101,6 +114,7 @@ public class MoreAppsSubmenuActivity extends NetworkBaseActivity {
         baseUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
         background = baseUrl + mySharedPreferences.getString(Constants.SHARED_PREFERENCES.URL_BACK);
         actualLang = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
+        logo = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.MINI_LOGO);
     }
 
     private void getTranslations(ArrayList<Button> btnList) {
@@ -109,6 +123,14 @@ public class MoreAppsSubmenuActivity extends NetworkBaseActivity {
                 if (translations.getLocale().equals(actualLang)) {
                     mTranslationsList.add(translations);
                 }
+            }
+        }
+    }
+
+    private void getTitle(ArrayList<TranslationSubmenu> translationList) {
+        for (TranslationSubmenu trans : translationList) {
+            if (trans.getLanguage().equals(actualLang)) {
+                binding.title.setText(trans.getTitle());
             }
         }
 
