@@ -68,7 +68,7 @@ public class MainMenu extends NetworkBaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        cleanCache();
+//        cleanCache();
         checkCasesConnection();
         binding.video.start();
     }

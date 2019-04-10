@@ -348,7 +348,7 @@ public class NetworkBaseActivity extends BaseActivity {
         }
         switch (function) {
             case 1:
-                exitApp(args);
+                startPackage(args);
                 break;
             case 2:
                 openWeb(args);
