@@ -6,6 +6,9 @@
     <string name="explanation_exit1">
         Tu information personnel il sera élimine quand tu sors de la chambre\nEn plus de ton information ne sera pas traité par nous ou par tiers part
     </string>
+
+    <string name="option_os">"TU CHOISIS TON SYSTÈME D'EXPLOITATION POUR RACCORDER AVEC MIRRORING "</string>
+
     <string name="explanation_exit_codes">Nous avons fait quelques fonctionnement, laisser nous quelques minute</string>
     <string name="back" >REVENIR</string>
     <string name="ok" >OK</string>

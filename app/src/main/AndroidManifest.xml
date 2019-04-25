@@ -55,6 +55,7 @@
             android:name=".views.activities.InfoCardActivity"
             android:launchMode="singleTask" />
         <activity android:name=".views.activities.MoreAppsSubmenuActivity" />
+        <activity android:name=".views.activities.CastTutorial" />
     </application>
 
 </manifest>

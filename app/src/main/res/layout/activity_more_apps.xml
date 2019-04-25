@@ -63,6 +63,7 @@
             android:layout_marginTop="110dp"
             android:textColor="@color/white"
             android:textSize="28sp"
+            android:fontFamily="@font/montserrat_light"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

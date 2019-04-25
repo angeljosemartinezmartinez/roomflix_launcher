@@ -2,9 +2,7 @@ package verion.desing.launcher.views.activities;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -14,16 +12,14 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.databinding.DataBindingUtil;
+
 import com.orhanobut.logger.Logger;
 
-import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
 
-import androidx.databinding.DataBindingUtil;
 import verion.desing.launcher.BuildConfig;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
@@ -68,7 +64,7 @@ public class MainMenu extends NetworkBaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        cleanCache();
+        cleanCache();
         checkCasesConnection();
         binding.video.start();
     }
@@ -104,7 +100,6 @@ public class MainMenu extends NetworkBaseActivity {
             @Override
             public void dataChange() {
                 runOnUiThread(() -> {
-                    deleteLocationDirectory();
                     generationMain();
                     hideLoader();
                 });
@@ -125,14 +120,6 @@ public class MainMenu extends NetworkBaseActivity {
                 Log.d(TAG, "Error: " + macAddress);
             }
         });
-    }
-
-    private void deleteLocationDirectory() {
-        try {
-            Runtime.getRuntime().exec(new String[]{"system/bin/su", "-c", " rm -rf /storage/emulated/0/Download/location/"});
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -225,6 +212,26 @@ public class MainMenu extends NetworkBaseActivity {
                 launchCode(inputText.getText().toString());
             dialog.dismiss();
             return true;
+        });
+        dialog.show();
+    }
+
+    private void openParentalControlDialog() {
+        Dialog dialog = new Dialog(MainMenu.this); // Context, this, etc.
+        dialog.setContentView(R.layout.fragment_exit_player);
+        dialog.setTitle(R.string.app_name);
+        EditText inputText = dialog.findViewById(R.id.input_control);
+        TextView btnInput = dialog.findViewById(R.id.btn);
+        btnInput.setOnFocusChangeListener((view, b) -> {
+            if (b)
+                btnInput.setTextColor(getResources().getColor(R.color.orange, getTheme()));
+            else
+                btnInput.setTextColor(getResources().getColor(R.color.md_grey_500, getTheme()));
+        });
+        btnInput.setOnClickListener(view -> {
+            if (inputText.getText().toString() != null && !inputText.getText().toString().equals("") && inputText.getText().toString().equals("4314"))
+                startPackage("verion.desing.video.player.debug");
+            dialog.dismiss();
         });
         dialog.show();
     }

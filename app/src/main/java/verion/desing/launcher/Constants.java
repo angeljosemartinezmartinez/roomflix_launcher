@@ -21,6 +21,8 @@ public class Constants {
         public static final String MINI_LOGO = "miniLogo";
         public static final String DEFAULT_CHANNEL = "defaultChannel";
         public static final String ID_MOREAPPS = "idMoreApps";
+        public static final String SSID = "ssid";
+        public static final String PASS = "pass";
     }
 
     public class ENVIRONMENT {

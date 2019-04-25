@@ -49,7 +49,6 @@ public class LanguageSelect extends BaseActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_idiomas);
         ((LauncherApplication) getApplicationContext()).getAppComponent().inject(this);
         autoHideLoader = new Handler();
-        deleteDirectoryContent();
         baseURl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
         logo = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LOGO);
         background = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.URL_BACK_LANG);
@@ -88,7 +87,6 @@ public class LanguageSelect extends BaseActivity {
     protected void onRestart() {
         super.onRestart();
         hideLoader();
-        deleteDirectoryContent();
     }
 
     @Override
@@ -108,46 +106,10 @@ public class LanguageSelect extends BaseActivity {
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.DEFAULT_CHANNEL, defaultChannel);
         try {
             Utils.changeAppLanguage(new Locale(idLangSelected.toUpperCase(), idLangSelected.toLowerCase()), this);
-            createFileLocation();
         } catch (Exception e) {
             e.printStackTrace();
         }
         openMainMenu(this);
-    }
-
-    public void createFileLocation() {
-        File locationStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                + "/" + "location");
-        if (!locationStorage.exists()) {
-            locationStorage.mkdir();
-        }
-        String language = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
-        String file = language + ".txt";
-        File outputFile = new File(locationStorage, file);
-        if (!outputFile.exists()) {
-            try {
-                outputFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
-    private void deleteDirectoryContent() {
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                + "/" + "location");
-        if (file.exists()) {
-            String[] entries = file.list();
-            for (String s : entries) {
-                new File(file.getPath(), s).delete();
-            }
-        }
-        try {
-            Runtime.getRuntime().exec(new String[]{"system/bin/su", "-c", " rm -rf /storage/emulated/0/Download/location/"});
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void openMainMenu(Context context) {

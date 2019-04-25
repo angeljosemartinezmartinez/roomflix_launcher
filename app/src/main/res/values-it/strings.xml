@@ -9,6 +9,9 @@
         Suo dato personale saranno cancellare quando tu esci de la stanza\nInoltre suo dato personale no usciranno trattato per noi né per terzo
     </string>
     <string name="explanation_exit_codes">Noi facciamo alcuni operazione, dare si alcuni minuto</string>
+
+    <string name="option_os">TU SELEZIONI IL SISTEMA OPERATIVO A COLLEGARE CON MIRRORING</string>
+
     <string name="back" >ARRIVARE RETRO</string>
     <string name="ok" >OK</string>
     <string name="mouse" >ATTIVARE/DISATTIVARE MOUSE</string>

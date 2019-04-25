@@ -80,7 +80,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
                 }));
                 binding.getRoot().setOnClickListener(v -> callBackClick.click(item, v));
                 new ImageHelper().loadRoundCorner(baseUrl + item.getPicture(), binding.image);
-                if (item.getCode().toLowerCase().equals("en")) {
+                if (item.getCode().toLowerCase().equals("es")) {
                     binding.image.requestFocus();
                     binding.image.setBackground(binding.getRoot().getContext()
                             .getResources().getDrawable(R.drawable.backstreaming, itemView.getContext().getTheme()));

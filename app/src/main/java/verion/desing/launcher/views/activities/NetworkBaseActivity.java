@@ -8,7 +8,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,7 +28,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import verion.desing.launcher.Constants;
-import verion.desing.launcher.R;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.listener.CallBackCheckConnection;
 import verion.desing.launcher.listener.CallBackSaveData;
@@ -282,6 +282,7 @@ public class NetworkBaseActivity extends BaseActivity {
         saveBackgroundLanguages(body);
         saveDefaultLanguage(body);
         saveTimezone(body.configuration);
+        saveHotSpotValues(body);
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.BASE_URL, body.baseUrl);
         baseUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
         saveLogo(body);
@@ -348,7 +349,7 @@ public class NetworkBaseActivity extends BaseActivity {
         }
         switch (function) {
             case 1:
-                startPackage(args);
+                exitApp(args);
                 break;
             case 2:
                 openWeb(args);
@@ -365,6 +366,8 @@ public class NetworkBaseActivity extends BaseActivity {
             case 6:
                 changeLanguage(this);
                 break;
+            case 7:
+                openCastTutorial(this);
             default:
                 comingSoon(this);
         }
@@ -402,6 +405,16 @@ public class NetworkBaseActivity extends BaseActivity {
 
         }
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.TIMEZONE, timezone);
+    }
+
+    private void saveHotSpotValues(ResponseAllInfo body){
+        if(body.configuration.accessPoint){
+            String ssid = body.configuration.ssid;
+            String pass = body.configuration.pass;
+            mySharedPreferences.putString(Constants.SHARED_PREFERENCES.SSID, ssid);
+            mySharedPreferences.putString(Constants.SHARED_PREFERENCES.PASS, pass);
+        }
+
     }
 
     private void startMoreAppsSubmenu(String args) {
@@ -461,5 +474,10 @@ public class NetworkBaseActivity extends BaseActivity {
     private void openWeb(String nPaquete) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(nPaquete));
         startActivity(browserIntent);
+    }
+
+    private void openCastTutorial(Context context){
+        Intent i = new Intent(context, CastTutorial.class);
+        startActivity(i);
     }
 }
