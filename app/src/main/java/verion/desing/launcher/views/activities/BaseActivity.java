@@ -18,11 +18,13 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.dragger.LauncherApplication;
 import verion.desing.launcher.dragger.MySharedPreferences;
 import verion.desing.launcher.helpers.FileHelper;
 import verion.desing.launcher.helpers.ImageHelper;
+import verion.desing.launcher.helpers.PermissionHelper;
 import verion.desing.launcher.managers.DBManager;
 import verion.desing.launcher.network.service.CallManager;
 import verion.desing.launcher.views.fragment.FragmentCodes;
@@ -41,6 +43,8 @@ public class BaseActivity extends AppCompatActivity {
     public DBManager mDBManager;
     @Inject
     public CallManager call;
+    @Inject
+    PermissionHelper mPermissionHelper;
     public String code;
     private long lastKeyClick;    //Last key time
     public String macAddress;

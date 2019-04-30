@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
-def vc = 6004
+def vc = 6005
 android {
     lintOptions{
         checkReleaseBuilds false
@@ -18,9 +18,9 @@ android {
 
     signingConfigs {
         release {
-            keyAlias 'Verion'
+            keyAlias 'verionLauncher'
             keyPassword 'L1N4R3S'
-            storeFile file('C:\\Users\\juani\\AndroidStudioProjects\\VerionLauncher\\Verion.keystore')
+            storeFile file('C:\\Users\\verion\\StudioProjects\\launcher-hotelplay\\Verion.keystore')
             storePassword 'android'
         }
     }
@@ -52,7 +52,7 @@ android {
     productFlavors {
         normal {
             applicationId "verion.desing.launcher"
-            versionName "6.0.0.4"
+            versionName "6.0.0.5"
             signingConfig signingConfigs.release
             flavorDimensions "default"
             archivesBaseName= "verionLauncher-" + vc

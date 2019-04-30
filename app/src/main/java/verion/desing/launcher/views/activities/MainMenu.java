@@ -1,9 +1,11 @@
 package verion.desing.launcher.views.activities;
 
+import android.app.AlarmManager;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,11 +22,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import verion.desing.launcher.BuildConfig;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
 import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.databinding.ActivityMainBinding;
+import verion.desing.launcher.helpers.PermissionHelper;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.listener.CallBackArrayList;
 import verion.desing.launcher.listener.CallBackCheckConnection;
@@ -34,6 +39,7 @@ import verion.desing.launcher.utils.Utils;
 public class MainMenu extends NetworkBaseActivity {
 
     private static final String TAG = "MainMenu";
+    public static Context context;
     private ActivityMainBinding binding;
     private ArrayList<verion.desing.launcher.model.Button> buttons;
     private String baseUrl;
@@ -42,15 +48,18 @@ public class MainMenu extends NetworkBaseActivity {
     private ArrayList<Translations> mPicturesList = new ArrayList<>();
     private Handler autoHideLoader;
     private long lastKeyClick;
+    private boolean timeSet;//if timeformat is change or not
     private boolean executingCall;
     private long lastTime;
     private Handler waitForNetwork = new Handler();
     private boolean restart;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         langID = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
+        context = this;
         Utils.changeAppLanguage(new Locale(langID.toUpperCase(), langID.toLowerCase()), this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         autoHideLoader = new Handler();
@@ -59,6 +68,29 @@ public class MainMenu extends NetworkBaseActivity {
         setClock();
         buttons = new ArrayList<>();
         checkPermission();
+        if (mPermissionHelper.hasWriteSettingsPermission(this)) timeFormat();
+        else mPermissionHelper.askSettingPermission(this);
+
+    }
+
+    private void timeFormat() {
+        String timezone =
+                mySharedPreferences.getString(Constants.SHARED_PREFERENCES.TIMEZONE);
+
+        if (timeSet) return;
+        try {
+            Settings.System.getInt(getContentResolver(), Settings.System.TIME_12_24);
+            Settings.System.putString(this.getContentResolver(), Settings.System.TIME_12_24, "12");
+            timeSet = true;
+            AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+            if (timezone.equals(""))
+                am.setTimeZone("Europe/Madrid");
+            else
+                am.setTimeZone(timezone);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -216,25 +248,7 @@ public class MainMenu extends NetworkBaseActivity {
         dialog.show();
     }
 
-    private void openParentalControlDialog() {
-        Dialog dialog = new Dialog(MainMenu.this); // Context, this, etc.
-        dialog.setContentView(R.layout.fragment_exit_player);
-        dialog.setTitle(R.string.app_name);
-        EditText inputText = dialog.findViewById(R.id.input_control);
-        TextView btnInput = dialog.findViewById(R.id.btn);
-        btnInput.setOnFocusChangeListener((view, b) -> {
-            if (b)
-                btnInput.setTextColor(getResources().getColor(R.color.orange, getTheme()));
-            else
-                btnInput.setTextColor(getResources().getColor(R.color.md_grey_500, getTheme()));
-        });
-        btnInput.setOnClickListener(view -> {
-            if (inputText.getText().toString() != null && !inputText.getText().toString().equals("") && inputText.getText().toString().equals("4314"))
-                startPackage("verion.desing.video.player.debug");
-            dialog.dismiss();
-        });
-        dialog.show();
-    }
+
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -266,11 +280,11 @@ public class MainMenu extends NetworkBaseActivity {
 
     private void launchCode(String value) {
         switch (value.trim()) {
-            case "143":
+            /*case "143":
                 startPackage("com.android.settings");
-                break;
+                break;*/
             case Constants.Codes.SETTINGS:
-                openDialog();
+                startPackage("com.android.settings");
                 break;
             case Constants.Codes.INSTALLER: {
                 appOpener("com.droidlogic.appinstall");
@@ -348,6 +362,8 @@ public class MainMenu extends NetworkBaseActivity {
                     "pm grant " + pkg + "  android.permission.INSTALL_PACKAGES"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c",
                     "pm grant " + pkg + "  android.permission.INSTANT_APP_FOREGROUND_SERVICE"});
+            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c",
+                    "pm grant " + pkg + "  android.permission.SET_TIME_ZONE"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c",
                     "pm grant " + pkg + "  android.permission.REQUEST_INSTALL_PACKAGES"});
             Process p = Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c",

@@ -1,12 +1,14 @@
 package verion.desing.launcher.views.activities;
 
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -27,7 +29,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import verion.desing.launcher.BuildConfig;
 import verion.desing.launcher.Constants;
+import verion.desing.launcher.R;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.listener.CallBackCheckConnection;
 import verion.desing.launcher.listener.CallBackSaveData;
@@ -282,7 +286,8 @@ public class NetworkBaseActivity extends BaseActivity {
         saveBackgroundLanguages(body);
         saveDefaultLanguage(body);
         saveTimezone(body.configuration);
-        saveHotSpotValues(body);
+        if (body.configuration.accessPoint)
+            saveHotSpotValues(body);
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.BASE_URL, body.baseUrl);
         baseUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
         saveLogo(body);
@@ -343,10 +348,6 @@ public class NetworkBaseActivity extends BaseActivity {
 
     public synchronized void goFunction(int function, String args) {
         Logger.d(function + "-" + args);
-        if (args.equals("") && function != 6) {
-            comingSoon(this);
-            return;
-        }
         switch (function) {
             case 1:
                 exitApp(args);
@@ -368,6 +369,10 @@ public class NetworkBaseActivity extends BaseActivity {
                 break;
             case 7:
                 openCastTutorial(this);
+                break;
+            case 8:
+                openParentalControlDialog(MainMenu.context);
+                break;
             default:
                 comingSoon(this);
         }
@@ -407,14 +412,11 @@ public class NetworkBaseActivity extends BaseActivity {
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.TIMEZONE, timezone);
     }
 
-    private void saveHotSpotValues(ResponseAllInfo body){
-        if(body.configuration.accessPoint){
-            String ssid = body.configuration.ssid;
-            String pass = body.configuration.pass;
-            mySharedPreferences.putString(Constants.SHARED_PREFERENCES.SSID, ssid);
-            mySharedPreferences.putString(Constants.SHARED_PREFERENCES.PASS, pass);
-        }
-
+    private void saveHotSpotValues(ResponseAllInfo body) {
+        String ssid = body.configuration.ssid;
+        String pass = body.configuration.pass;
+        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.SSID, ssid);
+        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.PASS, pass);
     }
 
     private void startMoreAppsSubmenu(String args) {
@@ -476,8 +478,38 @@ public class NetworkBaseActivity extends BaseActivity {
         startActivity(browserIntent);
     }
 
-    private void openCastTutorial(Context context){
-        Intent i = new Intent(context, CastTutorial.class);
-        startActivity(i);
+    private void openCastTutorial(Context context) {
+        String ssid = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.SSID);
+        String pass = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.PASS);
+        if (!ssid.equals("") && !pass.equals("")) {
+            Intent i = new Intent(context, CastTutorial.class);
+            startActivity(i);
+        } else
+            comingSoon(context);
+
+    }
+
+    private void openParentalControlDialog(Context context) {
+        Dialog dialog = new Dialog(context); // Context, this, etc.
+        dialog.setContentView(R.layout.fragment_exit_player);
+        dialog.setTitle(R.string.app_name);
+        EditText inputText = dialog.findViewById(R.id.input_control);
+        TextView btnInput = dialog.findViewById(R.id.btn);
+        btnInput.setOnFocusChangeListener((view, b) -> {
+            if (b)
+                btnInput.setTextColor(getResources().getColor(R.color.orange, getTheme()));
+            else
+                btnInput.setTextColor(getResources().getColor(R.color.md_grey_500, getTheme()));
+        });
+        btnInput.setOnClickListener(view -> {
+            if (inputText.getText().toString() != null && !inputText.getText().toString().equals("") && inputText.getText().toString().equals("4314")) {
+                if ((BuildConfig.ENVIRONMENT.equals(Constants.ENVIRONMENT.DEVELOP)))
+                    startPackage("verion.desing.video.player.premium.debug");
+                else
+                    startPackage("verion.desing.video.player.premium");
+            }
+            dialog.dismiss();
+        });
+        dialog.show();
     }
 }
