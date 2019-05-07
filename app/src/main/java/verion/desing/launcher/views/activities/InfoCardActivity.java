@@ -1,6 +1,7 @@
 package verion.desing.launcher.views.activities;
 
 import android.os.Bundle;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,6 +81,9 @@ public class InfoCardActivity extends NetworkBaseActivity {
                         childs.add(template);
                         Collections.reverse(childs);
                         setChilds(infoCard.getChild());
+                        if(childs.size() == 1){
+                            binding.indicator.setVisibility(View.INVISIBLE);
+                        }
                         ScreenSlidePagerAdapter myAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager(), mTranslationsList);
                         binding.viewPager.setAdapter(myAdapter);
                         binding.indicator.setViewPager(binding.viewPager);

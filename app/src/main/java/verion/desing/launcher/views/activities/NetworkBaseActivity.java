@@ -433,12 +433,14 @@ public class NetworkBaseActivity extends BaseActivity {
         if (dialog != null)
             if (dialog.isShowing()) {
                 dialog.dismiss();
+                cleanCache(nPackage);
                 startPackage(nPackage);
                 return;
             }
 
         dialog = new FragmentExit().createDialog(this);
         dialog.setOnDismissListener(dialogInterface -> {
+            cleanCache(nPackage);
             startPackage(nPackage);
         });
         dialog.setOnCancelListener(dialogInterface -> startPackage(nPackage));

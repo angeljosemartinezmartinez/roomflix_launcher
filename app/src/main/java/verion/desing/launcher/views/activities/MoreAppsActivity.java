@@ -148,22 +148,25 @@ public class MoreAppsActivity extends NetworkBaseActivity {
     }
 
     private ArrayList<Translations> filterItemsFirstPage() {
-        ArrayList<Translations> itemsFiltered = new ArrayList<>();
         ArrayList<Translations> itemsTemp = new ArrayList<>();
         for (Translations item : mTranslationsList) {
-            itemsFiltered.add(item);
-            if (itemsFiltered.size() <= 4)
+            if ((mTranslationsList.indexOf(item) == 0
+                    || mTranslationsList.indexOf(item) == 1
+                    || mTranslationsList.indexOf(item) == 3
+                    || mTranslationsList.indexOf(item) == 5) && itemsTemp.size() < 4) {
                 itemsTemp.add(item);
+            }
         }
         return itemsTemp;
     }
 
     private ArrayList<Translations> filterItemsSecondPage() {
-        ArrayList<Translations> itemsFiltered = new ArrayList<>();
         ArrayList<Translations> itemsTemp = new ArrayList<>();
         for (Translations item : mTranslationsList) {
-            itemsFiltered.add(item);
-            if ((itemsFiltered.indexOf(item) > 3 && itemsFiltered.indexOf(item) <= 7) && itemsTemp.size() < 4) {
+            if ((mTranslationsList.indexOf(item) == 2
+                    || mTranslationsList.indexOf(item) == 4
+                    || mTranslationsList.indexOf(item) == 6
+                    || mTranslationsList.indexOf(item) == 7) && itemsTemp.size() < 4) {
                 itemsTemp.add(item);
             }
         }

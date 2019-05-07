@@ -138,7 +138,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void cleanCache() {
+    /*protected void cleanCache() {
         try {
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.netflix.mediaclient"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.amazon.avod.thirdpartyclient"});
@@ -152,6 +152,15 @@ public class BaseActivity extends AppCompatActivity {
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear de.sky.bw"});
             Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear fr.tf1.mytf1"});
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }*/
+
+    protected void cleanCache(String nPackage){
+        try{
+            Process p = Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear "+ nPackage});
+            p.waitFor();
+        }catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
     }

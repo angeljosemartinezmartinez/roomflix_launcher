@@ -10,7 +10,7 @@
         <ImageView
             android:id="@+id/logo"
             android:layout_width="wrap_content"
-            android:layout_height="80dp"
+            android:layout_height="75dp"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
             android:adjustViewBounds="true"

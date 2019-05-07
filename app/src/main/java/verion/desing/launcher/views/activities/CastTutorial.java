@@ -171,9 +171,16 @@ public class CastTutorial extends NetworkBaseActivity implements View.OnClickLis
         });
     }
 
-    @Override
+    /*@Override
     protected void onPause() {
         super.onPause();
+        stopTethering();
+        isHotSpotActive(getApplicationContext());
+    }*/
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         stopTethering();
         isHotSpotActive(getApplicationContext());
     }
