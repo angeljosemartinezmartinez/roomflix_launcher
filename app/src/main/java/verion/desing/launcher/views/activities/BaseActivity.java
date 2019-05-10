@@ -138,24 +138,6 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    /*protected void cleanCache() {
-        try {
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.netflix.mediaclient"});
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.amazon.avod.thirdpartyclient"});
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear rtve.tablet.android"});
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.google.android.youtube.tv"});
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.dazn"});
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.a3.sgt"});
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.bskyb.skygo"});
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear tv.wuaki"});
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear com.mubi"});
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear de.sky.bw"});
-            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear fr.tf1.mytf1"});
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
-
     protected void cleanCache(String nPackage){
         try{
             Process p = Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear "+ nPackage});
@@ -189,9 +171,17 @@ public class BaseActivity extends AppCompatActivity {
 
     public void startPackage(String nPackage) {
         try {
-            Intent launchIntent = getPackageManager().getLaunchIntentForPackage(nPackage);
-            if (launchIntent != null) {
-                startActivity(launchIntent);//null pointer check in case package nombre was not found
+            if(nPackage.equals("verion.desing.verionweather")){
+                Intent intent = getPackageManager().getLaunchIntentForPackage(nPackage);
+                Bundle locale = new Bundle();
+                locale.putString("locale", mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID));
+                intent.putExtra("locale", locale);
+                startActivity(intent);
+            }else {
+                Intent launchIntent = getPackageManager().getLaunchIntentForPackage(nPackage);
+                if (launchIntent != null) {
+                    startActivity(launchIntent);//null pointer check in case package nombre was not found
+                }
             }
         } catch (Exception e) {
             comingSoon(this);

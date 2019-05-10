@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -60,7 +59,7 @@ public class MainMenu extends NetworkBaseActivity {
         super.onCreate(savedInstanceState);
         langID = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID);
         context = this;
-        Utils.changeAppLanguage(new Locale(langID.toUpperCase(), langID.toLowerCase()), this);
+        Utils.changeAppLanguage(new Locale(langID.toLowerCase()), this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         autoHideLoader = new Handler();
         executingCall = false;
@@ -70,7 +69,6 @@ public class MainMenu extends NetworkBaseActivity {
         checkPermission();
         if (mPermissionHelper.hasWriteSettingsPermission(this)) timeFormat();
         else mPermissionHelper.askSettingPermission(this);
-
     }
 
     private void timeFormat() {
@@ -98,6 +96,7 @@ public class MainMenu extends NetworkBaseActivity {
         super.onResume();
         checkCasesConnection();
         binding.video.start();
+        closeWeather();
     }
 
     @Override
@@ -148,7 +147,6 @@ public class MainMenu extends NetworkBaseActivity {
                     hideLoader();
                     runOnUiThread(() -> imageHelper.loadRoundCorner(R.drawable.dispositivo_alta_es, binding.background));
                 }
-                Log.d(TAG, "Error: " + macAddress);
             }
         });
     }
@@ -469,6 +467,14 @@ public class MainMenu extends NetworkBaseActivity {
             binding.loader.setVisibility(View.VISIBLE);
             autoHideLoader.removeCallbacks(null);
         });
+    }
+
+    private void closeWeather(){
+        try {
+            Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "am force-stop verion.desing.verionweather"});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

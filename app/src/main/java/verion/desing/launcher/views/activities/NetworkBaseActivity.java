@@ -373,6 +373,9 @@ public class NetworkBaseActivity extends BaseActivity {
             case 8:
                 openParentalControlDialog(MainMenu.context);
                 break;
+            case 9:
+                startPackage("verion.desing.verionweather");
+                break;
             default:
                 comingSoon(this);
         }
