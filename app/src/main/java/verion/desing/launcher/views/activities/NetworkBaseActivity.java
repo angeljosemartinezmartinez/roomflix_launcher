@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -286,8 +287,7 @@ public class NetworkBaseActivity extends BaseActivity {
         saveBackgroundLanguages(body);
         saveDefaultLanguage(body);
         saveTimezone(body.configuration);
-        if (body.configuration.accessPoint)
-            saveHotSpotValues(body);
+        saveHotSpotValues(body);
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.BASE_URL, body.baseUrl);
         baseUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
         saveLogo(body);
@@ -509,10 +509,12 @@ public class NetworkBaseActivity extends BaseActivity {
         btnInput.setOnClickListener(view -> {
             if (inputText.getText().toString() != null && !inputText.getText().toString().equals("") && inputText.getText().toString().equals("4314")) {
                 if ((BuildConfig.ENVIRONMENT.equals(Constants.ENVIRONMENT.DEVELOP)))
-                    startPackage("verion.desing.video.player.premium.debug");
+                    startTvPremium("verion.desing.video.player.debug");
                 else
-                    startPackage("verion.desing.video.player.premium");
-            }
+                    startTvPremium("verion.desing.video.player");
+            }else
+                Toast.makeText(context,R.string.error_tv_premium, Toast.LENGTH_SHORT).show();
+
             dialog.dismiss();
         });
         dialog.show();

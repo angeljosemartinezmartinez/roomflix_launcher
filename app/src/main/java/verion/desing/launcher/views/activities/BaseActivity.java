@@ -177,7 +177,8 @@ public class BaseActivity extends AppCompatActivity {
                 locale.putString("locale", mySharedPreferences.getString(Constants.SHARED_PREFERENCES.LANGUAGE_ID));
                 intent.putExtra("locale", locale);
                 startActivity(intent);
-            }else {
+            }
+            else {
                 Intent launchIntent = getPackageManager().getLaunchIntentForPackage(nPackage);
                 if (launchIntent != null) {
                     startActivity(launchIntent);//null pointer check in case package nombre was not found
@@ -187,5 +188,13 @@ public class BaseActivity extends AppCompatActivity {
             comingSoon(this);
             e.printStackTrace();
         }
+    }
+
+    public void startTvPremium(String nPackage){
+        Intent intent = getPackageManager().getLaunchIntentForPackage(nPackage);
+        Bundle adult = new Bundle();
+        adult.putBoolean("adult", true);
+        intent.putExtra("adult", adult);
+        startActivity(intent);
     }
 }

@@ -14,4 +14,9 @@
     <string name="ok" >OK</string>
     <string name="mouse" >ACTIVAR/DESACTIVAR MOUSE</string>
     <string name="top_bottom" >ARRIBA/ABAJO/IZQUIERDA/DERECHA</string>
+
+    <string name="parental_control">Introduzca el codigo de control parental para acceder al contenido</string>
+    <string name="control_parental">Control parental</string>
+    <string name="codigo">Escribe el codigo aqui</string>
+    <string name="error_tv_premium">Código erróneo</string>
 </resources>

@@ -16,7 +16,8 @@
     <string name="mouse" >ENABLE/DISABLE MOUSE</string>
     <string name="top_bottom" >UP/DOWN/RIGHT/LEFT</string>
     <string name="loading_please_wait" translatable="false">Loading... please wait</string>
-    <string name="parental_control" translatable="false">Introduzca el codigo de control parental para acceder al contenido</string>
-    <string name="control_parental" translatable="false">Control parental</string>
-    <string name="codigo" translatable="false">Escribe el codigo aqui</string>
+    <string name="parental_control">Enter the parental control code to access the content</string>
+    <string name="control_parental">Parental control</string>
+    <string name="codigo">Input the code here</string>
+    <string name="error_tv_premium">Wrong code</string>
 </resources>
