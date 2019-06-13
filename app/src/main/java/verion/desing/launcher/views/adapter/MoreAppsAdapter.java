@@ -44,12 +44,15 @@ public class MoreAppsAdapter extends RecyclerView.Adapter<MoreAppsAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         Translations btn = mBtnList.get(position);
         holder.bind(btn);
+
+        float factor = holder.itemView.getContext().getResources().getDisplayMetrics().density;
+
         if (position == 0) {
-            ((ViewGroup.MarginLayoutParams) binding.image.getLayoutParams()).setMargins(8, 0, 0, 8);
-            binding.image.setLayoutParams(new LinearLayout.LayoutParams(282, 282));
+            ((ViewGroup.MarginLayoutParams) binding.image.getLayoutParams()).setMargins((int)(6 * factor), 0, 0, (int)(6 * factor));
+            binding.image.setLayoutParams(new LinearLayout.LayoutParams((int)(212 * factor), (int)(212 * factor)));
         } else {
-            binding.image.setLayoutParams(new LinearLayout.LayoutParams(282, 138));
-            ((ViewGroup.MarginLayoutParams) binding.image.getLayoutParams()).setMargins(8, 0, 0, 8);
+            binding.image.setLayoutParams(new LinearLayout.LayoutParams((int)(212 * factor), (int)(103 * factor)));
+            ((ViewGroup.MarginLayoutParams) binding.image.getLayoutParams()).setMargins((int)(6 * factor), 0, 0, (int)(6 * factor));
         }
     }
 

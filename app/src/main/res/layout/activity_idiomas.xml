@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="390dp"
+            android:layout_marginTop="294dp"
             android:layout_marginEnd="8dp"
             android:background="@color/transparent"
             android:focusable="false"
@@ -40,8 +40,8 @@
 
         <ImageView
             android:id="@+id/logo"
-            android:layout_width="300dp"
-            android:layout_height="150dp"
+            android:layout_width="226dp"
+            android:layout_height="116dp"
             android:layout_marginTop="130dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

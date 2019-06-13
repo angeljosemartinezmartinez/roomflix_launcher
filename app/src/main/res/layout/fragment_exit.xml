@@ -17,24 +17,24 @@
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_light"
             android:text="@string/title_exit"
             android:textAlignment="center"
-            android:textColor="@color/white"
             android:textAllCaps="true"
-            android:textSize="24sp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:fontFamily="@font/montserrat_light"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
         android:id="@+id/imgExit"
-        android:layout_width="60dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="76dp"
+        android:layout_width="45dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="57dp"
         android:background="@drawable/salir"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,17 +45,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="8dp"
+        android:fontFamily="@font/montserrat_light"
         android:text="@string/explanation_exit"
         android:textAlignment="center"
-        android:textSize="20sp"
+        android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgExit"
-        android:fontFamily="@font/montserrat_light"/>
+        app:layout_constraintTop_toBottomOf="@+id/imgExit" />
 
 
     <TextView
@@ -63,14 +63,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="15dp"
+        android:fontFamily="@font/montserrat_light"
         android:text="@string/explanation_exit1"
         android:textAlignment="center"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/message"
-        android:fontFamily="@font/montserrat_light"/>
+        app:layout_constraintTop_toBottomOf="@+id/message" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

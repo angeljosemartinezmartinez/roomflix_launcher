@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="btn_size">138dp</dimen>
+    <dimen name="btn_size">103dp</dimen>
 
 </resources>

@@ -64,7 +64,7 @@ public class BaseActivity extends AppCompatActivity {
             macAddress = getMacAddress().replaceAll(":", "");
             mySharedPreferences.putString(Constants.SHARED_PREFERENCES.MAC, macAddress);
         }
-        //macAddress = "C44EAC158C1C";
+        macAddress = "112233445566";
 
     }
 
@@ -88,7 +88,7 @@ public class BaseActivity extends AppCompatActivity {
 
     public String getMacAddress() {
         try {
-            return mFileHelper.loadFileAsString("/sys/class/net/eth0/address")
+            return mFileHelper.loadFileAsString("/sys/class/net/wlan0/address")
                     .toUpperCase().substring(0, 17).replaceAll(":", "");
         } catch (IOException e) {
             e.printStackTrace();
