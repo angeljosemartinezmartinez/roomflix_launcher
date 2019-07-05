@@ -23,6 +23,7 @@ public class Constants {
         public static final String ID_MOREAPPS = "idMoreApps";
         public static final String SSID = "ssid";
         public static final String PASS = "pass";
+        public static final String ADB_SERVER = "adbServer";
     }
 
     public class ENVIRONMENT {
@@ -30,17 +31,10 @@ public class Constants {
     }
 
     public class Codes {
-        public static final String SETTINGS = "1431430";
-        public static final String INSTALLER = "1431431";
-        public static final String TEAMVIEWER = "1431432";
-        public static final String MARKET = "1431433";
-        public static final String AUTOREBOOT = "1431434";
-        public static final String REBOOT = "1431435";
-        public static final String DROP = "1431436";
-        public static final String DROID_SETTINGS = "1431438";
-        public static final String SHOW_IP = "1431439";
-        public static final String TCP_IP = "1444441";
-        public static final String MAC = "1431437";
+        public static final String SETTINGS = "21212221212219";
+        public static final String TEAMVIEWER = "21212221212221";
+        public static final String SHOW_IP = "21212221212220";
+        public static final String MAC = "21212221212222";
 
         public static final String DIALOG = "143";
     }

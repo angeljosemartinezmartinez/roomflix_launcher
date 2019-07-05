@@ -12,8 +12,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
@@ -30,6 +28,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import verion.desing.launcher.BuildConfig;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
@@ -255,6 +259,11 @@ public class NetworkBaseActivity extends BaseActivity {
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.URL_BACK, background);
     }
 
+    private void saveAdbServer(ResponseAllInfo body) {
+        String adbServer = body.configuration.adbServer;
+        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.ADB_SERVER, adbServer);
+    }
+
     private void saveBackgroundLanguages(ResponseAllInfo body) {
         String backgroundLanguages = body.templates.background;
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.URL_BACK_LANG, backgroundLanguages);
@@ -285,6 +294,7 @@ public class NetworkBaseActivity extends BaseActivity {
         Logger.d("DATA DIFFERENT");
         saveBackground(body);
         saveBackgroundLanguages(body);
+        saveAdbServer(body);
         saveDefaultLanguage(body);
         saveTimezone(body.configuration);
         saveHotSpotValues(body);
@@ -436,19 +446,39 @@ public class NetworkBaseActivity extends BaseActivity {
         if (dialog != null)
             if (dialog.isShowing()) {
                 dialog.dismiss();
-                cleanCache(nPackage);
-                startPackage(nPackage);
+                //(nPackage);
+                //startPackage(nPackage);
                 return;
             }
 
         dialog = new FragmentExit().createDialog(this);
-        dialog.setOnDismissListener(dialogInterface -> {
-            cleanCache(nPackage);
-            startPackage(nPackage);
+        dialog.setOnShowListener(dialogInterface -> {
+
+            String adbServer = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.ADB_SERVER);
+
+            OkHttpClient okHttpClient = new OkHttpClient();
+            FormBody.Builder formBodyBuilder = new FormBody.Builder();
+            formBodyBuilder.add("package", nPackage);
+            FormBody formBody = formBodyBuilder.build();
+            Request.Builder builder = new Request.Builder();
+            builder = builder.url("http://"+adbServer+"/runapp/index.php");
+            builder = builder.post(formBody);
+            Request request = builder.build();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    dialog.dismiss();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    dialog.dismiss();
+                }
+            });
         });
         dialog.setOnCancelListener(dialogInterface -> startPackage(nPackage));
         runOnUiThread(() -> {
-
             dialog.show();
             new Thread(() -> {
                 if (dialog != null) dialog.dismiss();

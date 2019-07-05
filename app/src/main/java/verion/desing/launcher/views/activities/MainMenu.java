@@ -251,8 +251,8 @@ public class MainMenu extends NetworkBaseActivity {
     public boolean dispatchKeyEvent(KeyEvent event) {
         int action = event.getAction();
         int keyCode = event.getKeyCode();
-        if (action == KeyEvent.ACTION_DOWN && KeyCodesConverter.isNumber(keyCode)) {
-            setCode(KeyCodesConverter.convertKeyCodeToNumber(keyCode));
+        if (action == KeyEvent.ACTION_DOWN && (keyCode == 19 || keyCode == 20 || keyCode == 21 || keyCode == 22)) {
+            setCode(keyCode);
             return false;
         }
         return super.dispatchKeyEvent(event);
@@ -262,7 +262,7 @@ public class MainMenu extends NetworkBaseActivity {
         Logger.d(number);
         if (System.currentTimeMillis() - lastKeyClick < 1000) {
             code = code + String.valueOf(number);
-            if (code.length() == 7) {
+            if (code.length() == 14) {
                 Logger.d(code);
                 launchCode(code);
                 code = "";
@@ -281,67 +281,19 @@ public class MainMenu extends NetworkBaseActivity {
                 startPackage("com.android.settings");
                 break;*/
             case Constants.Codes.SETTINGS:
-                startPackage("com.android.settings");
+                startPackage("com.android.tv.settings");
                 break;
-            case Constants.Codes.INSTALLER: {
-                appOpener("com.droidlogic.appinstall");
-                break;
-            }
             case Constants.Codes.TEAMVIEWER: {
                 appOpener("com.teamviewer.host.market");
-                break;
-            }
-            case Constants.Codes.MARKET: {
-                appOpener("com.android.vending");
-                break;
-            }
-            case Constants.Codes.AUTOREBOOT: {
-                appOpener("com.pereira.autoreboot");
-                break;
-            }
-            case Constants.Codes.REBOOT: {
-                try {
-                    Process p = Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "reboot"});
-                    p.waitFor();
-                } catch (IOException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-                break;
-            }
-            case Constants.Codes.DROP: {
-                mySharedPreferences.deleteAll();
-                try {
-                    Runtime runtime = Runtime.getRuntime();
-                    runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "rm -r /data/dalvik-cache"});
-                    runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "rm -r /cache/dalvik-cache"});
-                    runtime.exec(new String[]{"/system/bin/su", "-c", "rm -r data/data/verion.desing.launcher/databases/"});
-                    String packageName = getApplicationContext().getPackageName();
-                    runtime.exec(new String[]{"/system/bin/su", "-c", "pm clear " + packageName});
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 break;
             }
             case Constants.Codes.MAC: {
                 Toast.makeText(this, macAddress, Toast.LENGTH_LONG).show();
                 break;
             }
-            case Constants.Codes.DROID_SETTINGS: {
-                appOpener("com.droidlogic.tv.settings");
-                break;
-            }
-
             case Constants.Codes.SHOW_IP: {
                 String ip = Utils.getIPAddress(true);
                 Toast.makeText(this, ip, Toast.LENGTH_LONG).show();
-                break;
-            }
-            case Constants.Codes.TCP_IP: {
-                try {
-                    Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "setprop service.adb.tcp.port 5555"});
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 break;
             }
         }

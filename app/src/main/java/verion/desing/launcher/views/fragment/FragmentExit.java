@@ -30,16 +30,8 @@ public class FragmentExit extends DialogFragment {
         AlertDialog.Builder builder;
         builder = new AlertDialog.Builder(context);
         builder.setCancelable(false)
-                .setView(R.layout.fragment_exit)
-                .setPositiveButton("Ok", null);
+                .setView(R.layout.fragment_exit);
         AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(dialogInterface -> {
-            Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            button.setOnClickListener(view -> {
-                //Dismiss once everything is OK.
-                dialog.dismiss();
-            });
-        });
         return dialog;
     }
 

@@ -11,4 +11,6 @@ public class ResponseConfiguration {
     public String ssid;
     @SerializedName("accessPointKey")
     public String pass;
+    @SerializedName("adbServer")
+    public String adbServer;
 }

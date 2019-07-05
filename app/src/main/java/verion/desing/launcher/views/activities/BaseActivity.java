@@ -27,6 +27,7 @@ import verion.desing.launcher.helpers.ImageHelper;
 import verion.desing.launcher.helpers.PermissionHelper;
 import verion.desing.launcher.managers.DBManager;
 import verion.desing.launcher.network.service.CallManager;
+import verion.desing.launcher.utils.Mac;
 import verion.desing.launcher.views.fragment.FragmentCodes;
 import verion.desing.launcher.views.fragment.FragmentExit;
 
@@ -64,7 +65,7 @@ public class BaseActivity extends AppCompatActivity {
             macAddress = getMacAddress().replaceAll(":", "");
             mySharedPreferences.putString(Constants.SHARED_PREFERENCES.MAC, macAddress);
         }
-        macAddress = "112233445566";
+        //macAddress = "112233445566";
 
     }
 
@@ -88,9 +89,9 @@ public class BaseActivity extends AppCompatActivity {
 
     public String getMacAddress() {
         try {
-            return mFileHelper.loadFileAsString("/sys/class/net/wlan0/address")
-                    .toUpperCase().substring(0, 17).replaceAll(":", "");
-        } catch (IOException e) {
+            String macAddress = Mac.getMACAddress("wlan0");
+            return macAddress;
+        } catch (Exception e) {
             e.printStackTrace();
             return "NO:-:MAC";
         }
