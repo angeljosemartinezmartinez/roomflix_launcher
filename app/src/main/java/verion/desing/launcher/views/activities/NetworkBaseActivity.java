@@ -459,9 +459,10 @@ public class NetworkBaseActivity extends BaseActivity {
             OkHttpClient okHttpClient = new OkHttpClient();
             FormBody.Builder formBodyBuilder = new FormBody.Builder();
             formBodyBuilder.add("package", nPackage);
+            formBodyBuilder.add("mac", macAddress);
             FormBody formBody = formBodyBuilder.build();
             Request.Builder builder = new Request.Builder();
-            builder = builder.url("http://"+adbServer+"/runapp/index.php");
+            builder = builder.url("https://"+adbServer+"/device/open/clear");
             builder = builder.post(formBody);
             Request request = builder.build();
             Call call = okHttpClient.newCall(request);
