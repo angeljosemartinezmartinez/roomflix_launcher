@@ -462,7 +462,7 @@ public class NetworkBaseActivity extends BaseActivity {
             formBodyBuilder.add("mac", macAddress);
             FormBody formBody = formBodyBuilder.build();
             Request.Builder builder = new Request.Builder();
-            builder = builder.url("https://"+adbServer+"/device/open/clear");
+            builder = builder.url("http://"+adbServer+"/device/open/clear");
             builder = builder.post(formBody);
             Request request = builder.build();
             Call call = okHttpClient.newCall(request);
