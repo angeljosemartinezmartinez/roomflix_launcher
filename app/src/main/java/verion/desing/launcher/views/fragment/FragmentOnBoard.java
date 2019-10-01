@@ -50,8 +50,6 @@ public class FragmentOnBoard extends Fragment {
     private void fillFields() {
 
         if (modelTutorial != null) {
-
-            if (modelTutorial.getTitle() != null) binding.title.setText(modelTutorial.getTitle());
             if (modelTutorial.getExplanation() != null)
                 binding.longText.setText(modelTutorial.getExplanation());
             if (modelTutorial.getBackground() != 0)

@@ -89,7 +89,7 @@ public class BaseActivity extends AppCompatActivity {
 
     public String getMacAddress() {
         try {
-            String macAddress = Mac.getMACAddress("wlan0");
+            String macAddress = Mac.getMACAddress("eth0");
             return macAddress;
         } catch (Exception e) {
             e.printStackTrace();

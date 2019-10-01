@@ -12,27 +12,18 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.databinding.DataBindingUtil;
-
-import com.orhanobut.logger.Logger;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
-
-import javax.inject.Inject;
-
 import verion.desing.launcher.BuildConfig;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.R;
 import verion.desing.launcher.database.tables.Translations;
 import verion.desing.launcher.databinding.ActivityMainBinding;
-import verion.desing.launcher.helpers.PermissionHelper;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.listener.CallBackArrayList;
 import verion.desing.launcher.listener.CallBackCheckConnection;
-import verion.desing.launcher.utils.KeyCodesConverter;
 import verion.desing.launcher.utils.Utils;
 
 public class MainMenu extends NetworkBaseActivity {
@@ -259,11 +250,9 @@ public class MainMenu extends NetworkBaseActivity {
     }
 
     public boolean setCode(int number) {
-        Logger.d(number);
         if (System.currentTimeMillis() - lastKeyClick < 1000) {
             code = code + String.valueOf(number);
             if (code.length() == 14) {
-                Logger.d(code);
                 launchCode(code);
                 code = "";
                 return true;
