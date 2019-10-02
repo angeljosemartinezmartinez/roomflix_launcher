@@ -85,6 +85,7 @@ public class MainMenu extends NetworkBaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Utils.changeAppLanguage(new Locale(langID.toLowerCase()), this);
         checkCasesConnection();
         binding.video.start();
         closeWeather();
@@ -141,7 +142,6 @@ public class MainMenu extends NetworkBaseActivity {
             }
         });
     }
-
 
     private void generationMain() {
         setDay(binding.help.day);

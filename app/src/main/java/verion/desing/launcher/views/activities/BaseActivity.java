@@ -112,7 +112,9 @@ public class BaseActivity extends AppCompatActivity {
         });
         vidView.setOnInfoListener((mp, what, extra) -> {
             if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END || what == MediaPlayer.MEDIA_ERROR_SERVER_DIED
-                    || what == MediaPlayer.MEDIA_INFO_VIDEO_NOT_PLAYING || what == MediaPlayer.MEDIA_ERROR_SERVER_DIED)
+                    || what == MediaPlayer.MEDIA_INFO_VIDEO_NOT_PLAYING || what == MediaPlayer.MEDIA_ERROR_IO
+                    || what == MediaPlayer.MEDIA_ERROR_TIMED_OUT || what == MediaPlayer.MEDIA_ERROR_UNKNOWN
+                    || what == MediaPlayer.MEDIA_INFO_AUDIO_NOT_PLAYING)
                 goStreaming(vidView, enlace);
             return true;
         });
