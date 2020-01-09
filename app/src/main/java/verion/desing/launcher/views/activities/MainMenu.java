@@ -338,7 +338,7 @@ public class MainMenu extends NetworkBaseActivity {
         if (BuildConfig.ENVIRONMENT.equals(Constants.ENVIRONMENT.DEVELOP))
             binding.video.setOnClickListener(view -> startPackage("verion.desing.video.player.debug"));
         else
-            binding.video.setOnClickListener(view -> startPackage("ar.tvplayer.tv"));
+            binding.video.setOnClickListener(view -> startPackage("verion.desing.video.player"));
 
         binding.video.setBackgroundResource(R.drawable.focus_video_view);
 
