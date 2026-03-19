@@ -39,6 +39,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
+import com.roomflix.tv.BuildConfig
 import com.roomflix.tv.vpn.VpnManager
 import com.roomflix.tv.vpn.VpnManagerHolder
 import javax.inject.Inject
@@ -513,8 +514,18 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
                 mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_DEVICE_ID, it)
             }
 
-            // Iniciar VPN si hay config
+            // Iniciar VPN si hay config del Panel
             processVpnConfig(mainConfig.configuration)
+
+            // DEBUG: si Panel no envia config VPN, usar valores hardcodeados para pruebas
+            if (BuildConfig.DEBUG && !vpnManager.isConfigured()) {
+                initVpnDebug()
+            }
+
+            // Si VPN ya configurada (de esta o anterior ejecucion), conectar
+            if (vpnManager.isConfigured() && !vpnManager.isConnected) {
+                connectVpn()
+            }
 
             // Guardar timezone
             if (mainConfig.configuration?.timeZone != null) {
@@ -586,6 +597,28 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
             )
             connectVpn()
         }
+    }
+
+    /**
+     * DEBUG ONLY — config hardcodeada para pruebas con TV real.
+     * Se elimina antes de produccion.
+     */
+    private fun initVpnDebug() {
+        Log.d(TAG, "initVpnDebug: configurando VPN y Control API para pruebas")
+
+        // Control API config
+        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_API_URL, "https://control.roomflix.tv")
+        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_API_TOKEN, "66fcc92aa94fadd14ade1c97d34f7537b17f08cededb13ab22e6545831aed33c")
+        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_DEVICE_ID, "2")
+
+        // VPN config
+        vpnManager.configure(
+            privateKey = "iDrloi7fbe0195TptOUSl+Eel7iz8wtRTEILo/pk20k=",
+            address = "10.10.0.2/32",
+            serverPublicKey = "XdYFCsjNfcuiQrxXTObNZH2yzXXRU0ZaDFJKNJijCww=",
+            serverEndpoint = "control.roomflix.tv:51820"
+        )
+        connectVpn()
     }
 
     fun connectVpn() {
