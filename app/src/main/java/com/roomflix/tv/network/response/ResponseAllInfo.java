@@ -1,0 +1,22 @@
+package com.roomflix.tv.network.response;
+
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public class ResponseAllInfo {
+
+    @SerializedName("baseUrl")
+    public String baseUrl;
+    @SerializedName("languages")
+    public ArrayList<ResponseLanguages> languages;
+    @SerializedName("template")
+    public ResponseTemplates templates;
+    @SerializedName("submenus")
+    public ArrayList<ResponseSubmenu> submenus;
+    @SerializedName("infoCards")
+    public ArrayList<ResponseInfoCards> infoCards;
+    @SerializedName("configuration")
+    public ResponseConfiguration configuration;
+}

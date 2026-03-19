@@ -1,34 +1,48 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
-def vc = 8000
+def vc = 2
+
 android {
-    lintOptions{
+    namespace 'com.roomflix.tv'
+    compileSdk 34
+
+    lintOptions {
         checkReleaseBuilds false
         abortOnError false
     }
-    defaultConfig {
-        applicationId "verion.desing.launcher"
-        minSdkVersion 25
-        targetSdkVersion 28
-        versionCode vc
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+    defaultConfig {
+        applicationId "com.roomflix.tv"
+        minSdkVersion 26
+        targetSdkVersion 34
+        versionCode vc
+        versionName "1.0.1"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        
+        multiDexEnabled true
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["incremental": "true"]
+            }
+        }
+        
+        ndk {
+            // Chromecast Google TV HD solo reporta armeabi-v7a; FFmpeg compilado para esta ABI.
+            abiFilters "armeabi-v7a"
+        }
     }
 
     signingConfigs {
         release {
             keyAlias 'verionLauncher'
             keyPassword 'L1N4R3S'
-            storeFile file('C:\\Users\\verion\\StudioProjects\\launcher-hotelplay\\Verion.keystore')
+            storeFile file('../Verion.keystore')
             storePassword 'android'
         }
     }
-
-    defaultConfig {
-        multiDexEnabled true
-    }
-    compileSdkVersion 'android-28'
 
     buildTypes {
         release {
@@ -39,108 +53,144 @@ android {
             signingConfig signingConfigs.release
         }
         debug {
-            minifyEnabled false
             buildConfigField "String", "ENVIRONMENT", "\"develop\""
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled false
             debuggable true
             renderscriptDebuggable false
             applicationIdSuffix '.debug'
             versionNameSuffix '-debug'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
     productFlavors {
         normal {
-            applicationId "verion.desing.launcher"
-            versionName "8.0.0.0"
+            dimension "default"
+            applicationId "com.roomflix.tv"
+            versionName "1.0.1"
             signingConfig signingConfigs.release
-            flavorDimensions "default"
-            archivesBaseName= "verionLauncher-" + vc
         }
     }
+    
+    flavorDimensions "default"
 
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+        compose = true
+        buildConfig = true // <--- AQUÍ ESTÁ LA SOLUCIÓN AL ERROR
     }
-    aaptOptions { cruncherEnabled = false }
+    
     compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
-        incremental = false
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.10"  // Compatible con Kotlin 1.9.22
+    }
+
+    packagingOptions {
+        pickFirst 'lib/armeabi-v7a/libffmpegJNI.so'
+        pickFirst 'lib/arm64-v8a/libffmpegJNI.so'
+        pickFirst 'lib/x86/libffmpegJNI.so'
+        pickFirst 'lib/x86_64/libffmpegJNI.so'
+        jniLibs {
+            useLegacyPackaging = true
+        }
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
     }
 }
 
 dependencies {
-
     implementation project(path: ':database')
-    //Test
-    testImplementation 'junit:junit:4.12'
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
 
-    //Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    // AndroidX & UI
+    implementation "androidx.core:core-ktx:1.13.1"
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    
+    // Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
+    
+    // Lifecycle (versiones estables para SDK 34)
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.8.4"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.8.4"
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.8.4"
 
-    //Player
-    implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
+    // Compose: BOM para versiones alineadas (evita NoSuchMethodError setContent / ReusableComposition)
+    implementation platform('androidx.compose:compose-bom:2024.02.00')
+    implementation 'androidx.compose.runtime:runtime'
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.activity:activity-compose'
+    // TV: no están en el BOM, versión explícita
+    implementation "androidx.tv:tv-foundation:1.0.0-alpha10"
+    implementation "androidx.tv:tv-material:1.0.0-alpha10"
+    
+    // Media3 Player - 1.3.1 en sintonía con Jellyfin media3-ffmpeg-decoder (evita Duplicate Classes / crashes)
+    def media3_version = "1.3.1"
+    implementation "androidx.media3:media3-exoplayer:$media3_version"
+    implementation "androidx.media3:media3-ui:$media3_version"
+    // Módulos críticos para IPTV (DASH, HLS y SmoothStreaming)
+    implementation "androidx.media3:media3-exoplayer-dash:$media3_version" // Soporte para .mpd (Type 0)
+    implementation "androidx.media3:media3-exoplayer-hls:$media3_version"  // Soporte para .m3u8 (Type 2)
+    implementation "androidx.media3:media3-exoplayer-smoothstreaming:$media3_version" // Soporte para SmoothStreaming
+    // FFmpeg: Jellyfin aporta las clases (androidx.media3.decoder.ffmpeg). libffmpegJNI.so para armeabi-v7a
+    // se compila desde androidx/media y se copia a app/src/main/jniLibs/armeabi-v7a/ (ver BUILD_FFMPEG_ARMEABI_V7A.md).
+    implementation "org.jellyfin.media3:media3-ffmpeg-decoder:1.3.1+2"
 
-    //Images
-    implementation 'com.github.bumptech.glide:glide:4.7.1'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
-    implementation 'com.squareup.picasso:picasso:2.71828'
+    // Coil para imágenes
+    implementation "io.coil-kt:coil-compose:2.5.0"
 
-    //Network
-    implementation "com.squareup.okhttp3:okhttp:$okhttp3_version"
-    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp3_version"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
-    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
-    implementation "com.squareup.retrofit2:converter-scalars:$retrofit_version"
+    // Retrofit
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.squareup.retrofit2:converter-scalars:2.9.0" // Para ScalarsConverterFactory
+
+    // OkHttp Logging
+    implementation "com.squareup.okhttp3:logging-interceptor:4.11.0" // Para HttpLoggingInterceptor
+
+    // Glide para carga de imágenes
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    kapt 'com.github.bumptech.glide:compiler:4.16.0'
 
     // Dagger 2
+    def draggerVersion = '2.48'
     implementation "com.google.dagger:dagger:${draggerVersion}"
-    annotationProcessor "com.google.dagger:dagger-compiler:${draggerVersion}"
+    kapt "com.google.dagger:dagger-compiler:${draggerVersion}"
     compileOnly 'javax.annotation:jsr250-api:1.0'
     implementation 'javax.inject:javax.inject:1'
 
-    //AndroidX a
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.viewpager:viewpager:1.0.0'
-
-    //room
-    implementation "androidx.room:room-runtime:$room_version"
-
-    //dataBinding
-    annotationProcessor "androidx.databinding:databinding-compiler:$databinding_compiler"
-
-    //Design
-    implementation 'com.kofigyan.stateprogressbar:stateprogressbar:0.0.9'
-    implementation 'com.google.android.material:material:1.0.0-alpha3'
-    implementation 'me.relex:circleindicator:1.2.2@aar'
-
-    //Icons
-    implementation 'com.mikepenz:iconics-views:3.1.0'
-    implementation 'com.mikepenz:iconics-core:3.1.0'
-    implementation 'com.mikepenz:fontawesome-typeface:5.3.1.1@aar'
-    implementation 'com.mikepenz:meteocons-typeface:1.1.0.5@aar'
-    implementation 'com.mikepenz:google-material-typeface:3.0.1.3.original@aar'
-
-    //Logger
+    // Logger (com.orhanobut:logger)
     implementation 'com.orhanobut:logger:2.2.0'
-
-//    Rx
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
-    implementation "io.reactivex.rxjava2:rxjava:2.1.14"
-
-}
-repositories {
-    google()
-    maven { url 'https://jitpack.io' }
-    jcenter()
+    
+    // Picasso para carga de imágenes
+    implementation 'com.squareup.picasso:picasso:2.8'
+    
+    // Iconics: core + views (views incluye utilidades de extensión sizeDp, colorInt)
+    implementation "com.mikepenz:iconics-core:5.3.3"
+    implementation "com.mikepenz:iconics-views:5.3.3"
+    implementation "com.mikepenz:weather-icons-typeface:2.0.10.7-kotlin"
+    
+    // Room (ya está en :database, pero añadimos aquí para compatibilidad)
+    def room_version = "2.6.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    
+    // Logging
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+    
+    // CircleIndicator (compatible con AndroidX)
+    implementation 'me.relex:circleindicator:2.1.6'
+    
+    // Google Play Services Location (para FusedLocationProviderClient)
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
 }

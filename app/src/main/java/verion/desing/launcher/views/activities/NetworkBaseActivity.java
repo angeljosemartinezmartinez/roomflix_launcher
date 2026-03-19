@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -16,14 +15,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -34,9 +27,10 @@ import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import verion.desing.launcher.BuildConfig;
+import com.roomflix.tv.BuildConfig;
 import verion.desing.launcher.Constants;
-import verion.desing.launcher.R;
+import com.roomflix.tv.R;
+import com.roomflix.tv.views.activities.MainMenu;
 import verion.desing.launcher.listener.CallBackAllInfoCheck;
 import verion.desing.launcher.listener.CallBackCheckConnection;
 import verion.desing.launcher.listener.CallBackSaveData;
@@ -121,13 +115,7 @@ public class NetworkBaseActivity extends BaseActivity {
             return false;
         } else {
             Logger.d("UPDATE CHANGED");
-            String date = body.date;
-            Log.d(TAG, "Different date: " + date + " shared preferences date: "
-                    + mySharedPreferences.getString(Constants.SHARED_PREFERENCES.APK_DATE));
-            if (!date.equals(mySharedPreferences.getString(Constants.SHARED_PREFERENCES.APK_DATE))) {
-                String apk = body.baseUrl + body.apk;
-                checkUpdate(apk, body.pkg);
-            }
+            // Launcher ya no gestiona instalación/desinstalación de APKs; solo persistir hash y objeto de update
             mySharedPreferences.putInt(Constants.SHARED_PREFERENCES.HASH_UPDATE, actual);
             mySharedPreferences.putStringObject(Constants.SHARED_PREFERENCES.UPDATE_OBJECT, body, typeOfObjectsListNew);
             return true;
@@ -172,86 +160,6 @@ public class NetworkBaseActivity extends BaseActivity {
     private void saveDateApk(String fecha) {
         if (fecha != null)
             mySharedPreferences.putString(Constants.SHARED_PREFERENCES.APK_DATE, fecha);
-    }
-
-    /**
-     * Download and create a directory where is saved the app
-     *
-     * @param apk where is downloaded
-     * @param pkg of the app
-     */
-    private void checkUpdate(String apk, String pkg) {
-        new Thread(() -> {
-            try {
-                URL url = new URL(apk);
-                HttpURLConnection c = (HttpURLConnection) url.openConnection();
-                c.setRequestMethod("GET");
-                c.connect();
-                File apkStorage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                        + "/" + "apks");
-                if (!apkStorage.exists()) {
-                    apkStorage.mkdir();
-                }
-                String apkDownloaded = apk.substring(38).trim();
-                File outputFile = new File(apkStorage, apkDownloaded);
-                if (!outputFile.exists()) {
-                    outputFile.createNewFile();
-                }
-                FileOutputStream fos = new FileOutputStream(outputFile);
-                InputStream is = c.getInputStream();
-                byte[] buffer = new byte[1024];
-                int len1;
-                while ((len1 = is.read(buffer)) != -1) {
-                    fos.write(buffer, 0, len1);
-                }
-                fos.close();
-                is.close();
-                installProcess(apkStorage.getAbsolutePath() + apkDownloaded, pkg);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-    /**
-     * Install an application downloaded from panel
-     *
-     * @param path where is specified apk
-     * @param pkg  package of the app
-     */
-    public void installProcess(String path, String pkg) {
-        Process pro1;
-        try {
-            pro1 = Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "chmod 777 " + path});
-            try {
-                pro1.waitFor();
-            } catch (InterruptedException e) {
-                Logger.d(e);
-                e.printStackTrace();
-            }
-            Logger.d(path);
-            Process pro2 = Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm install -r -d -g " + path});
-            try {
-                pro2.waitFor();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                Logger.d(e);
-
-            }
-            Process pro3 = Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm install -r -i " + pkg + " -d -g  " + path});
-            try {
-                pro3.waitFor();
-            } catch (InterruptedException e) {
-                Logger.d(e);
-
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            Logger.d(e);
-            e.printStackTrace();
-        }
     }
 
     private void saveBackground(ResponseAllInfo body) {
@@ -380,9 +288,11 @@ public class NetworkBaseActivity extends BaseActivity {
             case 7:
                 openCastTutorial(this);
                 break;
-            case 8:
-                openParentalControlDialog(MainMenu.context);
+            case 8: {
+                android.content.Context ctx = MainMenu.getContext();
+                openParentalControlDialog(ctx != null ? ctx : this);
                 break;
+            }
             case 9:
                 startPackage("verion.desing.verionweather");
                 break;
@@ -391,12 +301,7 @@ public class NetworkBaseActivity extends BaseActivity {
         }
     }
 
-    public void setDay(TextView day) {
-        Date myDate = new Date();
-        SimpleDateFormat dmyFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.FRENCH);
-        String dmy = dmyFormat.format(myDate);
-        day.setText(dmy);
-    }
+    // setDay() - ELIMINADO: La función ya no se usa, el elemento 'day' fue eliminado del layout
 
     private void saveTimezone(ResponseConfiguration configuration) {
         String timezone = configuration.timeZone + "";
@@ -501,12 +406,9 @@ public class NetworkBaseActivity extends BaseActivity {
     }
 
 
+    /** Antes lanzaba LanguageSelect (eliminado); idioma se cambia desde la píldora en MainMenu. */
     public void changeLanguage(Context context) {
-        finish();
-        Intent i = new Intent(context, LanguageSelect.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i);
+        // No-op: selector de idioma integrado en MainMenu (píldora expandible)
     }
 
     private void openWeb(String nPaquete) {

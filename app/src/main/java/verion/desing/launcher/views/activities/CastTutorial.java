@@ -12,8 +12,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import verion.desing.launcher.Constants;
-import verion.desing.launcher.R;
-import verion.desing.launcher.databinding.ActivityCatyTutorialBinding;
+import com.roomflix.tv.R;
+import com.roomflix.tv.databinding.ActivityCatyTutorialBinding;
 import verion.desing.launcher.model.ModelTutorial;
 import verion.desing.launcher.views.fragment.FragmentOnBoard;
 

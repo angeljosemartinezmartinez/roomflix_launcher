@@ -8,7 +8,7 @@ interface ConfigurationDao {
     @Query("SELECT * from configuration")
     fun getAll(): List<Configuration>
 
-    @Insert(onConflict = OnConflictStrategy.ROLLBACK)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(button: Configuration)
 
     @Query("DELETE from configuration")

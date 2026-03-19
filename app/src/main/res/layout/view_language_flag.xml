@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/languageFlagItem"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:gravity="center"
+    android:clipChildren="false"
+    android:focusable="true"
+    android:clickable="true"
+    android:focusableInTouchMode="true"
+    android:background="@android:color/transparent"
+    android:stateListAnimator="@animator/scale_on_focus_110">
+
+    <ImageView
+        android:id="@+id/languageFlag"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerCrop" />
+
+</FrameLayout>

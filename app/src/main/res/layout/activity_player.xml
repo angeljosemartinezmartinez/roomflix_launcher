@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <!-- Media3 PlayerView - Sin controles nativos para zapping directo -->
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/playerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:clickable="false"
+        android:keepScreenOn="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:use_controller="false"
+        app:resize_mode="fill"
+        app:surface_type="surface_view"
+        app:show_buffering="when_playing" />
+
+    <!-- ProgressBar para mostrar estado de carga -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@android:color/white"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Barra de información de canal: scrim para legibilidad en TV full screen -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/channelBanner"
+        android:layout_width="0dp"
+        android:layout_height="360dp"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/bg_info_scrim"
+        android:paddingBottom="48dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Guideline al 23% del ancho para delimitar área del logo -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/logo_boundary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.23" />
+
+        <!-- Guideline vertical al 70% para separar EPG y Metadatos -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/metadata_boundary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.70" />
+
+        <!-- Número del canal - Ancho fijo para evitar desplazamiento del logo -->
+        <TextView
+            android:id="@+id/channelNumber"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:shadowColor="#CC000000"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="3"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
+
+        <!-- Logo del canal - Centrado visualmente entre el número y el inicio del EPG -->
+        <ImageView
+            android:id="@+id/channelLogo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:scaleType="fitCenter"
+            android:contentDescription="Logo del canal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/logo_boundary"
+            app:layout_constraintStart_toEndOf="@id/channelNumber"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Nombre del canal - Arriba del EPG, alineado con metadatos -->
+        <TextView
+            android:id="@+id/channelName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:shadowColor="#CC000000"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="3"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:visibility="visible"
+            app:layout_constraintEnd_toStartOf="@id/metadata_boundary"
+            app:layout_constraintStart_toEndOf="@id/logo_boundary"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Contenedor EPG (Información de programa) - Entre 23% y 70%, debajo del nombre -->
+        <LinearLayout
+            android:id="@+id/epgContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="4dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/metadata_boundary"
+            app:layout_constraintStart_toEndOf="@id/logo_boundary"
+            app:layout_constraintTop_toBottomOf="@id/channelName"
+            app:layout_constraintVertical_bias="0.0">
+
+            <!-- Título del programa actual -->
+            <TextView
+                android:id="@+id/currentProgramTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:shadowColor="#CC000000"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="3"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <!-- Hora inicio - Hora fin | Barra de progreso | Tiempo restante -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Hora inicio - Hora fin -->
+                <TextView
+                    android:id="@+id/programTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="12sp" />
+
+                <!-- Barra de progreso (delgada) -->
+                <ProgressBar
+                    android:id="@+id/programProgress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:progressTint="@android:color/white"
+                    android:progressBackgroundTint="#66FFFFFF"
+                    android:max="100"
+                    android:progress="50" />
+
+                <!-- Tiempo restante -->
+                <TextView
+                    android:id="@+id/programTimeRemaining"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- Programa siguiente (más pequeño y menos opaco) -->
+            <TextView
+                android:id="@+id/nextProgramTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="#99FFFFFF"
+                android:textSize="14sp"
+                android:shadowColor="#CC000000"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="3"
+                android:maxLines="1"
+                android:ellipsize="end" />
+        </LinearLayout>
+
+
+        <!-- Contenedor de Metadatos Técnicos (Derecha Superior) - Después del 70% -->
+        <LinearLayout
+            android:id="@+id/metadataContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical|end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/metadata_boundary"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- Pill: Calidad (HD/4K) -->
+            <TextView
+                android:id="@+id/qualityPill"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/pill_metadata"
+                android:paddingStart="8dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="4dp"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:text="HD" />
+
+            <!-- Pill: FPS -->
+            <TextView
+                android:id="@+id/fpsPill"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/pill_metadata"
+                android:paddingStart="8dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="4dp"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:text="30 FPS" />
+
+            <!-- Pill: Audio -->
+            <TextView
+                android:id="@+id/audioPill"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/pill_metadata"
+                android:paddingStart="8dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="4dp"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:text="STEREO" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

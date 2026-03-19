@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    
+    <!-- Gradiente vertical: transparente arriba, negro sólido abajo -->
+    <gradient
+        android:angle="270"
+        android:startColor="#00212121"
+        android:centerColor="#CC000000"
+        android:endColor="#FF000000"
+        android:type="linear" />
+    
+</shape>

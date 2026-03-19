@@ -8,7 +8,7 @@ interface ButtonDao {
     @Query("SELECT * from button")
     fun getAll(): List<Button>
 
-    @Insert(onConflict = OnConflictStrategy.ROLLBACK)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(button: Button)
 
     @Query("DELETE from button")

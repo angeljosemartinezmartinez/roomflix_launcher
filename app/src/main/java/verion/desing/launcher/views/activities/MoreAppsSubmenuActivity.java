@@ -12,12 +12,12 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import verion.desing.launcher.Constants;
-import verion.desing.launcher.R;
+import com.roomflix.tv.R;
 import verion.desing.launcher.database.models.TranslationSubmenu;
 import verion.desing.launcher.database.tables.Button;
 import verion.desing.launcher.database.tables.Submenus;
 import verion.desing.launcher.database.tables.Translations;
-import verion.desing.launcher.databinding.ActivityMoreAppsSubmenuBinding;
+import com.roomflix.tv.databinding.ActivityMoreAppsSubmenuBinding;
 import verion.desing.launcher.dragger.LauncherApplication;
 import verion.desing.launcher.listener.CallBackGetOne;
 import verion.desing.launcher.managers.DBManager;
@@ -50,18 +50,11 @@ public class MoreAppsSubmenuActivity extends NetworkBaseActivity {
         imageHelper.loadRoundCorner(background, binding.background);
         imageHelper.loadRoundCorner(logo, binding.help.logo);
         getSubmenuFromBtn();
-        setClock();
-        setDay(binding.help.day);
+        // setClock() y setDay() - ELIMINADOS: El reloj antiguo ya no existe
 
     }
 
-    private void setClock() {
-        binding.help.toptextClock.setFormat12Hour(null);
-        binding.help.toptextClock.setFormat24Hour("HH:mm");
-        String timezone = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.TIMEZONE);
-        if (timezone != "")
-            binding.help.toptextClock.setTimeZone(timezone);
-    }
+    // setClock() - ELIMINADO: El reloj antiguo (toptextClock) ya no existe en el layout
 
     private void getSubmenuFromBtn() {
         mDBManager.getSubmenu(new CallBackGetOne<Submenus>() {

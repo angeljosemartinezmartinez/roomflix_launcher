@@ -2,7 +2,7 @@
 <resources>
 
     <string name="title_exit">Warnung</string>
-    <string name="explanation_exit">Sie gingst zu ausgang von HotelPlay</string>
+    <string name="explanation_exit">Sie gingst zu ausgang von Roomflix</string>
     <string name="explanation_exit1">Dein persönlinch informationen weird sein gestrichen wann du gehst aus der zimmer\nAußerdem dein daten nein weird sein verfahren von uns oder von dritte teil</string>
     <string name="explanation_exit_codes">Wir machen ein paar bedienung, lassen uns ein paar minute</string>
 

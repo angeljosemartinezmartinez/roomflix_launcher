@@ -16,16 +16,192 @@
             android:background="@color/black"
             android:scaleType="fitXY" />
 
+        <!-- Logo del hotel: alineado a la barra superior centrada en el espacio superior -->
         <ImageView
-            android:id="@+id/ver_tv"
-            android:layout_width="45dp"
-            android:layout_height="21dp"
+            android:id="@+id/topBarLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_marginStart="16dp"
             android:adjustViewBounds="true"
             android:scaleType="fitXY"
-            android:background="@drawable/ver_tv"
+            android:contentDescription="Logo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/topBar"
+            app:layout_constraintBottom_toBottomOf="@+id/topBar"
+            app:layout_constraintVertical_bias="0.5" />
+
+        <!-- Barra superior: ocupa el espacio entre el borde superior y la fila de contenidos,
+             centrando verticalmente el bloque de hora/fecha en ese espacio -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/myVideo"
-            app:layout_constraintEnd_toEndOf="@+id/myVideo"
-            android:visibility="invisible"/>
+            app:layout_constraintVertical_bias="0.5">
+
+            <!-- Barra de información (diseño RoomFlix): centrada verticalmente en la franja superior -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/topInfoBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:clickable="false"
+                android:gravity="center"
+                android:layout_marginEnd="24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <!-- Hora: cabeza de cadena vertical, centrada con bias 0.5 -->
+                <TextView
+                    android:id="@+id/infoClock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="13:35"
+                    android:textColor="#FFFFFF"
+                    android:textSize="34sp"
+                    android:fontFamily="sans-serif-light"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/infoDate"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    app:layout_constraintVertical_bias="0.5" />
+
+                <!-- Fecha: mismo ancho que el reloj, pegada al reloj, sin restricción bottom extra -->
+                <TextView
+                    android:id="@+id/infoDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Jue, 29 ene"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:textAllCaps="true"
+                    android:maxLines="2"
+                    android:ellipsize="none"
+                    android:layout_marginTop="0dp"
+                    android:padding="0dp"
+                    android:lineSpacingExtra="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/infoClock"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- COLUMNA DERECHA: Acciones (Píldora de Idioma + Botón Send) -->
+
+            <!-- Botón Send / Chromecast: alineado con la barra (barra anclada al logo) -->
+            <FrameLayout
+                android:id="@+id/sendButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="18dp"
+                android:background="@drawable/selector_top_button"
+                android:focusable="true"
+                android:clickable="true"
+                android:focusableInTouchMode="true"
+                android:descendantFocusability="blocksDescendants"
+                android:nextFocusLeft="@+id/languagePillContainer"
+                android:nextFocusDown="@+id/btn13"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <ImageView
+                    android:id="@+id/sendButtonIcon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_cast_white"
+                    android:scaleType="centerInside"
+                    android:contentDescription="@string/send_content_description" />
+            </FrameLayout>
+
+            <!-- Bloque clima dinámico (Open-Meteo): icono sobre temperatura, a la izquierda de Idioma/Chromecast -->
+            <LinearLayout
+                android:id="@+id/weatherContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginEnd="24dp"
+                app:layout_constraintEnd_toStartOf="@+id/languagePillContainer"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <ImageView
+                    android:id="@+id/weatherIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_cloud_white"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside" />
+
+                <TextView
+                    android:id="@+id/weatherTemp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0°"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <!-- Píldora expansiva de idiomas (40dp colapsada); alineada con la barra (barra anclada al logo) -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/languagePillContainer"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_language_pill"
+                android:elevation="24dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:clickable="true"
+                android:nextFocusLeft="@+id/languagePillContainer"
+                android:nextFocusDown="@id/btn10"
+                app:layout_constraintEnd_toStartOf="@+id/sendButton"
+                app:layout_constraintTop_toTopOf="@+id/sendButton"
+                app:layout_constraintBottom_toBottomOf="@+id/sendButton">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/languagesRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:descendantFocusability="blocksDescendants"
+                    android:duplicateParentState="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:nextFocusDown="@id/btn10"
+                    android:overScrollMode="never"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/myVideo"
@@ -33,19 +209,48 @@
             android:layout_height="212dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="73dp"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
+            android:layout_marginEnd="6dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
+            android:descendantFocusability="blocksDescendants"
+            android:foreground="@drawable/video_foreground_selector"
+            android:nextFocusDown="@+id/btn0"
             android:nextFocusRight="@id/btn7"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <VideoView
+            <androidx.media3.ui.PlayerView
                 android:id="@+id/video"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:clickable="true"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:visibility="invisible" />
+                android:nextFocusUp="@id/video"
+                android:nextFocusDown="@+id/btn0"
+                android:nextFocusLeft="@id/video"
+                android:visibility="invisible"
+                app:use_controller="false"
+                app:surface_type="surface_view" />
+
+            <TextView
+                android:id="@+id/videoLiveText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginBottom="12dp"
+                android:text="Live TV"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif-light"
+                android:shadowColor="#000000"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="3"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -55,10 +260,15 @@
             android:layout_height="103dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="6dp"
+            android:layout_marginEnd="6dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
             android:focusableInTouchMode="true"
             android:scaleType="centerInside"
+            android:nextFocusUp="@+id/myVideo"
+            android:nextFocusRight="@+id/btn2"
+            android:nextFocusDown="@+id/btn1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/myVideo" />
 
@@ -68,10 +278,14 @@
             android:layout_height="103dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="6dp"
+            android:layout_marginEnd="6dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
             android:focusableInTouchMode="true"
             android:scaleType="centerInside"
+            android:nextFocusUp="@+id/btn0"
+            android:nextFocusRight="@+id/btn3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn0" />
 
@@ -82,12 +296,14 @@
             android:layout_marginStart="6dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
             android:focusableInTouchMode="true"
             android:scaleType="centerInside"
-            app:layout_constraintBottom_toBottomOf="@+id/btn0"
+            android:nextFocusUp="@+id/myVideo"
+            android:nextFocusLeft="@+id/btn0"
+            android:nextFocusRight="@+id/btn4"
             app:layout_constraintStart_toEndOf="@+id/btn0"
             app:layout_constraintTop_toTopOf="@+id/btn0" />
-
 
         <ImageButton
             android:id="@+id/btn3"
@@ -96,12 +312,14 @@
             android:layout_marginStart="6dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
             android:focusableInTouchMode="true"
             android:scaleType="centerInside"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:nextFocusUp="@+id/btn2"
+            android:nextFocusLeft="@+id/btn1"
+            android:nextFocusRight="@+id/btn5"
             app:layout_constraintStart_toEndOf="@+id/btn1"
-            app:layout_constraintTop_toTopOf="@+id/btn1"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="@+id/btn1" />
 
         <ImageButton
             android:id="@+id/btn4"
@@ -110,9 +328,12 @@
             android:layout_marginStart="6dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
             android:focusableInTouchMode="true"
             android:scaleType="centerInside"
-            app:layout_constraintBottom_toBottomOf="@+id/btn2"
+            android:nextFocusUp="@+id/myVideo"
+            android:nextFocusLeft="@+id/btn2"
+            android:nextFocusRight="@+id/btn6"
             app:layout_constraintStart_toEndOf="@+id/btn2"
             app:layout_constraintTop_toTopOf="@+id/btn2" />
 
@@ -123,26 +344,29 @@
             android:layout_marginStart="6dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
             android:focusableInTouchMode="true"
             android:scaleType="centerInside"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:nextFocusUp="@+id/btn4"
+            android:nextFocusLeft="@+id/btn3"
             app:layout_constraintStart_toEndOf="@+id/btn3"
-            app:layout_constraintTop_toTopOf="@+id/btn3"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="@+id/btn3" />
 
         <ImageButton
             android:id="@+id/btn6"
             android:layout_width="53dp"
             android:layout_height="212dp"
             android:layout_marginStart="6dp"
-            android:layout_marginTop="6dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
             android:focusableInTouchMode="true"
-            android:nextFocusDown="@id/btn6"
-            app:layout_constraintBottom_toBottomOf="@id/btn5"
+            android:nextFocusUp="@+id/myVideo"
+            android:nextFocusLeft="@+id/btn4"
+            android:nextFocusRight="@+id/btn8"
+            android:scaleType="centerInside"
             app:layout_constraintStart_toEndOf="@+id/btn4"
-            app:layout_constraintTop_toBottomOf="@+id/myVideo" />
+            app:layout_constraintTop_toTopOf="@+id/btn4" />
 
         <ImageButton
             android:id="@+id/btn7"
@@ -152,7 +376,10 @@
             android:layout_marginTop="73dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
+            android:enabled="true"
             android:focusableInTouchMode="true"
+            android:nextFocusLeft="@+id/myVideo"
             android:scaleType="centerInside"
             app:layout_constraintStart_toEndOf="@+id/myVideo"
             app:layout_constraintTop_toTopOf="parent" />
@@ -164,7 +391,13 @@
             android:layout_marginStart="6dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
             android:focusableInTouchMode="true"
+            android:nextFocusUp="@+id/btn7"
+            android:nextFocusLeft="@+id/btn6"
+            android:nextFocusRight="@+id/btn12"
+            android:nextFocusDown="@+id/btn9"
+            android:scaleType="centerInside"
             app:layout_constraintStart_toEndOf="@+id/btn6"
             app:layout_constraintTop_toTopOf="@+id/btn6" />
 
@@ -175,11 +408,14 @@
             android:layout_marginStart="6dp"
             android:layout_marginTop="6dp"
             android:background="@color/transparent"
-            android:nextFocusDown="@id/btn9"
+            android:focusable="true"
+            android:clickable="true"
+            android:focusableInTouchMode="true"
+            android:nextFocusUp="@+id/btn8"
+            android:nextFocusLeft="@+id/btn6"
             android:scaleType="centerInside"
             app:layout_constraintStart_toEndOf="@+id/btn6"
             app:layout_constraintTop_toBottomOf="@+id/btn8" />
-
 
         <ImageButton
             android:id="@+id/btn10"
@@ -188,7 +424,13 @@
             android:layout_marginStart="6dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
             android:focusableInTouchMode="true"
+            android:nextFocusUp="@+id/languagePillContainer"
+            android:nextFocusLeft="@+id/btn7"
+            android:nextFocusRight="@+id/btn13"
+            android:nextFocusDown="@+id/btn11"
+            android:scaleType="centerInside"
             app:layout_constraintStart_toEndOf="@+id/btn7"
             app:layout_constraintTop_toTopOf="@+id/btn7" />
 
@@ -200,7 +442,11 @@
             android:layout_marginTop="6dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
             android:focusableInTouchMode="true"
+            android:nextFocusUp="@+id/btn10"
+            android:nextFocusLeft="@+id/btn7"
+            android:nextFocusRight="@+id/btn14"
             android:scaleType="centerInside"
             app:layout_constraintStart_toEndOf="@+id/btn7"
             app:layout_constraintTop_toBottomOf="@id/btn10" />
@@ -213,8 +459,12 @@
             android:layout_marginTop="6dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
             android:focusableInTouchMode="true"
-            android:nextFocusDown="@id/btn12"
+            android:nextFocusUp="@+id/btn11"
+            android:nextFocusLeft="@+id/btn8"
+            android:nextFocusRight="@+id/btn15"
+            android:scaleType="centerInside"
             app:layout_constraintStart_toEndOf="@+id/btn8"
             app:layout_constraintTop_toBottomOf="@+id/btn11" />
 
@@ -224,12 +474,15 @@
             android:layout_height="103dp"
             android:layout_marginStart="6dp"
             android:layout_marginTop="73dp"
-            android:layout_marginBottom="6dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
             android:focusableInTouchMode="true"
+            android:nextFocusUp="@+id/sendButton"
+            android:nextFocusDown="@+id/btn14"
+            android:nextFocusLeft="@+id/btn10"
+            android:nextFocusRight="@+id/btn13"
             android:scaleType="centerInside"
-            app:layout_constraintBottom_toTopOf="@+id/btn14"
             app:layout_constraintStart_toEndOf="@+id/btn10"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -240,7 +493,11 @@
             android:layout_marginStart="6dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
             android:focusableInTouchMode="true"
+            android:nextFocusUp="@+id/btn13"
+            android:nextFocusLeft="@+id/btn11"
+            android:nextFocusRight="@+id/btn14"
             android:scaleType="centerInside"
             app:layout_constraintStart_toEndOf="@+id/btn11"
             app:layout_constraintTop_toTopOf="@+id/btn11" />
@@ -252,7 +509,11 @@
             android:layout_marginStart="6dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
             android:focusableInTouchMode="true"
+            android:nextFocusUp="@+id/btn14"
+            android:nextFocusLeft="@+id/btn12"
+            android:nextFocusRight="@+id/btn15"
             android:scaleType="centerInside"
             app:layout_constraintStart_toEndOf="@+id/btn12"
             app:layout_constraintTop_toTopOf="@+id/btn12" />
@@ -265,8 +526,11 @@
             android:layout_marginTop="6dp"
             android:background="@color/transparent"
             android:focusable="true"
+            android:clickable="true"
             android:focusableInTouchMode="true"
-            android:nextFocusDown="@id/btn16"
+            android:nextFocusUp="@+id/btn15"
+            android:nextFocusLeft="@+id/btn12"
+            android:nextFocusRight="@+id/btn16"
             android:scaleType="centerInside"
             app:layout_constraintStart_toEndOf="@+id/btn12"
             app:layout_constraintTop_toBottomOf="@+id/btn15" />
@@ -275,15 +539,8 @@
             android:id="@+id/help"
             layout="@layout/help_remote_control"
             android:focusable="false"
-            android:focusableInTouchMode="false" />
-
-        <include
-            android:id="@+id/loader"
-            layout="@layout/loader"
-            android:focusable="false"
             android:focusableInTouchMode="false"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp" />
+            android:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

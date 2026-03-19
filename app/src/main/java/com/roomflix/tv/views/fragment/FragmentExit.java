@@ -1,0 +1,46 @@
+package com.roomflix.tv.views.fragment;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.os.Bundle;
+import android.widget.Button;
+
+import androidx.fragment.app.DialogFragment;
+import com.roomflix.tv.R;
+
+public class FragmentExit extends DialogFragment {
+
+    public FragmentExit() {
+
+    }
+
+    public static FragmentExit newInstance(String param1) {
+        FragmentExit fragment = new FragmentExit();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    public AlertDialog createDialog(Context context) {
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false)
+                .setView(R.layout.fragment_exit);
+        AlertDialog dialog = builder.create();
+        return dialog;
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        if (getDialog() != null && getRetainInstance()) {
+            getDialog().setDismissMessage(null);
+        }
+        super.onDestroyView();
+    }
+}

@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
-import verion.desing.launcher.databinding.FragmentOnBoardBinding;
+import com.roomflix.tv.databinding.FragmentOnBoardBinding;
 import verion.desing.launcher.model.ModelTutorial;
 
 /**

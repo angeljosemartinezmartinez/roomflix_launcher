@@ -11,9 +11,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.mikepenz.iconics.Iconics;
-import com.mikepenz.iconics.context.IconicsContextWrapper;
-
-import java.io.IOException;
+// import com.mikepenz.iconics.context.IconicsContextWrapper; // Removed to fix Android 13 crash
 
 import javax.inject.Inject;
 
@@ -69,17 +67,16 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
+    /** Antes lanzaba LanguageSelect (eliminado); idioma se cambia desde la píldora en MainMenu. */
     public void goLangSelect() {
-        Intent intent = new Intent(getApplicationContext(), LanguageSelect.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-
+        // No-op: selector de idioma integrado en MainMenu (píldora expandible)
     }
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(IconicsContextWrapper.wrap(newBase));
+        // IconicsContextWrapper removed to fix NullPointerException on Android 13
+        // super.attachBaseContext(IconicsContextWrapper.wrap(newBase));
+        super.attachBaseContext(newBase);
     }
 
     @Override
@@ -137,15 +134,6 @@ public class BaseActivity extends AppCompatActivity {
             runOnUiThread(() -> Toast.makeText(context, str, Toast.LENGTH_SHORT).show());
 
         } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
-    }
-
-    protected void cleanCache(String nPackage){
-        try{
-            Process p = Runtime.getRuntime().exec(new String[]{"/system/bin/su", "-c", "pm clear "+ nPackage});
-            p.waitFor();
-        }catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
     }

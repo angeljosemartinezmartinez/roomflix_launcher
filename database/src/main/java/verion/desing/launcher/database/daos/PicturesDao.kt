@@ -9,7 +9,7 @@ interface PicturesDao {
     @Query("SELECT * from pictures")
     fun getAll():List<Translations>
 
-    @Insert(onConflict = OnConflictStrategy.ROLLBACK)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(pictures: ArrayList<Translations>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

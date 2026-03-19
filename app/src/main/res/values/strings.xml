@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name" translatable="false">VerionLauncher</string>
+    <string name="app_name" translatable="false">Roomflix</string>
     <string name="title_exit">Warning</string>
     <string name="explanation_exit_codes">We are doing some operations, let us some minutes</string>
     <string name="explanation_exit">
-        You are going to exit from HotelPlay
+        You are going to exit from Roomflix
     </string>
     <string name="explanation_exit1">
         Your personal information will be deleted when you go out from the room\nAlso your data wont be processed by us or by third part
@@ -20,4 +20,12 @@
     <string name="control_parental">Parental control</string>
     <string name="codigo">Input the code here</string>
     <string name="error_tv_premium">Wrong code</string>
+    <string name="network_error_title">Error de Conexión</string>
+    <string name="network_error_message">No se pudo cargar la configuración. Por favor, compruebe su conexión a internet.</string>
+    <string name="network_error_retry">Reintentar</string>
+    <string name="network_error_settings">Configurar Red</string>
+    <string name="send_content_description">Compartir contenido a la TV</string>
+    <!-- Device Admin (MDM / Kiosk) -->
+    <string name="device_admin_label">Roomflix Device Admin</string>
+    <string name="device_admin_description">Permite configurar Roomflix como launcher principal y modo kiosk en el dispositivo.</string>
 </resources>

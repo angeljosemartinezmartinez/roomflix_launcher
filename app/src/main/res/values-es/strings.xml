@@ -3,7 +3,7 @@
 
     <string name="title_exit">Atención</string>
     <string name="explanation_exit">
-        Va a salir de HotelPlay
+        Va a salir de Roomflix
     </string>
     <string name="explanation_exit1">Sus datos personales serán borrados cuando salga de la aplicación\nAdemás sus datos personales no serán tratados por nosotros ni por terceros</string>
     <string name="explanation_exit_codes">Estamos haciendo algunos cambios, danos un segundo</string>

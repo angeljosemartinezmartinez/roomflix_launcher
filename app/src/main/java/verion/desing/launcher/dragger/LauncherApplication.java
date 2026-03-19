@@ -8,7 +8,7 @@ import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.PrettyFormatStrategy;
 
-import verion.desing.launcher.BuildConfig;
+import com.roomflix.tv.BuildConfig;
 import verion.desing.launcher.Constants;
 import verion.desing.launcher.helpers.FileHelper;
 import verion.desing.launcher.helpers.ImageHelper;

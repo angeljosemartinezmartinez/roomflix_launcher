@@ -8,7 +8,7 @@ interface UpdateDao {
     @Query("SELECT * from updateTable")
     fun getAll(): List<Update>
 
-    @Insert(onConflict = OnConflictStrategy.ROLLBACK)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(button: Update)
 
 }

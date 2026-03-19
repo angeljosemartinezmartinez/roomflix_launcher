@@ -7,7 +7,7 @@ import android.widget.Button;
 
 import androidx.fragment.app.DialogFragment;
 
-import verion.desing.launcher.R;
+import com.roomflix.tv.R;
 
 public class FragmentExitControl extends DialogFragment {
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Estado enfocado: icono oscuro sobre fondo blanco -->
+    <item android:state_focused="true" android:drawable="@drawable/ic_cast_dark" />
+    <item android:state_pressed="true" android:drawable="@drawable/ic_cast_dark" />
+    <!-- Estado normal: icono blanco sobre fondo semi-transparente -->
+    <item android:drawable="@drawable/ic_cast" />
+</selector>

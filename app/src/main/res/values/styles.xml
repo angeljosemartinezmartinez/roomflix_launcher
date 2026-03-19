@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:windowActionBar">false</item>
@@ -9,8 +9,32 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">#009688</item>
         <item name="android:windowContentTransitions">true</item>
-        <item name="android:background">@color/transparent</item>
+        <item name="android:windowBackground">@android:color/black</item>
         <item name="android:fontFamily">@font/montserrat_bold</item>
+    </style>
+
+    <!-- PlayerActivity Theme: Full-screen player compatible with AppCompat -->
+    <style name="Theme.Roomflix.Player" parent="Theme.AppCompat.NoActionBar">
+        <!-- Full-screen configuration -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <!-- Black background for video player -->
+        <item name="android:windowBackground">@android:color/black</item>
+        <!-- Keep screen on during playback -->
+        <item name="android:keepScreenOn">true</item>
+        <!-- Disable window animations for instant transitions -->
+        <item name="android:windowAnimationStyle">@null</item>
+        <!-- Ensure hardware acceleration for video playback -->
+        <item name="android:hardwareAccelerated">true</item>
+    </style>
+
+    <!-- Tema para diálogos RoomFlix (uso en BaseActivity.handleAppNotFound) -->
+    <style name="RoomFlixDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="colorAccent">#E50914</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
     </style>
 
 </resources>

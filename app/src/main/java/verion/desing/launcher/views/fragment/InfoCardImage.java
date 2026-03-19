@@ -10,7 +10,7 @@ import com.squareup.picasso.Picasso;
 
 import androidx.fragment.app.Fragment;
 import verion.desing.launcher.database.models.Translation;
-import verion.desing.launcher.databinding.InfocardImageBinding;
+import com.roomflix.tv.databinding.InfocardImageBinding;
 
 public class InfoCardImage extends Fragment {
 

@@ -8,7 +8,7 @@ import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import verion.desing.launcher.BuildConfig;
+import com.roomflix.tv.BuildConfig;
 import verion.desing.launcher.Constants;
 
 public class ApiPro {

@@ -9,10 +9,10 @@ import java.util.ArrayList;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
-import verion.desing.launcher.R;
+import com.roomflix.tv.R;
 import verion.desing.launcher.database.tables.Translations;
-import verion.desing.launcher.databinding.ItemMoreAppsBinding;
-import verion.desing.launcher.databinding.ItemSubmenuBinding;
+import com.roomflix.tv.databinding.ItemMoreAppsBinding;
+import com.roomflix.tv.databinding.ItemSubmenuBinding;
 import verion.desing.launcher.helpers.ImageHelper;
 
 /**

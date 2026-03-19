@@ -12,12 +12,12 @@ import javax.inject.Inject;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import verion.desing.launcher.Constants;
-import verion.desing.launcher.R;
+import com.roomflix.tv.R;
 import verion.desing.launcher.database.models.TranslationSubmenu;
 import verion.desing.launcher.database.tables.Button;
 import verion.desing.launcher.database.tables.Submenus;
 import verion.desing.launcher.database.tables.Translations;
-import verion.desing.launcher.databinding.ActivityMoreAppsBinding;
+import com.roomflix.tv.databinding.ActivityMoreAppsBinding;
 import verion.desing.launcher.dragger.LauncherApplication;
 import verion.desing.launcher.listener.CallBackGetOne;
 import verion.desing.launcher.managers.DBManager;
@@ -54,18 +54,10 @@ public class MoreAppsActivity extends NetworkBaseActivity {
         imageHelper.loadRoundCorner(logo, binding.help.logo);
         idSubmenu = mySharedPreferences.getInt(Constants.SHARED_PREFERENCES.ID_SUBMENU);
         getSubmenuFromBtn();
-        setClock();
-        setDay(binding.help.day);
+        // setClock() y setDay() - ELIMINADOS: El reloj antiguo ya no existe
     }
 
-    private void setClock() {
-        binding.help.toptextClock.setFormat12Hour(null);
-        binding.help.toptextClock.setFormat24Hour("HH:mm");
-        String timezone = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.TIMEZONE);
-
-        if (timezone != "")
-            binding.help.toptextClock.setTimeZone(timezone);
-    }
+    // setClock() - ELIMINADO: El reloj antiguo (toptextClock) ya no existe en el layout
 
     private void chargeSharedPreferencesData() {
         baseUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.BASE_URL);
@@ -175,14 +167,14 @@ public class MoreAppsActivity extends NetworkBaseActivity {
 
     private void hideLoader() {
         runOnUiThread(() -> {
-            binding.loader.setVisibility(View.GONE);
+            binding.loader.getRoot().setVisibility(View.GONE);
             autoHideLoader.removeCallbacks(null);
         });
     }
 
     private void showLoader() {
         runOnUiThread(() -> {
-            binding.loader.setVisibility(View.VISIBLE);
+            binding.loader.getRoot().setVisibility(View.VISIBLE);
             autoHideLoader.removeCallbacks(null);
         });
     }

@@ -13,10 +13,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import verion.desing.launcher.Constants;
-import verion.desing.launcher.R;
+import com.roomflix.tv.R;
 import verion.desing.launcher.database.models.Translation;
 import verion.desing.launcher.database.tables.InfoCards;
-import verion.desing.launcher.databinding.ActivityInfocardBinding;
+import com.roomflix.tv.databinding.ActivityInfocardBinding;
 import verion.desing.launcher.dragger.LauncherApplication;
 import verion.desing.launcher.listener.CallBackGetOne;
 import verion.desing.launcher.managers.DBManager;
@@ -51,13 +51,7 @@ public class InfoCardActivity extends NetworkBaseActivity {
 
     }
 
-    private void setClock() {
-        binding.help.toptextClock.setFormat12Hour(null);
-        binding.help.toptextClock.setFormat24Hour("HH:mm");
-        String timezone = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.TIMEZONE);
-        if (timezone != "")
-            binding.help.toptextClock.setTimeZone(timezone);
-    }
+    // setClock() - ELIMINADO: El reloj antiguo (toptextClock) ya no existe en el layout
 
     private void generateUI() {
         background = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.URL_BACK);
@@ -65,8 +59,7 @@ public class InfoCardActivity extends NetworkBaseActivity {
         logo = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.MINI_LOGO);
         imageHelper.loadRoundCorner(baseUrl + background, binding.background);
         imageHelper.loadRoundCorner(logo, binding.help.logo);
-        setClock();
-        setDay(binding.help.day);
+        // setClock() y setDay() - ELIMINADOS: El reloj antiguo ya no existe
     }
 
     private void getInfocard() {

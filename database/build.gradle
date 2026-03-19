@@ -1,64 +1,52 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
+
+// AÑADE ESTE BLOQUE AQUÍ
+kapt {
+    correctErrorTypes = true
+}
 
 android {
-    compileSdkVersion 'android-28'
-
-    buildToolsVersion "$buildToolsVersion"
-    kapt { generateStubs = true }
-    signingConfigs {
-        release {
-            keyAlias 'Verion'
-            keyPassword 'L1N4R3S'
-            storeFile file('/home/dani/AndroidStudioProjects/hotelplay/Verion.keystore')
-            storePassword 'android'
-        }
+    namespace 'com.roomflix.tv.database'
+    compileSdk 34
+    buildToolsVersion "34.0.0"
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
+    
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
-    buildTypes {
-        release {
-            minifyEnabled true
-            debuggable false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            jniDebuggable false
-            signingConfig signingConfigs.release
-        }
-        debug {
-            minifyEnabled false
-            debuggable true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            jniDebuggable true
-        }
-
-
+    buildFeatures {
+        buildConfig true
     }
-
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.0-alpha3'
-    testImplementation 'junit:junit:4.12'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    
+    // Forzamos la versión de Kotlin para que coincida con el compilador
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.22"
+    
+    implementation 'com.google.code.gson:gson:2.10.1'
+    
+    def room_version = "2.6.1"
     implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
-}
-repositories {
-    google()
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
-    jcenter()
+
+    testImplementation 'junit:junit:4.13.2'
 }

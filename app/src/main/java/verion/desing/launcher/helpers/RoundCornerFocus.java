@@ -3,7 +3,7 @@ package verion.desing.launcher.helpers;
 import android.view.View;
 import android.widget.ImageView;
 
-import verion.desing.launcher.R;
+import com.roomflix.tv.R;
 
 public class RoundCornerFocus implements View.OnFocusChangeListener {
 

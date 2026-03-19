@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Estado enfocado (focused): mismo tono traslúcido que el idioma, ligeramente más claro -->
+    <item android:state_focused="true" android:state_enabled="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#4DFFFFFF" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+    
+    <!-- Estado presionado (pressed): coherente con foco -->
+    <item android:state_pressed="true" android:state_enabled="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#4DFFFFFF" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+    
+    <!-- Estado normal (default) -->
+    <item android:state_enabled="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#33FFFFFF" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+    
+    <!-- Estado deshabilitado -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#1AFFFFFF" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+</selector>

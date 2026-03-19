@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Enfocado: zoom + ligera elevación -->
+    <item android:state_focused="true">
+        <set>
+            <objectAnimator
+                android:duration="150"
+                android:propertyName="scaleX"
+                android:valueFrom="1.0"
+                android:valueTo="1.2"
+                android:valueType="floatType" />
+
+            <objectAnimator
+                android:duration="150"
+                android:propertyName="scaleY"
+                android:valueFrom="1.0"
+                android:valueTo="1.2"
+                android:valueType="floatType" />
+
+            <!-- translationZ funciona como “elevación” en TV -->
+            <objectAnimator
+                android:duration="150"
+                android:propertyName="translationZ"
+                android:valueFrom="0"
+                android:valueTo="8"
+                android:valueType="floatType" />
+        </set>
+    </item>
+
+    <!-- Normal: vuelve a escala y sin elevación -->
+    <item>
+        <set>
+            <objectAnimator
+                android:duration="150"
+                android:propertyName="scaleX"
+                android:valueFrom="1.2"
+                android:valueTo="1.0"
+                android:valueType="floatType" />
+
+            <objectAnimator
+                android:duration="150"
+                android:propertyName="scaleY"
+                android:valueFrom="1.2"
+                android:valueTo="1.0"
+                android:valueType="floatType" />
+
+            <objectAnimator
+                android:duration="150"
+                android:propertyName="translationZ"
+                android:valueFrom="8"
+                android:valueTo="0"
+                android:valueType="floatType" />
+        </set>
+    </item>
+</selector>

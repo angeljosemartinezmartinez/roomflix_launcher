@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">VerionLauncher</string>
+    <string name="app_name">Roomflix</string>
     <string name="title_exit">Warning</string>
     <string name="explanation_exit_codes">We are doing some operations, let us some minutes</string>
     <string name="explanation_exit">
-        You are going to exit from HotelPlay
+        You are going to exit from Roomflix
     </string>
     <string name="explanation_exit1">
         Your personal information will be deleted when you go out from the room\nAlso your data wont be processed by us or by third part
