@@ -627,6 +627,9 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
                 _needsVpnPermission.value = true
                 return@launch
             }
+
+            vpnManager.onVpnConnected = { startVpnHeartbeat() }
+
             val result = vpnManager.connect()
             _vpnState.value = result
             when (result) {
@@ -636,6 +639,35 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
                     Log.w(TAG, "VPN error (no critico): ${result.message}")
                 is VpnManager.VpnResult.NotConfigured ->
                     Log.i(TAG, "VPN no configurada - modo legacy")
+            }
+        }
+    }
+
+    private fun startVpnHeartbeat() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val token = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.CONTROL_API_TOKEN) ?: return@launch
+            val deviceId = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.CONTROL_DEVICE_ID) ?: return@launch
+            if (token.isBlank() || deviceId.isBlank()) return@launch
+
+            val api = com.roomflix.tv.api.ControlApiService.create(vpnConnected = true)
+
+            // Primer ping inmediato
+            try {
+                api.ping("Bearer $token", deviceId)
+                Log.i(TAG, "VPN heartbeat: ping inicial enviado a Control")
+            } catch (e: Exception) {
+                Log.w(TAG, "VPN heartbeat error inicial: ${e.message}")
+            }
+
+            // Ping cada 60s
+            while (vpnManager.isConnected) {
+                kotlinx.coroutines.delay(60_000)
+                try {
+                    api.ping("Bearer $token", deviceId)
+                    Log.d(TAG, "VPN heartbeat: ping OK")
+                } catch (e: Exception) {
+                    Log.w(TAG, "VPN heartbeat fallo: ${e.message}")
+                }
             }
         }
     }

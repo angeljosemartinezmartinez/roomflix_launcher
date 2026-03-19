@@ -43,6 +43,8 @@ class VpnManager(private val context: Context) {
     var isConnected = false
         private set
 
+    var onVpnConnected: (() -> Unit)? = null
+
     fun configure(
         privateKey: String,
         address: String,
@@ -111,6 +113,10 @@ class VpnManager(private val context: Context) {
             isConnected = true
 
             Log.i(TAG, "VPN activa: $addressStr (split tunnel: $VPN_SUBNET)")
+
+            // Notificar callback
+            onVpnConnected?.invoke()
+
             VpnResult.Connected(addressStr)
         } catch (e: Exception) {
             Log.e(TAG, "Error VPN: ${e.message}", e)
