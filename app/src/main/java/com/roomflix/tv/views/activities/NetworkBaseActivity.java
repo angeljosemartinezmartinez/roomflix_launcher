@@ -511,30 +511,33 @@ public class NetworkBaseActivity extends BaseActivity {
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
-            private void launchAfterDelay() {
-                uiHandler.postDelayed(() -> {
-                    dismissLoadingDialog();
-                    startPackage(packageName);
-                }, 1000L);
-            }
-
             @Override
             public void onFailure(Call call, java.io.IOException e) {
                 Log.w(TAG, "Control API clear-data failed: " + e.getMessage());
-                launchAfterDelay();
+                // fail-open: abrir app inmediatamente
+                uiHandler.post(() -> { dismissLoadingDialog(); startPackage(packageName); });
             }
 
             @Override
             public void onResponse(Call call, Response response) {
+                boolean clearOk = false;
                 try {
-                    if (response.isSuccessful()) {
-                        Log.d(TAG, "Control API clear-data OK");
+                    if (response.isSuccessful() && response.body() != null) {
+                        String bodyStr = response.body().string();
+                        clearOk = bodyStr.contains("\"success\":true");
+                        Log.d(TAG, "Control API clear-data: " + (clearOk ? "OK" : "FAIL") + " " + bodyStr);
                     } else {
                         Log.w(TAG, "Control API clear-data HTTP " + response.code());
                     }
-                    response.close();
-                } catch (Exception ignored) { }
-                launchAfterDelay();
+                } catch (Exception e) {
+                    Log.w(TAG, "Error leyendo respuesta clear: " + e.getMessage());
+                } finally {
+                    try { response.close(); } catch (Exception ignored) {}
+                }
+
+                // Delay solo si clear exitoso (dar tiempo a que surta efecto)
+                long delay = clearOk ? 800L : 0L;
+                uiHandler.postDelayed(() -> { dismissLoadingDialog(); startPackage(packageName); }, delay);
             }
         });
     }
