@@ -25,7 +25,10 @@ public class Constants {
         public static final String ID_MOREAPPS = "idMoreApps";
         public static final String SSID = "ssid";
         public static final String PASS = "pass";
-        public static final String ADB_SERVER = "adbServer";
+        public static final String ADB_SERVER = "adbServer";  // Legacy
+        public static final String CONTROL_API_URL = "controlApiUrl";
+        public static final String CONTROL_API_TOKEN = "controlApiToken";
+        public static final String CONTROL_DEVICE_ID = "controlDeviceId";
         public static final String CACHED_ALL_INFO = "cachedAllInfo";
         public static final String IS_USING_CACHE = "isUsingCache";
     }

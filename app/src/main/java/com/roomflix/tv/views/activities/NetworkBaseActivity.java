@@ -252,8 +252,19 @@ public class NetworkBaseActivity extends BaseActivity {
                 }
             }
             
-            if (cachedData.configuration != null && cachedData.configuration.adbServer != null) {
-                mySharedPreferences.putString(Constants.SHARED_PREFERENCES.ADB_SERVER, cachedData.configuration.adbServer);
+            if (cachedData.configuration != null) {
+                if (cachedData.configuration.adbServer != null) {
+                    mySharedPreferences.putString(Constants.SHARED_PREFERENCES.ADB_SERVER, cachedData.configuration.adbServer);
+                }
+                if (cachedData.configuration.controlApiUrl != null) {
+                    mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_API_URL, cachedData.configuration.controlApiUrl);
+                }
+                if (cachedData.configuration.controlApiToken != null) {
+                    mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_API_TOKEN, cachedData.configuration.controlApiToken);
+                }
+                if (cachedData.configuration.controlDeviceId != null) {
+                    mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_DEVICE_ID, cachedData.configuration.controlDeviceId);
+                }
             }
             
             // Restaurar idioma por defecto
@@ -433,31 +444,104 @@ public class NetworkBaseActivity extends BaseActivity {
     }
 
     /**
-     * Limpia rastro vía servidor ADB (timeout 2s) y abre la app externa.
-     * Si el servidor ADB está caído o tarda, igualmente abrimos la app.
+     * Limpia datos de la app via Control API (o legacy adbServer) y abre la app externa.
+     * Fail-open: si la API falla, igualmente abrimos la app.
      */
     private void cleanAndStartApp(final String packageName) {
         if (packageName == null || packageName.trim().isEmpty()) {
             return;
         }
 
-        // Anti-double click: si ya estamos en proceso, ignorar nuevos clicks
+        // Anti-double click
         if (loadingDialog != null && loadingDialog.isShowing()) {
             return;
         }
 
+        final String controlApiUrl = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.CONTROL_API_URL);
+        final String controlApiToken = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.CONTROL_API_TOKEN);
+        final String controlDeviceId = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.CONTROL_DEVICE_ID);
+
+        // Si tenemos Control API configurada, usar la nueva ruta
+        if (controlApiUrl != null && !controlApiUrl.trim().isEmpty()
+                && controlApiToken != null && !controlApiToken.trim().isEmpty()
+                && controlDeviceId != null && !controlDeviceId.trim().isEmpty()) {
+            cleanViaControlApi(packageName, controlApiUrl, controlApiToken, controlDeviceId);
+            return;
+        }
+
+        // Fallback: usar legacy adbServer
+        cleanViaLegacyAdb(packageName);
+    }
+
+    /**
+     * Clear data via Control API REST (control.roomflix.tv)
+     */
+    private void cleanViaControlApi(String packageName, String apiUrl, String token, String deviceId) {
+        showLoadingDialog(getFriendlyAppName(packageName));
+        Log.d(TAG, "Clear data via Control API: " + apiUrl + " device=" + deviceId + " pkg=" + packageName);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
+                .build();
+
+        String json = "{\"package\":\"" + packageName + "\"}";
+        okhttp3.RequestBody body = okhttp3.RequestBody.create(
+                json, okhttp3.MediaType.parse("application/json"));
+
+        String url = apiUrl.endsWith("/") ? apiUrl : apiUrl + "/";
+        Request request = new Request.Builder()
+                .url(url + "api/v1/devices/" + deviceId + "/clear-data")
+                .addHeader("Authorization", "Bearer " + token)
+                .addHeader("Content-Type", "application/json")
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            private void launchAfterDelay() {
+                uiHandler.postDelayed(() -> {
+                    dismissLoadingDialog();
+                    startPackage(packageName);
+                }, 1000L);
+            }
+
+            @Override
+            public void onFailure(Call call, java.io.IOException e) {
+                Log.w(TAG, "Control API clear-data failed: " + e.getMessage());
+                launchAfterDelay();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) {
+                try {
+                    if (response.isSuccessful()) {
+                        Log.d(TAG, "Control API clear-data OK");
+                    } else {
+                        Log.w(TAG, "Control API clear-data HTTP " + response.code());
+                    }
+                    response.close();
+                } catch (Exception ignored) { }
+                launchAfterDelay();
+            }
+        });
+    }
+
+    /**
+     * Legacy: clear data via adbServer directo (deprecado)
+     */
+    private void cleanViaLegacyAdb(String packageName) {
         final String adbServer = mySharedPreferences.getString(Constants.SHARED_PREFERENCES.ADB_SERVER);
-        final String deviceId12 = DeviceIdProvider.getDeviceId(getApplicationContext()); // ID virtual (12 chars)
+        final String deviceId12 = DeviceIdProvider.getDeviceId(getApplicationContext());
         final String localIp = getLocalIpAddress();
 
-        // Si no hay servidor configurado, abrir app sin limpieza
         if (adbServer == null || adbServer.trim().isEmpty()) {
             runOnUiThread(() -> startPackage(packageName));
             return;
         }
 
         showLoadingDialog(getFriendlyAppName(packageName));
-        Log.d("DEBUG_CLEAN", "Enviada orden de limpieza para " + packageName + " al servidor " + adbServer + ".");
+        Log.d(TAG, "Clear data via legacy adbServer: " + adbServer + " pkg=" + packageName);
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(5, TimeUnit.SECONDS)
@@ -487,16 +571,12 @@ public class NetworkBaseActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call call, java.io.IOException e) {
-                // Fallo/timeout: abrir app igualmente
                 launchAfterDelay();
             }
 
             @Override
             public void onResponse(Call call, Response response) {
-                // Éxito (o incluso error HTTP): abrir app igualmente
-                try {
-                    response.close();
-                } catch (Exception ignored) { }
+                try { response.close(); } catch (Exception ignored) { }
                 launchAfterDelay();
             }
         });

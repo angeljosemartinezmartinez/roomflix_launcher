@@ -488,11 +488,22 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
                 mySharedPreferences.putString(Constants.SHARED_PREFERENCES.MINI_LOGO, miniLogo)
             }
             
-            // Guardar ADB server
+            // Guardar ADB server (legacy)
             if (mainConfig.configuration?.adbServer != null) {
                 mySharedPreferences.putString(Constants.SHARED_PREFERENCES.ADB_SERVER, mainConfig.configuration.adbServer)
             }
-            
+
+            // Guardar Control API config (reemplaza adbServer)
+            mainConfig.configuration?.controlApiUrl?.let {
+                mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_API_URL, it)
+            }
+            mainConfig.configuration?.controlApiToken?.let {
+                mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_API_TOKEN, it)
+            }
+            mainConfig.configuration?.controlDeviceId?.let {
+                mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_DEVICE_ID, it)
+            }
+
             // Guardar timezone
             if (mainConfig.configuration?.timeZone != null) {
                 val timezone = when (mainConfig.configuration.timeZone.toString()) {
