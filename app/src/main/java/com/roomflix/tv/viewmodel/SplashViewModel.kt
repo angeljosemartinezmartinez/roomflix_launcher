@@ -39,6 +39,8 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
+import com.roomflix.tv.vpn.VpnManager
+import com.roomflix.tv.vpn.VpnManagerHolder
 import javax.inject.Inject
 
 /**
@@ -72,6 +74,13 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
     
     // CompletableDeferred para sincronizar el guardado en base de datos
     private var dbSaveDeferred: CompletableDeferred<Boolean>? = null
+
+    // VPN Manager
+    private val vpnManager by lazy { VpnManagerHolder.getInstance(getApplication()) }
+    private val _vpnState = MutableStateFlow<VpnManager.VpnResult?>(null)
+    val vpnState: StateFlow<VpnManager.VpnResult?> = _vpnState.asStateFlow()
+    private val _needsVpnPermission = MutableStateFlow(false)
+    val needsVpnPermission: StateFlow<Boolean> = _needsVpnPermission.asStateFlow()
     
     sealed class LoadingState {
         object Idle : LoadingState()
@@ -504,6 +513,9 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
                 mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_DEVICE_ID, it)
             }
 
+            // Iniciar VPN si hay config
+            processVpnConfig(mainConfig.configuration)
+
             // Guardar timezone
             if (mainConfig.configuration?.timeZone != null) {
                 val timezone = when (mainConfig.configuration.timeZone.toString()) {
@@ -555,6 +567,43 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
             // Asegurar que el deferred se complete incluso si hay error antes del callback
             dbSaveDeferred?.complete(false)
             // No crashear Splash: continuar flujo con caché/DB existente
+        }
+    }
+
+    // --- VPN ---
+
+    private fun processVpnConfig(config: ResponseConfiguration?) {
+        if (config?.vpnPrivateKey != null &&
+            config.vpnAddress != null &&
+            config.vpnServerPublicKey != null &&
+            config.vpnServerEndpoint != null) {
+
+            vpnManager.configure(
+                privateKey = config.vpnPrivateKey!!,
+                address = config.vpnAddress!!,
+                serverPublicKey = config.vpnServerPublicKey!!,
+                serverEndpoint = config.vpnServerEndpoint!!
+            )
+            connectVpn()
+        }
+    }
+
+    fun connectVpn() {
+        viewModelScope.launch {
+            if (vpnManager.prepareVpnPermission() != null) {
+                _needsVpnPermission.value = true
+                return@launch
+            }
+            val result = vpnManager.connect()
+            _vpnState.value = result
+            when (result) {
+                is VpnManager.VpnResult.Connected ->
+                    Log.i(TAG, "VPN conectada: ${result.vpnIp}")
+                is VpnManager.VpnResult.Error ->
+                    Log.w(TAG, "VPN error (no critico): ${result.message}")
+                is VpnManager.VpnResult.NotConfigured ->
+                    Log.i(TAG, "VPN no configurada - modo legacy")
+            }
         }
     }
 }

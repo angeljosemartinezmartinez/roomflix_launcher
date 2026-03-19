@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import com.roomflix.tv.BuildConfig
 import com.roomflix.tv.R
 import com.roomflix.tv.viewmodel.SplashViewModel
+import com.roomflix.tv.vpn.VpnPermissionActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -54,6 +55,7 @@ class SplashActivity : AppCompatActivity() {
         registrationText.visibility = View.GONE
 
         observeLoadingState()
+        observeVpnState()
 
         lifecycleScope.launch {
             try {
@@ -125,6 +127,42 @@ class SplashActivity : AppCompatActivity() {
                         is SplashViewModel.LoadingState.Idle -> statusText.visibility = View.GONE
                     }
                 }
+            }
+        }
+    }
+
+    private fun observeVpnState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.needsVpnPermission.collectLatest { needs ->
+                    if (needs) {
+                        startActivityForResult(
+                            Intent(this@SplashActivity, VpnPermissionActivity::class.java),
+                            VpnPermissionActivity.REQUEST_CODE
+                        )
+                    }
+                }
+            }
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.vpnState.collectLatest { result ->
+                    if (result != null) {
+                        Log.i(TAG, "VPN state: $result")
+                    }
+                }
+            }
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == VpnPermissionActivity.REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                viewModel.connectVpn()
+            } else {
+                Log.w(TAG, "Permiso VPN denegado - funcionando sin VPN")
             }
         }
     }

@@ -193,4 +193,7 @@ dependencies {
     
     // Google Play Services Location (para FusedLocationProviderClient)
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+
+    // WireGuard tunnel userspace (GoBackend) — embebido en APK, sin app externa ni root
+    implementation 'com.wireguard.android:tunnel:1.0.20230706'
 }

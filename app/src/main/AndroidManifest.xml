@@ -19,6 +19,7 @@
         android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- Permiso especial para Launchers: Permite ver TODAS las apps instaladas (API 30+) -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" 
         tools:ignore="QueryAllPackagesPermission" />
@@ -114,6 +115,22 @@
             android:screenOrientation="landscape"
             android:theme="@style/Theme.Roomflix.Player" />
         
+        <!-- VpnService de GoBackend (WireGuard userspace embebido) -->
+        <service
+            android:name="com.wireguard.android.backend.GoBackend$VpnService"
+            android:exported="false"
+            android:permission="android.permission.BIND_VPN_SERVICE">
+            <intent-filter>
+                <action android:name="android.net.VpnService" />
+            </intent-filter>
+        </service>
+
+        <!-- Actividad transparente para dialogo permiso VPN -->
+        <activity
+            android:name=".vpn.VpnPermissionActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:exported="false" />
+
         <!-- Device Admin Receiver (MDM / Kiosk): launcher fijo, lock task, pantalla siempre on -->
         <receiver
             android:name=".mdm.RoomflixDeviceAdminReceiver"

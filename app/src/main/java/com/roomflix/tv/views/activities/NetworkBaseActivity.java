@@ -53,6 +53,7 @@ import com.roomflix.tv.network.response.ResponseAllInfo;
 import com.roomflix.tv.network.response.ResponseConfiguration;
 import com.roomflix.tv.network.response.ResponseUpdate;
 import com.roomflix.tv.utils.NetWorkUtils;
+import com.roomflix.tv.vpn.VpnManagerHolder;
 
 public class NetworkBaseActivity extends BaseActivity {
 
@@ -474,11 +475,23 @@ public class NetworkBaseActivity extends BaseActivity {
     }
 
     /**
-     * Clear data via Control API REST (control.roomflix.tv)
+     * Clear data via Control API REST.
+     * Si VPN activa: usa 10.10.0.1 (trafico por tunel WireGuard).
+     * Si VPN inactiva: usa el dominio control.roomflix.tv (fallback).
      */
     private void cleanViaControlApi(String packageName, String apiUrl, String token, String deviceId) {
         showLoadingDialog(getFriendlyAppName(packageName));
-        Log.d(TAG, "Clear data via Control API: " + apiUrl + " device=" + deviceId + " pkg=" + packageName);
+
+        // Determinar URL base segun estado VPN
+        boolean vpnActive = VpnManagerHolder.INSTANCE.getInstance(this).isConnected();
+        String baseUrl;
+        if (vpnActive) {
+            baseUrl = "http://10.10.0.1/";
+            Log.d(TAG, "Clear data via VPN tunnel (10.10.0.1) device=" + deviceId);
+        } else {
+            baseUrl = apiUrl.endsWith("/") ? apiUrl : apiUrl + "/";
+            Log.d(TAG, "Clear data via domain (" + apiUrl + ") device=" + deviceId);
+        }
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(5, TimeUnit.SECONDS)
@@ -490,9 +503,8 @@ public class NetworkBaseActivity extends BaseActivity {
         okhttp3.RequestBody body = okhttp3.RequestBody.create(
                 json, okhttp3.MediaType.parse("application/json"));
 
-        String url = apiUrl.endsWith("/") ? apiUrl : apiUrl + "/";
         Request request = new Request.Builder()
-                .url(url + "api/v1/devices/" + deviceId + "/clear-data")
+                .url(baseUrl + "api/v1/devices/" + deviceId + "/clear-data")
                 .addHeader("Authorization", "Bearer " + token)
                 .addHeader("Content-Type", "application/json")
                 .post(body)
