@@ -475,71 +475,77 @@ public class NetworkBaseActivity extends BaseActivity {
     }
 
     /**
-     * Clear data via Control API REST.
+     * Clear data via Control API REST con retry automatico.
      * Si VPN activa: usa 10.10.0.1 (trafico por tunel WireGuard).
      * Si VPN inactiva: usa el dominio control.roomflix.tv (fallback).
+     * Maximo 2 intentos. Fail-open: siempre abre la app al final.
      */
     private void cleanViaControlApi(String packageName, String apiUrl, String token, String deviceId) {
         showLoadingDialog(getFriendlyAppName(packageName));
 
-        // Determinar URL base segun estado VPN
-        boolean vpnActive = VpnManagerHolder.INSTANCE.getInstance(this).isConnected();
-        String baseUrl;
-        if (vpnActive) {
-            baseUrl = "http://10.10.0.1/";
-            Log.d(TAG, "Clear data via VPN tunnel (10.10.0.1) device=" + deviceId);
-        } else {
-            baseUrl = apiUrl.endsWith("/") ? apiUrl : apiUrl + "/";
-            Log.d(TAG, "Clear data via domain (" + apiUrl + ") device=" + deviceId);
-        }
+        new Thread(() -> {
+            boolean clearOk = false;
+            boolean vpnActive = VpnManagerHolder.INSTANCE.getInstance(this).isConnected();
+            String baseUrl = vpnActive
+                    ? "http://10.10.0.1/"
+                    : (apiUrl.endsWith("/") ? apiUrl : apiUrl + "/");
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(5, TimeUnit.SECONDS)
-                .build();
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(5, TimeUnit.SECONDS)
+                    .readTimeout(10, TimeUnit.SECONDS)
+                    .writeTimeout(5, TimeUnit.SECONDS)
+                    .build();
 
-        String json = "{\"package\":\"" + packageName + "\"}";
-        okhttp3.RequestBody body = okhttp3.RequestBody.create(
-                json, okhttp3.MediaType.parse("application/json"));
+            String json = "{\"package\":\"" + packageName + "\"}";
+            String url = baseUrl + "api/v1/devices/" + deviceId + "/clear-data";
 
-        Request request = new Request.Builder()
-                .url(baseUrl + "api/v1/devices/" + deviceId + "/clear-data")
-                .addHeader("Authorization", "Bearer " + token)
-                .addHeader("Content-Type", "application/json")
-                .post(body)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, java.io.IOException e) {
-                Log.w(TAG, "Control API clear-data failed: " + e.getMessage());
-                // fail-open: abrir app inmediatamente
-                uiHandler.post(() -> { dismissLoadingDialog(); startPackage(packageName); });
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) {
-                boolean clearOk = false;
+            int maxRetries = 2;
+            for (int attempt = 1; attempt <= maxRetries; attempt++) {
                 try {
-                    if (response.isSuccessful() && response.body() != null) {
-                        String bodyStr = response.body().string();
-                        clearOk = bodyStr.contains("\"success\":true");
-                        Log.d(TAG, "Control API clear-data: " + (clearOk ? "OK" : "FAIL") + " " + bodyStr);
-                    } else {
-                        Log.w(TAG, "Control API clear-data HTTP " + response.code());
+                    okhttp3.RequestBody body = okhttp3.RequestBody.create(
+                            json, okhttp3.MediaType.parse("application/json"));
+                    Request request = new Request.Builder()
+                            .url(url)
+                            .addHeader("Authorization", "Bearer " + token)
+                            .addHeader("Content-Type", "application/json")
+                            .post(body)
+                            .build();
+
+                    Response response = client.newCall(request).execute();
+                    try {
+                        if (response.isSuccessful() && response.body() != null) {
+                            String bodyStr = response.body().string();
+                            clearOk = bodyStr.contains("\"success\":true");
+                            Log.d(TAG, "Clear-data intento " + attempt + ": " + (clearOk ? "OK" : "FAIL") + " " + bodyStr);
+                        } else {
+                            Log.w(TAG, "Clear-data intento " + attempt + ": HTTP " + response.code());
+                        }
+                    } finally {
+                        response.close();
+                    }
+
+                    if (clearOk) break;
+
+                    if (attempt < maxRetries) {
+                        Log.d(TAG, "Retry en 1.5s...");
+                        Thread.sleep(1500);
                     }
                 } catch (Exception e) {
-                    Log.w(TAG, "Error leyendo respuesta clear: " + e.getMessage());
-                } finally {
-                    try { response.close(); } catch (Exception ignored) {}
+                    Log.w(TAG, "Clear-data intento " + attempt + " error: " + e.getMessage());
+                    if (attempt < maxRetries) {
+                        try { Thread.sleep(1500); } catch (InterruptedException ignored) {}
+                    }
                 }
-
-                // Delay solo si clear exitoso (dar tiempo a que surta efecto)
-                long delay = clearOk ? 800L : 0L;
-                uiHandler.postDelayed(() -> { dismissLoadingDialog(); startPackage(packageName); }, delay);
             }
-        });
+
+            // Siempre abrir la app (fail-open)
+            final boolean ok = clearOk;
+            long delay = ok ? 800L : 0L;
+            uiHandler.postDelayed(() -> {
+                dismissLoadingDialog();
+                startPackage(packageName);
+            }, delay);
+        }).start();
     }
 
     /**
