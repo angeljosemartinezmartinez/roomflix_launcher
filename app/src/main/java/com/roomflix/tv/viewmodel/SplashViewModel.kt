@@ -40,6 +40,8 @@ import java.time.ZonedDateTime
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
 import com.roomflix.tv.BuildConfig
+import com.roomflix.tv.api.PingRequest
+import com.roomflix.tv.remote.BluetoothRemoteManager
 import com.roomflix.tv.vpn.VpnManager
 import com.roomflix.tv.vpn.VpnManagerHolder
 import javax.inject.Inject
@@ -651,9 +653,18 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
 
             val api = com.roomflix.tv.api.ControlApiService.create(vpnConnected = true)
 
+            fun buildPing(): PingRequest {
+                val app = getApplication<android.app.Application>()
+                return PingRequest(
+                    remoteConnected = BluetoothRemoteManager.hasRemoteConnected(app),
+                    remoteNames = BluetoothRemoteManager.getConnectedRemotes(app),
+                    remoteDaysSinceActivity = BluetoothRemoteManager.daysSinceLastActivity(app)
+                )
+            }
+
             // Primer ping inmediato
             try {
-                api.ping("Bearer $token", deviceId)
+                api.ping("Bearer $token", deviceId, buildPing())
                 Log.i(TAG, "VPN heartbeat: ping inicial enviado a Control")
             } catch (e: Exception) {
                 Log.w(TAG, "VPN heartbeat error inicial: ${e.message}")
@@ -663,7 +674,7 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
             while (vpnManager.isConnected) {
                 kotlinx.coroutines.delay(60_000)
                 try {
-                    api.ping("Bearer $token", deviceId)
+                    api.ping("Bearer $token", deviceId, buildPing())
                     Log.d(TAG, "VPN heartbeat: ping OK")
                 } catch (e: Exception) {
                     Log.w(TAG, "VPN heartbeat fallo: ${e.message}")

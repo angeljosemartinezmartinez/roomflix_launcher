@@ -24,6 +24,12 @@ data class PingResponse(
     val ip: String?
 )
 
+data class PingRequest(
+    val remoteConnected: Boolean = false,
+    val remoteNames: List<String> = emptyList(),
+    val remoteDaysSinceActivity: Int = -1
+)
+
 interface ControlApiEndpoints {
 
     @POST("api/v1/devices/{id}/clear-data")
@@ -36,7 +42,8 @@ interface ControlApiEndpoints {
     @POST("api/v1/devices/{id}/ping")
     suspend fun ping(
         @Header("Authorization") token: String,
-        @Path("id") deviceId: String
+        @Path("id") deviceId: String,
+        @Body request: PingRequest = PingRequest()
     ): Response<PingResponse>
 
     @POST("api/v1/devices/{id}/reboot")

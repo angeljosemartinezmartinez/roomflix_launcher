@@ -13,6 +13,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.Lifecycle
 import com.roomflix.tv.BuildConfig
 import com.roomflix.tv.R
+import com.roomflix.tv.remote.BluetoothRemoteManager
+import com.roomflix.tv.remote.RemotePairingActivity
 import com.roomflix.tv.viewmodel.SplashViewModel
 import com.roomflix.tv.vpn.VpnPermissionActivity
 import kotlinx.coroutines.Dispatchers
@@ -158,16 +160,34 @@ class SplashActivity : AppCompatActivity() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == VpnPermissionActivity.REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                viewModel.connectVpn()
-            } else {
-                Log.w(TAG, "Permiso VPN denegado - funcionando sin VPN")
+        when (requestCode) {
+            VpnPermissionActivity.REQUEST_CODE -> {
+                if (resultCode == RESULT_OK) viewModel.connectVpn()
+                else Log.w(TAG, "Permiso VPN denegado - funcionando sin VPN")
+            }
+            RemotePairingActivity.REQUEST_CODE -> {
+                // Tanto si emparejo como si omitio -> ir al menu
+                Log.i(TAG, "Pairing result: ${if (resultCode == RESULT_OK) "OK" else "SKIP"}")
+                goToMainMenu()
             }
         }
     }
 
     private fun navigateToMainMenu() {
+        // Verificar si hay mando BT conectado antes de ir al menu
+        if (!BluetoothRemoteManager.hasRemoteConnected(this)) {
+            Log.w(TAG, "Sin mando detectado -> lanzando asistente")
+            startActivityForResult(
+                Intent(this, RemotePairingActivity::class.java),
+                RemotePairingActivity.REQUEST_CODE
+            )
+        } else {
+            Log.i(TAG, "Mando OK -> ir al menu")
+            goToMainMenu()
+        }
+    }
+
+    private fun goToMainMenu() {
         val intent = Intent(this, MainMenu::class.java)
         intent.putExtra("from_splash", true)
         startActivity(intent)

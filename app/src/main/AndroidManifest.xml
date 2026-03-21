@@ -20,6 +20,9 @@
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <!-- Permiso especial para Launchers: Permite ver TODAS las apps instaladas (API 30+) -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" 
         tools:ignore="QueryAllPackagesPermission" />
@@ -115,6 +118,12 @@
             android:screenOrientation="landscape"
             android:theme="@style/Theme.Roomflix.Player" />
         
+        <!-- Asistente emparejamiento BT -->
+        <activity
+            android:name=".remote.RemotePairingActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:exported="false" />
+
         <!-- VpnService de GoBackend (WireGuard userspace embebido) -->
         <service
             android:name="com.wireguard.android.backend.GoBackend$VpnService"

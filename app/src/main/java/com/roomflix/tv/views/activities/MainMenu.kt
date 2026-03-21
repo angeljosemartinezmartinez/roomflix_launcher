@@ -939,7 +939,12 @@ class MainMenu : NetworkBaseActivity() {
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         val action = event.action
         val keyCode = event.keyCode
-        
+
+        // Registrar actividad del mando BT
+        if (action == KeyEvent.ACTION_DOWN) {
+            com.roomflix.tv.remote.BluetoothRemoteManager.recordRemoteActivity(applicationContext)
+        }
+
         // Backdoor: Detectar secuencia de teclas (ARRIBA, ARRIBA, ARRIBA, ABAJO, DERECHA, OK)
         if (action == KeyEvent.ACTION_DOWN) {
             if (handleBackdoorSequence(keyCode)) {
