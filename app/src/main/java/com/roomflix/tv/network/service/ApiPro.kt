@@ -22,7 +22,8 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 object ApiPro {
 
     // URL base de la API - HTTPS para seguridad
-    private const val BASE_URL = "https://panel.hotelplay.tv"
+    // TODO: cambiar a panel.roomflix.tv en produccion
+    private const val BASE_URL = "https://pre.panel.roomflix.tv"
 
     // Context global para DeviceIdInterceptor
     private var globalContext: Context? = null

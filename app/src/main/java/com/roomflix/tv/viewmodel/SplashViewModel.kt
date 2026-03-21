@@ -39,7 +39,6 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
-import com.roomflix.tv.BuildConfig
 import com.roomflix.tv.api.PingRequest
 import com.roomflix.tv.remote.BluetoothRemoteManager
 import com.roomflix.tv.vpn.VpnManager
@@ -519,11 +518,6 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
             // Iniciar VPN si hay config del Panel
             processVpnConfig(mainConfig.configuration)
 
-            // DEBUG: si Panel no envia config VPN, usar valores hardcodeados para pruebas
-            if (BuildConfig.DEBUG && !vpnManager.isConfigured()) {
-                initVpnDebug()
-            }
-
             // Si VPN ya configurada (de esta o anterior ejecucion), conectar
             if (vpnManager.isConfigured() && !vpnManager.isConnected) {
                 connectVpn()
@@ -586,11 +580,15 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
     // --- VPN ---
 
     private fun processVpnConfig(config: ResponseConfiguration?) {
+        Log.i(TAG, "processVpnConfig: vpnPrivateKey=${config?.vpnPrivateKey?.take(10) ?: "null"}, vpnAddress=${config?.vpnAddress ?: "null"}, endpoint=${config?.vpnServerEndpoint ?: "null"}, pubkey=${config?.vpnServerPublicKey?.take(10) ?: "null"}")
+        Log.i(TAG, "processVpnConfig: controlApiUrl=${config?.controlApiUrl ?: "null"}, controlDeviceId=${config?.controlDeviceId ?: "null"}")
+
         if (config?.vpnPrivateKey != null &&
             config.vpnAddress != null &&
             config.vpnServerPublicKey != null &&
             config.vpnServerEndpoint != null) {
 
+            Log.i(TAG, "VPN config desde Panel: ${config.vpnServerEndpoint}")
             vpnManager.configure(
                 privateKey = config.vpnPrivateKey!!,
                 address = config.vpnAddress!!,
@@ -598,29 +596,9 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
                 serverEndpoint = config.vpnServerEndpoint!!
             )
             connectVpn()
+        } else {
+            Log.w(TAG, "VPN config incompleta desde Panel - VPN no configurada")
         }
-    }
-
-    /**
-     * DEBUG ONLY — config hardcodeada para pruebas con TV real.
-     * Se elimina antes de produccion.
-     */
-    private fun initVpnDebug() {
-        Log.d(TAG, "initVpnDebug: configurando VPN y Control API para pruebas")
-
-        // Control API config
-        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_API_URL, "https://control.roomflix.tv")
-        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_API_TOKEN, "d62c08a5840b3d1dcf3e7d2bf981775aabcf474b7889c121889a21d028b6b9ae")
-        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_DEVICE_ID, "1")
-
-        // VPN config
-        vpnManager.configure(
-            privateKey = "iDrloi7fbe0195TptOUSl+Eel7iz8wtRTEILo/pk20k=",
-            address = "10.10.0.2/32",
-            serverPublicKey = "XdYFCsjNfcuiQrxXTObNZH2yzXXRU0ZaDFJKNJijCww=",
-            serverEndpoint = "control.roomflix.tv:51820"
-        )
-        connectVpn()
     }
 
     fun connectVpn() {
