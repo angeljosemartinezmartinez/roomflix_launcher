@@ -610,8 +610,8 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
 
         // Control API config
         mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_API_URL, "https://control.roomflix.tv")
-        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_API_TOKEN, "66fcc92aa94fadd14ade1c97d34f7537b17f08cededb13ab22e6545831aed33c")
-        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_DEVICE_ID, "2")
+        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_API_TOKEN, "d62c08a5840b3d1dcf3e7d2bf981775aabcf474b7889c121889a21d028b6b9ae")
+        mySharedPreferences.putString(Constants.SHARED_PREFERENCES.CONTROL_DEVICE_ID, "1")
 
         // VPN config
         vpnManager.configure(
